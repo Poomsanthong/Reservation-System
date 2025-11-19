@@ -11,7 +11,7 @@ function Header() {
   const [mobileOpen, setMobileOpen] = useState(false); // mobile menu open/close
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100">
       {/* navigation content goes here */}
       <nav className="border-b bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
