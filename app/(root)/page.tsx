@@ -33,18 +33,18 @@ import {
 import { Reservation } from "@/lib/types";
 
 const timeSlots = [
-  { time: "11:00 AM", available: true, recommended: false },
-  { time: "11:30 AM", available: true, recommended: false },
-  { time: "12:00 PM", available: true, recommended: true },
-  { time: "12:30 PM", available: true, recommended: false },
-  { time: "1:00 PM", available: true, recommended: true },
-  { time: "1:30 PM", available: false, recommended: false },
-  { time: "2:00 PM", available: true, recommended: false },
-  { time: "2:30 PM", available: true, recommended: false },
-  { time: "6:00 PM", available: true, recommended: true },
-  { time: "6:30 PM", available: true, recommended: false },
-  { time: "7:00 PM", available: true, recommended: true },
-  { time: "7:30 PM", available: false, recommended: false },
+  { time: "11:00 AM", available: true },
+  { time: "11:30 AM", available: true },
+  { time: "12:00 PM", available: true },
+  { time: "12:30 PM", available: true },
+  { time: "1:00 PM", available: true },
+  { time: "1:30 PM", available: false },
+  { time: "2:00 PM", available: true },
+  { time: "2:30 PM", available: true },
+  { time: "6:00 PM", available: true },
+  { time: "6:30 PM", available: true },
+  { time: "7:00 PM", available: true },
+  { time: "7:30 PM", available: false },
 ];
 
 export default function BookingPage() {
@@ -202,10 +202,6 @@ export default function BookingPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label>Available Times</Label>
-                  <div className="flex items-center gap-2 text-xs text-slate-600">
-                    <Sparkles className="w-3 h-3 text-purple-600" />
-                    <span>AI Recommended</span>
-                  </div>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   {timeSlots.map((slot) => (
@@ -217,16 +213,11 @@ export default function BookingPage() {
                       disabled={!slot.available}
                       onClick={() => setSelectedTime(slot.time)}
                       className={`relative ${
-                        slot.recommended &&
-                        slot.available &&
-                        selectedTime !== slot.time
+                        slot.available && selectedTime !== slot.time
                           ? "border-purple-300 bg-purple-50 hover:bg-purple-100"
                           : ""
                       }`}
                     >
-                      {slot.recommended && slot.available && (
-                        <Sparkles className="w-3 h-3 absolute -top-1 -right-1 text-purple-600" />
-                      )}
                       <Clock className="w-3 h-3 mr-1" />
                       {slot.time}
                     </Button>
