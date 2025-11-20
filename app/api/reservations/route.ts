@@ -12,7 +12,10 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  const { data, error } = await supabaseServer.from("reservations").select("*");
+  const { data, error } = await supabaseServer
+    .from("reservations")
+    .select("*")
+    .order("date", { ascending: true });
 
   if (error) return NextResponse.json({ error }, { status: 400 });
 

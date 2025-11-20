@@ -71,7 +71,7 @@ export default function BookingPage() {
       people: parseInt(partySize), // number
     };
 
-    const res = await fetch("/api/reservation", {
+    const res = await fetch("/api/reservations", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
