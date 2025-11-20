@@ -3,8 +3,8 @@ export type Reservation = {
   name: string;
   phone: string;
   email?: string | null;
-  reservation_date: string; // YYYY-MM-DD
-  reservation_time: string; // HH:MM:SS
+  date: string; // YYYY-MM-DD
+  time: string; // HH:MM:SS
   people: number;
   status?: "confirmed" | "cancelled";
   notes?: string | null;

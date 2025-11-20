@@ -11,13 +11,13 @@ function Header() {
   const [mobileOpen, setMobileOpen] = useState(false); // mobile menu open/close
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 w-screen">
       {/* navigation content goes here */}
-      <nav className="border-b bg-white shadow-sm">
+      <nav className="border-b w-full shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-16 px-2 sm:px-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center ">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
                 <CalendarClock className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -84,6 +84,9 @@ function Header() {
               variant={activeView === "admin" ? "default" : "outline"}
               onClick={() => {
                 setActiveView("admin");
+                {
+                  /*Admin page goes here */
+                }
                 setMobileOpen(false);
               }}
               className="w-full justify-start gap-2"
