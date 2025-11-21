@@ -5,9 +5,7 @@ import Footer from "@/components/Footer";
 const layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen text-gray-400 ">
-      <Header />
-      <div className="container mx-auto ">{children}</div>
-      <Footer />
+      <div className="container mx-auto ">{children}</div>={" "}
     </div>
   );
 };

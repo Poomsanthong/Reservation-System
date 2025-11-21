@@ -5,11 +5,11 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
 
   const date = searchParams.get("date");
-  const people = Number(searchParams.get("people") || 0);
+  const partySize = Number(searchParams.get("partySize") || 0);
 
-  if (!date || !people) {
+  if (!date || !partySize) {
     return NextResponse.json(
-      { error: "Missing date or people" },
+      { error: "Missing date or partySize" },
       { status: 400 }
     );
   }
@@ -42,7 +42,7 @@ export async function GET(req: Request) {
   // 3. GET EXISTING RESERVATIONS FOR THAT DATE
   const { data: reservations, error } = await supabaseServer
     .from("reservations")
-    .select("people")
+    .select("partySize")
     .eq("reservation_date", date);
 
   if (error) {
@@ -50,14 +50,14 @@ export async function GET(req: Request) {
   }
 
   // sum up reserved seats
-  const reservedSeats = reservations.reduce((sum, r) => sum + r.people, 0);
+  const reservedSeats = reservations.reduce((sum, r) => sum + r.partySize, 0);
 
   const remaining = MAX_CAPACITY - reservedSeats;
 
   return NextResponse.json({
     date,
-    requested_people: people,
-    available: remaining >= people,
+    requested_partySize: partySize,
+    available: remaining >= partySize,
     remaining_capacity: remaining,
     reserved_seats: reservedSeats,
     max_capacity: MAX_CAPACITY,

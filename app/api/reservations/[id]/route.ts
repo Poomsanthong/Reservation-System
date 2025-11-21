@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseServer";
 
+// Get reservation by ID
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
@@ -16,6 +17,7 @@ export async function GET(
   return NextResponse.json(data);
 }
 
+// Update reservation by ID
 export async function PUT(
   req: Request,
   { params }: { params: { id: string } }
@@ -32,6 +34,7 @@ export async function PUT(
   return NextResponse.json({ success: true });
 }
 
+// Delete reservation by ID
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }

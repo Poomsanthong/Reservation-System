@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import { CalendarClock, LayoutDashboard, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 function Header() {
   // State: activeView can only be "booking" or "admin"  in ("booking") is the initial value
   // setActiveView changes the value
-
+  const router = useRouter();
   const [activeView, setActiveView] = useState<"booking" | "admin">("booking");
   const [mobileOpen, setMobileOpen] = useState(false); // mobile menu open/close
 
@@ -34,6 +35,7 @@ function Header() {
                 onClick={() => {
                   setActiveView("booking");
                   setMobileOpen(false);
+                  router.push("/");
                 }}
                 className="gap-2"
               >
@@ -45,6 +47,7 @@ function Header() {
                 onClick={() => {
                   setActiveView("admin");
                   setMobileOpen(false);
+                  router.push("/admin");
                 }}
                 className="gap-2"
               >
@@ -73,6 +76,7 @@ function Header() {
               variant={activeView === "booking" ? "default" : "outline"}
               onClick={() => {
                 setActiveView("booking");
+                router.push("/");
                 setMobileOpen(false);
               }}
               className="w-full justify-start gap-2"
@@ -84,9 +88,7 @@ function Header() {
               variant={activeView === "admin" ? "default" : "outline"}
               onClick={() => {
                 setActiveView("admin");
-                {
-                  /*Admin page goes here */
-                }
+                router.push("/admin");
                 setMobileOpen(false);
               }}
               className="w-full justify-start gap-2"

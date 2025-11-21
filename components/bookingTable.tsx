@@ -42,6 +42,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { PUT } from "@/app/api/reservations/[id]/route";
 
 interface Booking {
   id: string;
@@ -81,8 +82,11 @@ export function BookingsTable() {
     async function loadBookings() {
       try {
         const res = await fetch("/api/reservations");
+
         if (!res.ok) throw new Error("Failed to fetch");
+
         const data = await res.json();
+
         if (active) setBookings(data);
       } catch (error) {
         console.error("Error loading bookings:", error);
@@ -264,7 +268,13 @@ export function BookingsTable() {
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Edit Booking</DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              console.log("Edit booking:", booking.email)
+                            }
+                          >
+                            Edit Booking
+                          </DropdownMenuItem>
                           <DropdownMenuItem>Send Reminder</DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="text-red-600">
