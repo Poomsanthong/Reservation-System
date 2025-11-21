@@ -55,6 +55,7 @@ export default function BookingPage() {
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [note, setNote] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,12 +67,13 @@ export default function BookingPage() {
       name: name, // string
       email: email, // string
       phone: phone, // string
-      date: date ? date.toISOString().split("T")[0] : "", // string (formatted)
-      time: selectedTime, // string
-      people: parseInt(partySize), // number
+      reservation_date: date ? date.toISOString().split("T")[0] : "", // string (formatted)
+      reservation_time: selectedTime, // string
+      partySize: parseInt(partySize), // number
+      note: note, // string
     };
 
-    const res = await fetch("/api/reservation", {
+    const res = await fetch("/api/reservations", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -87,6 +89,7 @@ export default function BookingPage() {
     }
 
     alert("Reservation saved!");
+    console.log("Reservation response:", data);
   };
 
   return (
@@ -257,8 +260,12 @@ export default function BookingPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="special">Special Requests</Label>
-                  <Input id="special" placeholder="Window seat, birthday..." />
+                  <Label htmlFor="note">Special Requests</Label>
+                  <Input
+                    id="note"
+                    placeholder="Window seat, birthday..."
+                    onChange={(e) => setNote(e.target.value)}
+                  />
                 </div>
               </div>
 
