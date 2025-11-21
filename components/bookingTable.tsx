@@ -33,6 +33,7 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  View,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -43,39 +44,38 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { PUT } from "@/app/api/reservations/[id]/route";
-
-interface Booking {
-  id: string;
-  guest: string;
-  email: string;
-  phone: string;
-  date: string;
-  time: string;
-  partySize: number;
-  status: string;
-  special?: string;
-}
+import { Reservation } from "@/lib/types";
+import ViewDetailsModal from "./ViewDetailsModal";
 
 // Mock data for bookings
-const mockBookings: Booking[] = [
+const mockBookings: Reservation[] = [
   {
     id: "BK-2847",
-    guest: "Emily Chen",
+    name: "Emily Chen",
     email: "emily.chen@email.com",
     phone: "+1 (555) 123-4567",
-    date: "2025-11-20",
-    time: "7:00 PM",
+    reservation_date: "2025-11-20",
+    reservation_time: "19:00:00",
     partySize: 4,
     status: "confirmed",
-    special: "Window seat",
+    note: "Window seat",
   },
 ];
 
 export function BookingsTable() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [viewOpen, setViewOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Reservation | null>(
+    null
+  );
+
+  function handleView(booking: Reservation) {
+    setSelectedBooking(booking);
+    setViewOpen(true);
+  }
 
   useEffect(() => {
     let active = true;
@@ -101,12 +101,12 @@ export function BookingsTable() {
   }, []);
 
   const filteredBookings = bookings.filter((booking) => {
-    const guest = booking.guest || "";
+    const name = booking.name || "";
     const id = booking.id || "";
     const email = booking.email || "";
 
     const matchesSearch =
-      guest.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       email.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -227,7 +227,7 @@ export function BookingsTable() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="text-slate-900">{booking.guest}</p>
+                        <p className="text-slate-900">{booking.name}</p>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -238,8 +238,12 @@ export function BookingsTable() {
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <p className="text-slate-900">{booking.date}</p>
-                        <p className="text-slate-600">{booking.time}</p>
+                        <p className="text-slate-900">
+                          {booking.reservation_date}
+                        </p>
+                        <p className="text-slate-600">
+                          {booking.reservation_time}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="text-slate-900">
@@ -247,15 +251,15 @@ export function BookingsTable() {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={getStatusVariant(booking.status)}
+                        variant={getStatusVariant(booking.status || "")}
                         className="gap-1"
                       >
-                        {getStatusIcon(booking.status)}
+                        {getStatusIcon(booking.status || "")}
                         {booking.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-slate-600">
-                      {booking.special || "-"}
+                      {booking.note || "-"}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
@@ -267,7 +271,10 @@ export function BookingsTable() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleView(booking)}>
+                            View Details
+                          </DropdownMenuItem>
+
                           <DropdownMenuItem
                             onClick={() =>
                               console.log("Edit booking:", booking.email)
@@ -287,6 +294,16 @@ export function BookingsTable() {
                 ))}
             </TableBody>
           </Table>
+
+          {/* View Details Modal */}
+          <ViewDetailsModal
+            open={viewOpen}
+            onOpenChange={setViewOpen}
+            booking={selectedBooking}
+          />
+
+          {/* Edit Booking Modal */}
+          {/* (To be implemented) */}
         </div>
 
         {/* Pagination Info */}
