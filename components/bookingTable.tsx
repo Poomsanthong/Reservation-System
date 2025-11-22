@@ -33,6 +33,7 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  View,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -42,71 +43,122 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { PUT } from "@/app/api/reservations/[id]/route";
+import { Reservation } from "@/lib/types";
+import ViewDetailsModal from "./ViewDetailsModal";
+import EditModal from "./EditModal";
+import { handleClick } from "@/lib/api";
+import { tr } from "date-fns/locale";
+import CancelModal from "./CancelModal";
 
-interface Booking {
-  id: string;
-  guest: string;
-  email: string;
-  phone: string;
-  date: string;
-  time: string;
-  partySize: number;
-  status: string;
-  special?: string;
-}
+// Define the table name
+const table = "reservations";
 
 // Mock data for bookings
-const mockBookings: Booking[] = [
+const mockBookings: Reservation[] = [
   {
     id: "BK-2847",
-    guest: "Emily Chen",
+    name: "Emily Chen",
     email: "emily.chen@email.com",
     phone: "+1 (555) 123-4567",
-    date: "2025-11-20",
-    time: "7:00 PM",
+    reservation_date: "2025-11-20",
+    reservation_time: "19:00:00",
     partySize: 4,
     status: "confirmed",
-    special: "Window seat",
+    note: "Window seat",
   },
 ];
 
 export function BookingsTable() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  useEffect(() => {
-    let active = true;
-    async function loadBookings() {
-      try {
-        const res = await fetch("/api/reservations");
+  const [viewOpen, setViewOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
 
-        if (!res.ok) throw new Error("Failed to fetch");
+  const [selected, setSelected] = useState<Reservation | null>(null);
+  const [action, setAction] = useState<string | null>("view");
+  let active = true;
 
-        const data = await res.json();
+  // implement universal handler clicked for all actions
 
-        if (active) setBookings(data);
-      } catch (error) {
-        console.error("Error loading bookings:", error);
-      } finally {
-        if (active) setLoading(false);
-      }
+  async function handleAction(action: string, table: String, payload: any) {
+    switch (action) {
+      case "view":
+        setSelected(payload);
+        setViewOpen(true);
+        setAction(action);
+        break;
+
+      case "edit":
+        setSelected(payload);
+        setEditOpen(true);
+        setAction(action);
+        break;
+
+      case "send_reminder":
+        // Implement send reminder logic here maybe with inngest service
+        alert(`Reminder sent to ${payload.email}`);
+        break;
+
+      case "cancel":
+        // Implement cancel booking logic here
+        setSelected(payload);
+        setCancelOpen(true);
+        setAction(action);
+        break;
     }
-    loadBookings();
-    return () => {
-      active = false;
-    };
-  }, []);
+  }
+
+  // handle submit from Edit and Cancel modals
+  async function handleSubmit(payload: Reservation) {
+    try {
+      if (!action) return; // safety check
+
+      await handleClick(action, "reservations", {
+        id: selected?.id,
+        ...payload,
+      });
+
+      // Close the appropriate modal onces submission is done
+      switch (action) {
+        case "edit":
+          setEditOpen(false);
+          break;
+        case "cancel":
+          setCancelOpen(false);
+          break;
+      }
+      loadBookings();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  async function loadBookings() {
+    try {
+      const res = await fetch("/api/reservations");
+
+      if (!res.ok) throw new Error("Failed to fetch");
+
+      const data = await res.json();
+
+      if (active) setBookings(data);
+    } catch (error) {
+      console.error("Error loading bookings:", error);
+    } finally {
+      if (active) setLoading(false);
+    }
+  }
 
   const filteredBookings = bookings.filter((booking) => {
-    const guest = booking.guest || "";
+    const name = booking.name || "";
     const id = booking.id || "";
     const email = booking.email || "";
 
     const matchesSearch =
-      guest.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       email.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -145,6 +197,15 @@ export function BookingsTable() {
         return "outline";
     }
   };
+
+  // Load bookings on component mount as useEffect
+  useEffect(() => {
+    active = true;
+    loadBookings();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <Card>
@@ -227,7 +288,7 @@ export function BookingsTable() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="text-slate-900">{booking.guest}</p>
+                        <p className="text-slate-900">{booking.name}</p>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -238,8 +299,12 @@ export function BookingsTable() {
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <p className="text-slate-900">{booking.date}</p>
-                        <p className="text-slate-600">{booking.time}</p>
+                        <p className="text-slate-900">
+                          {booking.reservation_date}
+                        </p>
+                        <p className="text-slate-600">
+                          {booking.reservation_time}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="text-slate-900">
@@ -247,15 +312,15 @@ export function BookingsTable() {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={getStatusVariant(booking.status)}
+                        variant={getStatusVariant(booking.status || "")}
                         className="gap-1"
                       >
-                        {getStatusIcon(booking.status)}
+                        {getStatusIcon(booking.status || "")}
                         {booking.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-slate-600">
-                      {booking.special || "-"}
+                      {booking.note || "-"}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
@@ -267,19 +332,36 @@ export function BookingsTable() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() =>
-                              console.log("Edit booking:", booking.email)
-                            }
+                            onClick={() => handleAction("view", table, booking)}
+                          >
+                            View Details
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem
+                            onClick={() => handleAction("edit", table, booking)}
                           >
                             Edit Booking
                           </DropdownMenuItem>
-                          <DropdownMenuItem>Send Reminder</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
-                            Cancel Booking
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleAction("send_reminder", table, booking)
+                            }
+                          >
+                            Send Reminder
                           </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+
+                          {booking.status !== "cancelled" && (
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() =>
+                                handleAction("cancel", table, booking)
+                              }
+                            >
+                              Cancel Booking
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -287,6 +369,39 @@ export function BookingsTable() {
                 ))}
             </TableBody>
           </Table>
+
+          {/* View Details Modal */}
+          <ViewDetailsModal
+            open={viewOpen}
+            onOpenChange={setViewOpen}
+            booking={selected}
+          />
+
+          {/* Edit Booking Modal */}
+          <EditModal
+            open={editOpen}
+            onOpenChange={setEditOpen}
+            booking={selected}
+            onSubmit={async (updated) => {
+              console.log("Updated booking:", updated);
+              await handleSubmit(updated);
+            }}
+          />
+          <CancelModal
+            open={cancelOpen}
+            onOpenChange={setCancelOpen}
+            booking={selected}
+            onSubmit={async () => {
+              if (!selected) return;
+              await handleClick("edit", "reservations", {
+                id: selected.id,
+                status: "cancelled",
+              });
+
+              setCancelOpen(false);
+              loadBookings();
+            }}
+          />
         </div>
 
         {/* Pagination Info */}

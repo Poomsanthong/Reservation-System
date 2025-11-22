@@ -29,3 +29,23 @@ export type Setting = {
   key: string;
   value: string;
 };
+
+export type ViewDetailsModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  booking: Reservation | null;
+};
+
+export type EditModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  booking: Reservation | null;
+  onSubmit: (payload: Reservation) => Promise<void>;
+};
+
+export type CancelModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  booking: Reservation | null;
+  onSubmit: (status: string, payload: Reservation) => void;
+};
