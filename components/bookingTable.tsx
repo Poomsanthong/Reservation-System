@@ -43,9 +43,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { PUT } from "@/app/api/reservations/[id]/route";
 import { Reservation } from "@/lib/types";
 import ViewDetailsModal from "./ViewDetailsModal";
+import EditModal from "./EditModal";
+import { handleClick } from "@/lib/api";
+
+// Define the table name
+const table = "reservations";
 
 // Mock data for bookings
 const mockBookings: Reservation[] = [
@@ -67,33 +71,63 @@ export function BookingsTable() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [viewOpen, setViewOpen] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState<Reservation | null>(
-    null
-  );
 
-  function handleView(booking: Reservation) {
-    setSelectedBooking(booking);
-    setViewOpen(true);
+  const [viewOpen, setViewOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+
+  const [selected, setSelected] = useState<Reservation | null>(null);
+  const [action, setAction] = useState<string | null>("view");
+  let active = true;
+
+  // implement universal handler clicked for all actions
+
+  async function handleAction(action: string, table: String, payload: any) {
+    switch (action) {
+      case "view":
+        setSelected(payload);
+        setViewOpen(true);
+        setAction(action);
+        break;
+
+      case "edit":
+        setSelected(payload);
+        setEditOpen(true);
+        setAction(action);
+        break;
+    }
+  }
+
+  // handle submit from Edit
+  async function handleSubmit(payload: Reservation) {
+    try {
+      await handleClick(action || "edit", "reservations", {
+        id: selected?.id,
+        ...payload,
+      });
+      setEditOpen(false);
+      loadBookings();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  async function loadBookings() {
+    try {
+      const res = await fetch("/api/reservations");
+
+      if (!res.ok) throw new Error("Failed to fetch");
+
+      const data = await res.json();
+
+      if (active) setBookings(data);
+    } catch (error) {
+      console.error("Error loading bookings:", error);
+    } finally {
+      if (active) setLoading(false);
+    }
   }
 
   useEffect(() => {
-    let active = true;
-    async function loadBookings() {
-      try {
-        const res = await fetch("/api/reservations");
-
-        if (!res.ok) throw new Error("Failed to fetch");
-
-        const data = await res.json();
-
-        if (active) setBookings(data);
-      } catch (error) {
-        console.error("Error loading bookings:", error);
-      } finally {
-        if (active) setLoading(false);
-      }
-    }
+    active = true;
     loadBookings();
     return () => {
       active = false;
@@ -271,14 +305,16 @@ export function BookingsTable() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleView(booking)}>
+                          <DropdownMenuItem
+                            onClick={() => handleAction("view", table, booking)}
+                          >
                             View Details
                           </DropdownMenuItem>
 
                           <DropdownMenuItem
-                            onClick={() =>
-                              console.log("Edit booking:", booking.email)
-                            }
+                            onClick={() => {
+                              handleAction("edit", table, booking);
+                            }}
                           >
                             Edit Booking
                           </DropdownMenuItem>
@@ -299,10 +335,19 @@ export function BookingsTable() {
           <ViewDetailsModal
             open={viewOpen}
             onOpenChange={setViewOpen}
-            booking={selectedBooking}
+            booking={selected}
           />
 
           {/* Edit Booking Modal */}
+          <EditModal
+            open={editOpen}
+            onOpenChange={setEditOpen}
+            booking={selected}
+            onSubmit={async (updated) => {
+              console.log("Updated booking:", updated);
+              await handleSubmit(updated);
+            }}
+          />
           {/* (To be implemented) */}
         </div>
 
