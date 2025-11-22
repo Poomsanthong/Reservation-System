@@ -13,7 +13,14 @@ import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { Reservation } from "@/lib/types";
 import { EditModalProps } from "@/lib/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "./ui/select";
 
 const labelCls =
   "text-xs font-medium uppercase tracking-wide text-muted-foreground";
@@ -37,7 +44,7 @@ const EditModal: React.FC<EditModalProps> = ({
 }) => {
   const [form, setForm] = useState<Reservation>({} as Reservation);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (booking) {
       setForm(booking);
     }
@@ -113,10 +120,20 @@ const EditModal: React.FC<EditModalProps> = ({
             </Field>
 
             <Field label="Status">
-              <Input
-                value={form.status || ""}
-                onChange={(e) => handleChange("status", e.target.value)}
-              />
+              <Select
+                value={form.status || "pending"}
+                onValueChange={(val) => handleChange("status", val)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="confirmed">Confirmed</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="waitlist">Waitlist</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
             </Field>
 
             <Field label="Notes">

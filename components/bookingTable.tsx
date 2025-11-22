@@ -47,6 +47,8 @@ import { Reservation } from "@/lib/types";
 import ViewDetailsModal from "./ViewDetailsModal";
 import EditModal from "./EditModal";
 import { handleClick } from "@/lib/api";
+import { tr } from "date-fns/locale";
+import CancelModal from "./CancelModal";
 
 // Define the table name
 const table = "reservations";
@@ -74,6 +76,7 @@ export function BookingsTable() {
 
   const [viewOpen, setViewOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
 
   const [selected, setSelected] = useState<Reservation | null>(null);
   const [action, setAction] = useState<string | null>("view");
@@ -94,17 +97,40 @@ export function BookingsTable() {
         setEditOpen(true);
         setAction(action);
         break;
+
+      case "send_reminder":
+        // Implement send reminder logic here maybe with inngest service
+        alert(`Reminder sent to ${payload.email}`);
+        break;
+
+      case "cancel":
+        // Implement cancel booking logic here
+        setSelected(payload);
+        setCancelOpen(true);
+        setAction(action);
+        break;
     }
   }
 
-  // handle submit from Edit
+  // handle submit from Edit and Cancel modals
   async function handleSubmit(payload: Reservation) {
     try {
-      await handleClick(action || "edit", "reservations", {
+      if (!action) return; // safety check
+
+      await handleClick(action, "reservations", {
         id: selected?.id,
         ...payload,
       });
-      setEditOpen(false);
+
+      // Close the appropriate modal onces submission is done
+      switch (action) {
+        case "edit":
+          setEditOpen(false);
+          break;
+        case "cancel":
+          setCancelOpen(false);
+          break;
+      }
       loadBookings();
     } catch (err) {
       console.error(err);
@@ -125,14 +151,6 @@ export function BookingsTable() {
       if (active) setLoading(false);
     }
   }
-
-  useEffect(() => {
-    active = true;
-    loadBookings();
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const filteredBookings = bookings.filter((booking) => {
     const name = booking.name || "";
@@ -179,6 +197,15 @@ export function BookingsTable() {
         return "outline";
     }
   };
+
+  // Load bookings on component mount as useEffect
+  useEffect(() => {
+    active = true;
+    loadBookings();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <Card>
@@ -312,17 +339,29 @@ export function BookingsTable() {
                           </DropdownMenuItem>
 
                           <DropdownMenuItem
-                            onClick={() => {
-                              handleAction("edit", table, booking);
-                            }}
+                            onClick={() => handleAction("edit", table, booking)}
                           >
                             Edit Booking
                           </DropdownMenuItem>
-                          <DropdownMenuItem>Send Reminder</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
-                            Cancel Booking
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleAction("send_reminder", table, booking)
+                            }
+                          >
+                            Send Reminder
                           </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+
+                          {booking.status !== "cancelled" && (
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() =>
+                                handleAction("cancel", table, booking)
+                              }
+                            >
+                              Cancel Booking
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -348,7 +387,21 @@ export function BookingsTable() {
               await handleSubmit(updated);
             }}
           />
-          {/* (To be implemented) */}
+          <CancelModal
+            open={cancelOpen}
+            onOpenChange={setCancelOpen}
+            booking={selected}
+            onSubmit={async () => {
+              if (!selected) return;
+              await handleClick("edit", "reservations", {
+                id: selected.id,
+                status: "cancelled",
+              });
+
+              setCancelOpen(false);
+              loadBookings();
+            }}
+          />
         </div>
 
         {/* Pagination Info */}
