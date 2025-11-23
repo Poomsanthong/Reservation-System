@@ -1,23 +1,23 @@
-// api/crud/edit/route.ts
-import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseServer";
+import { success, fail, validateTable, requireFields } from "@/lib/utils";
 
-export async function POST(req: Request) {
-  const body = await req.json();
-  const { table, id, ...updates } = body;
+export async function PATCH(req: Request) {
+  try {
+    const { table, id, data } = await req.json();
 
-  if (!table || !id) {
-    return NextResponse.json({ error: "Missing table or id" }, { status: 400 });
+    requireFields({ table, id, data }, ["table", "id", "data"]);
+    validateTable(table);
+
+    const { data: updated, error } = await supabaseServer
+      .from(table)
+      .update(data)
+      .eq("id", id)
+      .select();
+
+    if (error) throw new Error(error.message);
+
+    return success(updated);
+  } catch (error) {
+    return fail(error);
   }
-
-  const { data, error } = await supabaseServer
-    .from(table)
-    .update(updates)
-    .eq("id", id);
-
-  if (error) {
-    return NextResponse.json({ error }, { status: 400 });
-  }
-
-  return NextResponse.json({ success: true, data });
 }

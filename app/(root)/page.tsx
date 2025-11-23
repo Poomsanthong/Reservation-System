@@ -1,7 +1,7 @@
 // app/booking/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -31,6 +31,7 @@ import {
   Phone,
 } from "lucide-react";
 import { Reservation } from "@/lib/types";
+import { create, get } from "@/lib/api/funtions";
 
 const timeSlots = [
   { time: "11:00 AM", available: true },
@@ -57,7 +58,7 @@ export default function BookingPage() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [note, setNote] = useState<string>("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handle = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setShowConfirmation(true);
@@ -91,6 +92,36 @@ export default function BookingPage() {
     alert("Reservation saved!");
     console.log("Reservation response:", data);
   };
+
+  // load booking data here
+  async function loadBookings() {
+    try {
+      const data = await get();
+      console.log("Loaded bookings:", data);
+    } catch (error) {
+      console.error("Error loading bookings:", error);
+    }
+  }
+  useEffect(() => {
+    loadBookings();
+  }, []);
+
+  async function handleCreate(payload: Reservation) {
+    try {
+      const data = await create(payload);
+
+      if (data.error) {
+        alert("Failed: " + data.error.message || data.error);
+        return;
+      }
+
+      await loadBookings();
+      setShowConfirmation(true);
+      setTimeout(() => setShowConfirmation(false), 5000);
+    } catch (e: any) {
+      alert("Failed: " + (e?.message || "Unexpected error"));
+    }
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ">
@@ -273,7 +304,19 @@ export default function BookingPage() {
                 className="w-full"
                 size="lg"
                 disabled={!selectedTime || !date}
-                onClick={handleSubmit}
+                onClick={() =>
+                  handleCreate({
+                    name,
+                    email,
+                    phone,
+                    reservation_date: date
+                      ? date.toISOString().split("T")[0]
+                      : "",
+                    reservation_time: selectedTime,
+                    partySize: parseInt(partySize),
+                    note,
+                  })
+                }
               >
                 Confirm Reservation
               </Button>
