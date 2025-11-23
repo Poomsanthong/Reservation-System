@@ -7,10 +7,9 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Badge } from "./ui/badge";
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { Reservation } from "@/lib/types";
 import { EditModalProps } from "@/lib/types";
 import { useEffect, useState } from "react";
@@ -20,7 +19,7 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 
 const labelCls =
   "text-xs font-medium uppercase tracking-wide text-muted-foreground";

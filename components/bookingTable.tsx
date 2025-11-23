@@ -1,5 +1,7 @@
-"use client"; // This file runs in the browser (not on the server)
+"use client";
+
 import { useEffect, useState } from "react";
+
 import {
   Card,
   CardContent,
@@ -18,23 +20,16 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+
 import {
   Search,
-  Filter,
-  Download,
   MoreHorizontal,
+  Download,
   CheckCircle2,
   XCircle,
   Clock,
-  View,
 } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,96 +38,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Reservation } from "@/lib/types";
-import ViewDetailsModal from "./ViewDetailsModal";
-import EditModal from "./EditModal";
-import CancelModal from "./CancelModal";
-import { cancelBooking, get, updateBooking } from "@/lib/api/funtions";
-// Define the table name
-const table = "reservations";
 
-// Mock data for bookings
-const mockBookings: Reservation[] = [
-  {
-    id: "BK-2847",
-    name: "Emily Chen",
-    email: "emily.chen@email.com",
-    phone: "+1 (555) 123-4567",
-    reservation_date: "2025-11-20",
-    reservation_time: "19:00:00",
-    partySize: 4,
-    status: "confirmed",
-    note: "Window seat",
-  },
-];
+import { Reservation } from "@/lib/types";
+import ViewDetailsModal from "./modal/ViewDetailsModal";
+import EditModal from "./modal/EditModal";
+import CancelModal from "./modal/CancelModal";
+
+import { cancelBooking, get, updateBooking } from "@/lib/api/funtions";
+
+import { useModalStore } from "@/store/useModalStore";
 
 export function BookingsTable() {
   const [bookings, setBookings] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
 
-  const [viewOpen, setViewOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-  const [cancelOpen, setCancelOpen] = useState(false);
+  const { open, type, payload, openModal, closeModal } = useModalStore();
 
-  const [selected, setSelected] = useState<Reservation | null>(null);
-  const [action, setAction] = useState<string | null>("view");
-  let active = true;
-
-  // implement universal handler clicked for all actions
-
-  async function handleAction(action: string, table: String, payload: any) {
-    setSelected(payload);
-    setAction(action);
-
-    switch (action) {
-      case "view":
-        setViewOpen(true);
-        break;
-
-      case "edit":
-        setEditOpen(true);
-        break;
-
-      case "send_reminder":
-        // Implement send reminder logic here maybe with inngest service
-        alert(`Reminder sent to ${payload.email}`);
-        break;
-
-      case "cancel":
-        setCancelOpen(true);
-        break;
-    }
-  }
-
-  async function handleSubmit(updated: Reservation) {
-    if (!selected) return;
-    const id = selected.id;
-
-    switch (action) {
-      case "edit":
-        await updateBooking(id, updated);
-        setEditOpen(false);
-        break;
-      case "cancel":
-        await cancelBooking(id, "cancelled");
-        setCancelOpen(false);
-        break;
-    }
-    setAction(null);
-    setSelected(null);
-    await loadBookings(); // refresh list
-  }
-  // load booking data here
+  // -----------------------
+  // LOAD BOOKINGS
+  // -----------------------
   async function loadBookings() {
     try {
-      const data = await get(); // CLEAN
-      setBookings(data.data);
-      console.log("Loaded bookings:", data);
+      const res = await get();
+      setBookings(res.data); // must read .data
       setLoading(false);
-    } catch (error) {
-      console.error("Error loading bookings:", error);
+    } catch (err) {
+      console.error("Failed loading bookings", err);
     }
   }
 
@@ -140,96 +72,95 @@ export function BookingsTable() {
     loadBookings();
   }, []);
 
+  // -----------------------
+  // HANDLE ACTION
+  // -----------------------
+  function handleAction(
+    type: "view" | "edit" | "cancel" | "send_reminder",
+    booking: Reservation
+  ) {
+    if (type === "send_reminder") {
+      alert(`Reminder sent to ${booking.email}`);
+      return;
+    }
+
+    openModal(type, booking); // Zustand handles everything
+  }
+
+  // -----------------------
+  // HANDLE SUBMIT (edit/cancel)
+  // -----------------------
+  async function handleSubmit(updated: Reservation) {
+    if (!payload) return;
+
+    if (type === "edit") {
+      await updateBooking(payload.id, updated);
+    }
+
+    if (type === "cancel") {
+      await cancelBooking(payload.id, "cancelled");
+    }
+
+    closeModal();
+    await loadBookings();
+  }
+
+  // -----------------------
+  // FILTER
+  // -----------------------
   const filteredBookings = bookings.filter((booking) => {
-    const name = booking.name || "";
-    const id = booking.id || "";
-    const email = booking.email || "";
-
     const matchesSearch =
-      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      email.toLowerCase().includes(searchTerm.toLowerCase());
+      booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === "all" || booking.status === statusFilter;
-
-    return matchesSearch && matchesStatus;
+    return matchesSearch;
   });
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "confirmed":
-        return <CheckCircle2 className="w-4 h-4" />;
-      case "cancelled":
-        return <XCircle className="w-4 h-4" />;
-      case "pending":
-      case "waitlist":
-        return <Clock className="w-4 h-4" />;
-      default:
-        return null;
-    }
+    if (status === "confirmed") return <CheckCircle2 className="w-4 h-4" />;
+    if (status === "cancelled") return <XCircle className="w-4 h-4" />;
+    return <Clock className="w-4 h-4" />;
   };
 
-  const getStatusVariant = (
-    status: string
-  ): "default" | "destructive" | "secondary" | "outline" => {
-    switch (status) {
-      case "confirmed":
-        return "default";
-      case "cancelled":
-        return "destructive";
-      case "pending":
-      case "waitlist":
-        return "secondary";
-      default:
-        return "outline";
-    }
+  const getStatusVariant = (status: string) => {
+    if (status === "confirmed") return "default";
+    if (status === "cancelled") return "destructive";
+    return "secondary";
   };
 
+  // -----------------------
+  // RENDER
+  // -----------------------
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>All Reservations</CardTitle>
-            <CardDescription>
-              Manage and track all customer bookings
-            </CardDescription>
+            <CardDescription>Manage and track all bookings</CardDescription>
           </div>
           <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Export
+            <Download className="w-4 h-4" /> Export
           </Button>
         </div>
       </CardHeader>
+
       <CardContent>
-        {/* Filters */}
+        {/* Search */}
         <div className="flex gap-3 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
-              placeholder="Search by name, ID, or email..."
+              placeholder="Search by name, ID, or email…"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
-              <Filter className="w-4 h-4 mr-2" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="waitlist">Waitlist</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
-        {/* Table */}
+        {/* TABLE */}
         <div className="border rounded-lg">
           <Table>
             <TableHeader>
@@ -240,67 +171,37 @@ export function BookingsTable() {
                 <TableHead>Date & Time</TableHead>
                 <TableHead>Party Size</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Special Requests</TableHead>
+                <TableHead>Notes</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {loading && (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-sm">
-                    Loading bookings...
+                  <TableCell colSpan={8} className="text-center py-6">
+                    Loading…
                   </TableCell>
                 </TableRow>
               )}
-              {!loading && filteredBookings.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center text-sm">
-                    No bookings found.
-                  </TableCell>
-                </TableRow>
-              )}
+
               {!loading &&
                 filteredBookings.map((booking) => (
                   <TableRow key={booking.id}>
-                    <TableCell className="font-mono text-sm">
-                      {booking.id}
-                    </TableCell>
+                    <TableCell>{booking.id}</TableCell>
+                    <TableCell>{booking.name}</TableCell>
+                    <TableCell>{booking.email}</TableCell>
+                    <TableCell>{booking.reservation_date}</TableCell>
+                    <TableCell>{booking.partySize} guests</TableCell>
+
                     <TableCell>
-                      <div>
-                        <p className="text-slate-900">{booking.name}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <p className="text-slate-600">{booking.email}</p>
-                        <p className="text-slate-500">{booking.phone}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <p className="text-slate-900">
-                          {booking.reservation_date}
-                        </p>
-                        <p className="text-slate-600">
-                          {booking.reservation_time}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-slate-900">
-                      {booking.partySize} guests
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={getStatusVariant(booking.status || "")}
-                        className="gap-1"
-                      >
-                        {getStatusIcon(booking.status || "")}
-                        {booking.status}
+                      <Badge variant={getStatusVariant(booking.status!)}>
+                        {getStatusIcon(booking.status!)} {booking.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-slate-600">
-                      {booking.note || "-"}
-                    </TableCell>
+
+                    <TableCell>{booking.note || "-"}</TableCell>
+
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -308,35 +209,27 @@ export function BookingsTable() {
                             <MoreHorizontal className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
+
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
+
                           <DropdownMenuItem
-                            onClick={() => handleAction("view", table, booking)}
+                            onClick={() => handleAction("view", booking)}
                           >
                             View Details
                           </DropdownMenuItem>
 
                           <DropdownMenuItem
-                            onClick={() => handleAction("edit", table, booking)}
+                            onClick={() => handleAction("edit", booking)}
                           >
                             Edit Booking
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleAction("send_reminder", table, booking)
-                            }
-                          >
-                            Send Reminder
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
 
                           {booking.status !== "cancelled" && (
                             <DropdownMenuItem
+                              onClick={() => handleAction("cancel", booking)}
                               className="text-red-600"
-                              onClick={() =>
-                                handleAction("cancel", table, booking)
-                              }
                             >
                               Cancel Booking
                             </DropdownMenuItem>
@@ -348,48 +241,34 @@ export function BookingsTable() {
                 ))}
             </TableBody>
           </Table>
+        </div>
 
-          {/* View Details Modal */}
+        {/* MODALS (dynamic via Zustand) */}
+        {type === "view" && (
           <ViewDetailsModal
-            open={viewOpen}
-            onOpenChange={setViewOpen}
-            booking={selected}
+            open={open}
+            onOpenChange={closeModal}
+            booking={payload}
           />
+        )}
 
-          {/* Edit Booking Modal */}
+        {type === "edit" && (
           <EditModal
-            open={editOpen}
-            onOpenChange={setEditOpen}
-            booking={selected}
-            onSubmit={async (updated) => {
-              console.log("Updated booking:", updated);
-              await handleSubmit(updated);
-            }}
+            open={open}
+            onOpenChange={closeModal}
+            booking={payload}
+            onSubmit={handleSubmit}
           />
-          <CancelModal
-            open={cancelOpen}
-            onOpenChange={setCancelOpen}
-            booking={selected}
-            onSubmit={async () => {
-              handleSubmit(selected!);
-            }}
-          />
-        </div>
+        )}
 
-        {/* Pagination Info */}
-        <div className="flex items-center justify-between mt-4">
-          <p className="text-sm text-slate-600">
-            Showing {filteredBookings.length} of {bookings.length} bookings
-          </p>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              Previous
-            </Button>
-            <Button variant="outline" size="sm">
-              Next
-            </Button>
-          </div>
-        </div>
+        {type === "cancel" && (
+          <CancelModal
+            open={open}
+            onOpenChange={closeModal}
+            booking={payload}
+            onSubmit={() => handleSubmit(payload)}
+          />
+        )}
       </CardContent>
     </Card>
   );
