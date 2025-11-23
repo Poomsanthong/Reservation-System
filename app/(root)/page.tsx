@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { Reservation } from "@/lib/types";
 import { create, get } from "@/lib/api/funtions";
-
+import { useToastStore } from "@/store/useToastStore";
 const timeSlots = [
   { time: "11:00 AM", available: true },
   { time: "11:30 AM", available: true },
@@ -49,6 +49,7 @@ const timeSlots = [
 ];
 
 export default function BookingPage() {
+  const toastStore = useToastStore();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [partySize, setPartySize] = useState<string>("2");
@@ -57,41 +58,6 @@ export default function BookingPage() {
   const [phone, setPhone] = useState<string>("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [note, setNote] = useState<string>("");
-
-  const handle = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setShowConfirmation(true);
-    setTimeout(() => setShowConfirmation(false), 5000);
-
-    const payload: Reservation = {
-      name: name, // string
-      email: email, // string
-      phone: phone, // string
-      reservation_date: date ? date.toISOString().split("T")[0] : "", // string (formatted)
-      reservation_time: selectedTime, // string
-      partySize: parseInt(partySize), // number
-      note: note, // string
-    };
-
-    const res = await fetch("/api/reservations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert("Failed: " + data.error.message);
-      return;
-    }
-
-    alert("Reservation saved!");
-    console.log("Reservation response:", data);
-  };
 
   // load booking data here
   async function loadBookings() {
@@ -106,23 +72,23 @@ export default function BookingPage() {
     loadBookings();
   }, []);
 
+  // Create new booking
   async function handleCreate(payload: Reservation) {
     try {
       const data = await create(payload);
 
-      if (data.error) {
-        alert("Failed: " + data.error.message || data.error);
+      if (data?.error) {
+        toastStore.error(data.error.message || "Booking failed");
         return;
       }
 
+      toastStore.success("Booking confirmed!");
       await loadBookings();
       setShowConfirmation(true);
-      setTimeout(() => setShowConfirmation(false), 5000);
-    } catch (e: any) {
-      alert("Failed: " + (e?.message || "Unexpected error"));
+    } catch (err: any) {
+      toastStore.error(err?.message || "Unexpected error");
     }
   }
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ">
       {/* Hero Section */}
