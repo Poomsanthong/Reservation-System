@@ -17,7 +17,7 @@ export async function create(data: any) {
 }
 
 export async function updateBooking(id: any, updates: any) {
-  const res = await fetch("/api/crud/update", {
+  const res = await fetch("/api/crud/edit", {
     method: "PATCH",
     body: JSON.stringify({
       table: "reservations",
@@ -25,6 +25,20 @@ export async function updateBooking(id: any, updates: any) {
       data: updates,
     }),
   });
+  alert("Reservation updated!");
+  return res.json();
+}
+
+export async function cancelBooking(id: any, status: string) {
+  const res = await fetch("/api/crud/edit", {
+    method: "PATCH",
+    body: JSON.stringify({
+      table: "reservations",
+      id,
+      data: { status },
+    }),
+  });
+  alert("Reservation cancelled!");
   return res.json();
 }
 
