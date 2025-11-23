@@ -1,21 +1,19 @@
-import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseServer";
+import { success, fail, validateTable, requireFields } from "@/lib/utils";
 
 export async function DELETE(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const table = searchParams.get("table");
-  const id = searchParams.get("id");
+  try {
+    const { table, id } = await req.json();
 
-  if (!table || !id) {
-    return NextResponse.json(
-      { error: "Missing table or id parameter" },
-      { status: 400 }
-    );
+    requireFields({ table, id }, ["table", "id"]);
+    validateTable(table);
+
+    const { error } = await supabaseServer.from(table).delete().eq("id", id);
+
+    if (error) throw new Error(error.message);
+
+    return success({ deleted: id });
+  } catch (error) {
+    return fail(error);
   }
-
-  const { error } = await supabaseServer.from(table).delete().eq("id", id);
-
-  if (error) return NextResponse.json({ error }, { status: 400 });
-
-  return NextResponse.json({ success: true });
 }

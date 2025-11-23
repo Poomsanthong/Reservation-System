@@ -46,10 +46,8 @@ import {
 import { Reservation } from "@/lib/types";
 import ViewDetailsModal from "./ViewDetailsModal";
 import EditModal from "./EditModal";
-import { handleClick } from "@/lib/api";
-import { tr } from "date-fns/locale";
 import CancelModal from "./CancelModal";
-
+import { cancelBooking, get, updateBooking } from "@/lib/api/funtions";
 // Define the table name
 const table = "reservations";
 
@@ -85,17 +83,16 @@ export function BookingsTable() {
   // implement universal handler clicked for all actions
 
   async function handleAction(action: string, table: String, payload: any) {
+    setSelected(payload);
+    setAction(action);
+
     switch (action) {
       case "view":
-        setSelected(payload);
         setViewOpen(true);
-        setAction(action);
         break;
 
       case "edit":
-        setSelected(payload);
         setEditOpen(true);
-        setAction(action);
         break;
 
       case "send_reminder":
@@ -104,53 +101,44 @@ export function BookingsTable() {
         break;
 
       case "cancel":
-        // Implement cancel booking logic here
-        setSelected(payload);
         setCancelOpen(true);
-        setAction(action);
         break;
     }
   }
 
-  // handle submit from Edit and Cancel modals
-  async function handleSubmit(payload: Reservation) {
-    try {
-      if (!action) return; // safety check
+  async function handleSubmit(updated: Reservation) {
+    if (!selected) return;
+    const id = selected.id;
 
-      await handleClick(action, "reservations", {
-        id: selected?.id,
-        ...payload,
-      });
-
-      // Close the appropriate modal onces submission is done
-      switch (action) {
-        case "edit":
-          setEditOpen(false);
-          break;
-        case "cancel":
-          setCancelOpen(false);
-          break;
-      }
-      loadBookings();
-    } catch (err) {
-      console.error(err);
+    switch (action) {
+      case "edit":
+        await updateBooking(id, updated);
+        setEditOpen(false);
+        break;
+      case "cancel":
+        await cancelBooking(id, "cancelled");
+        setCancelOpen(false);
+        break;
     }
+    setAction(null);
+    setSelected(null);
+    await loadBookings(); // refresh list
   }
+  // load booking data here
   async function loadBookings() {
     try {
-      const res = await fetch("/api/reservations");
-
-      if (!res.ok) throw new Error("Failed to fetch");
-
-      const data = await res.json();
-
-      if (active) setBookings(data);
+      const data = await get(); // CLEAN
+      setBookings(data.data);
+      console.log("Loaded bookings:", data);
+      setLoading(false);
     } catch (error) {
       console.error("Error loading bookings:", error);
-    } finally {
-      if (active) setLoading(false);
     }
   }
+
+  useEffect(() => {
+    loadBookings();
+  }, []);
 
   const filteredBookings = bookings.filter((booking) => {
     const name = booking.name || "";
@@ -197,15 +185,6 @@ export function BookingsTable() {
         return "outline";
     }
   };
-
-  // Load bookings on component mount as useEffect
-  useEffect(() => {
-    active = true;
-    loadBookings();
-    return () => {
-      active = false;
-    };
-  }, []);
 
   return (
     <Card>
@@ -392,14 +371,7 @@ export function BookingsTable() {
             onOpenChange={setCancelOpen}
             booking={selected}
             onSubmit={async () => {
-              if (!selected) return;
-              await handleClick("edit", "reservations", {
-                id: selected.id,
-                status: "cancelled",
-              });
-
-              setCancelOpen(false);
-              loadBookings();
+              handleSubmit(selected!);
             }}
           />
         </div>
