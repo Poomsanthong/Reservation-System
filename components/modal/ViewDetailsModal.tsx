@@ -7,9 +7,9 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "./ui/dialog";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+} from "../ui/dialog";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 import { ViewDetailsModalProps } from "@/lib/types";
 
 const labelCls =
