@@ -33,7 +33,8 @@ export default function AdminLoginPage() {
     }
     setSuccess("Login successful. Redirecting...");
     // IMPORTANT: refresh server-side auth
-    window.location.href = "/admin";
+    router.refresh();
+    router.push("/admin");
   }
 
   async function forgotPassword() {

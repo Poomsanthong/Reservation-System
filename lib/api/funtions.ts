@@ -1,12 +1,7 @@
 export async function get(table: string) {
-  try {
-    const res = await fetch(`/api/crud/get?table=${table}`);
-    if (!res.ok) throw new Error("Failed to load bookings");
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    throw err;
-  }
+  const res = await fetch(`/api/crud/get?table=${table}`);
+  if (!res.ok) throw new Error("Failed to load bookings");
+  return res.json();
 }
 
 export async function create(data: any) {

@@ -59,14 +59,19 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   // -----------------------
   // LOAD BOOKINGS
   // -----------------------
-  const table = "reservations";
   async function loadBookings() {
     try {
-      const res = await get(table);
-      setBookingsData(res.data); // must read .data
-      setLoading(false);
+      setLoading(true);
+
+      const res = await get("reservations");
+
+      if (res.error) throw res.error;
+
+      setBookingsData(res.data || []);
     } catch (err) {
-      console.error("Failed loading bookings", err);
+      setBookingsData([]); // fallback
+    } finally {
+      setLoading(false);
     }
   }
 

@@ -33,7 +33,6 @@ import {
 import { get } from "@/lib/api/funtions";
 
 import { useBookingForm } from "@/lib/hooks/useBookingForm";
-import { table } from "console";
 const timeSlots = [
   { time: "11:00 AM", available: true },
   { time: "11:30 AM", available: true },
@@ -55,10 +54,9 @@ export default function BookingPage() {
   const form = useBookingForm();
 
   // load booking data here
-  const table = "reservations";
   async function loadBookings() {
     try {
-      const data = await get(table);
+      const data = await get("reservations");
       console.log("Loaded bookings:", data);
     } catch (error) {
       console.error("Error loading bookings:", error);
