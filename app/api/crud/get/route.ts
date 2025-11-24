@@ -8,8 +8,8 @@ export async function GET(req: Request) {
 
     validateTable(table);
 
-    const { data, error } = await supabaseServer.from(table!).select("*");
-
+    const supabase = await supabaseServer(); // 👈 call the function
+    const { data, error } = await supabase.from(table!).select("*");
     if (error) throw new Error(error.message);
 
     return success(data);

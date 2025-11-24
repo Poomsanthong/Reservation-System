@@ -8,7 +8,8 @@ export async function DELETE(req: Request) {
     requireFields({ table, id }, ["table", "id"]);
     validateTable(table);
 
-    const { error } = await supabaseServer.from(table).delete().eq("id", id);
+    const supabase = await supabaseServer(); // 👈 call the function
+    const { error } = await supabase.from(table).delete().eq("id", id);
 
     if (error) throw new Error(error.message);
 

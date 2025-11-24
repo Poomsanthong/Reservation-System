@@ -13,7 +13,8 @@ export async function DELETE(req: Request) {
     );
   }
 
-  const { error } = await supabaseServer.from(table).delete().eq("id", id);
+  const supabase = await supabaseServer(); // 👈 call the function
+  const { error } = await supabase.from(table).delete().eq("id", id);
 
   if (error) return NextResponse.json({ error }, { status: 400 });
 

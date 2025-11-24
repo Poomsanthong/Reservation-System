@@ -47,10 +47,11 @@ import CancelModal from "./modal/CancelModal";
 import { cancelBooking, get, updateBooking } from "@/lib/api/funtions";
 
 import { useModalStore } from "@/store/useModalStore";
+import { ta } from "date-fns/locale";
 
-export function BookingsTable() {
-  const [bookings, setBookings] = useState<Reservation[]>([]);
+export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   const [loading, setLoading] = useState(true);
+  const [bookingsData, setBookingsData] = useState<Reservation[]>(bookings);
   const [searchTerm, setSearchTerm] = useState("");
 
   const { open, type, payload, openModal, closeModal } = useModalStore();
@@ -60,11 +61,17 @@ export function BookingsTable() {
   // -----------------------
   async function loadBookings() {
     try {
-      const res = await get();
-      setBookings(res.data); // must read .data
-      setLoading(false);
+      setLoading(true);
+
+      const res = await get("reservations");
+
+      if (res.error) throw res.error;
+
+      setBookingsData(res.data || []);
     } catch (err) {
-      console.error("Failed loading bookings", err);
+      setBookingsData([]); // fallback
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -108,7 +115,7 @@ export function BookingsTable() {
   // -----------------------
   // FILTER
   // -----------------------
-  const filteredBookings = bookings.filter((booking) => {
+  const filteredBookings = bookingsData.filter((booking) => {
     const matchesSearch =
       booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
