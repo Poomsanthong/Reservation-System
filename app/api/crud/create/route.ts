@@ -10,7 +10,8 @@ export async function POST(req: Request) {
     requireFields({ table, data }, ["table", "data"]);
     validateTable(table);
 
-    const { data: created, error } = await supabaseServer
+    const supabase = await supabaseServer(); // 👈 call the function
+    const { data: created, error } = await supabase
       .from(table)
       .insert(data)
       .select();

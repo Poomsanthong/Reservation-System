@@ -12,7 +12,7 @@ function Header() {
   const [mobileOpen, setMobileOpen] = useState(false); // mobile menu open/close
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-slate-100 w-screen">
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 ">
       {/* navigation content goes here */}
       <nav className="border-b w-full shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,7 +47,7 @@ function Header() {
                 onClick={() => {
                   setActiveView("admin");
                   setMobileOpen(false);
-                  router.push("/admin");
+                  router.push("/admin/login");
                 }}
                 className="gap-2"
               >

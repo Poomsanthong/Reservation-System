@@ -48,9 +48,9 @@ import { cancelBooking, get, updateBooking } from "@/lib/api/funtions";
 
 import { useModalStore } from "@/store/useModalStore";
 
-export function BookingsTable() {
-  const [bookings, setBookings] = useState<Reservation[]>([]);
+export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   const [loading, setLoading] = useState(true);
+  const [bookingsData, setBookingsData] = useState<Reservation[]>(bookings);
   const [searchTerm, setSearchTerm] = useState("");
 
   const { open, type, payload, openModal, closeModal } = useModalStore();
@@ -61,7 +61,7 @@ export function BookingsTable() {
   async function loadBookings() {
     try {
       const res = await get();
-      setBookings(res.data); // must read .data
+      setBookingsData(res.data); // must read .data
       setLoading(false);
     } catch (err) {
       console.error("Failed loading bookings", err);
@@ -108,7 +108,7 @@ export function BookingsTable() {
   // -----------------------
   // FILTER
   // -----------------------
-  const filteredBookings = bookings.filter((booking) => {
+  const filteredBookings = bookingsData.filter((booking) => {
     const matchesSearch =
       booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||

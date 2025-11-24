@@ -8,7 +8,8 @@ export async function PATCH(req: Request) {
     requireFields({ table, id, data }, ["table", "id", "data"]);
     validateTable(table);
 
-    const { data: updated, error } = await supabaseServer
+    const supabase = await supabaseServer(); // 👈 call the function
+    const { data: updated, error } = await supabase
       .from(table)
       .update(data)
       .eq("id", id)

@@ -12,7 +12,6 @@ export async function create(data: any) {
       data,
     }),
   });
-  alert("Reservation saved!");
   return res.json();
 }
 
@@ -25,7 +24,6 @@ export async function updateBooking(id: any, updates: any) {
       data: updates,
     }),
   });
-  alert("Reservation updated!");
   return res.json();
 }
 
@@ -38,7 +36,6 @@ export async function cancelBooking(id: any, status: string) {
       data: { status },
     }),
   });
-  alert("Reservation cancelled!");
   return res.json();
 }
 
@@ -49,6 +46,14 @@ export async function deleteBooking(id: any) {
       table: "reservations",
       id,
     }),
+  });
+  return res.json();
+}
+export async function checkDuplicate(date: string, time: string, name: string) {
+  const res = await fetch("/api/reservations/check-duplicate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ date, time, name }),
   });
   return res.json();
 }

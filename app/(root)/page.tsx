@@ -30,9 +30,9 @@ import {
   CheckCircle2,
   Phone,
 } from "lucide-react";
-import { Reservation } from "@/lib/types";
-import { create, get } from "@/lib/api/funtions";
-import { useToastStore } from "@/store/useToastStore";
+import { get } from "@/lib/api/funtions";
+
+import { useBookingForm } from "@/lib/hooks/useBookingForm";
 const timeSlots = [
   { time: "11:00 AM", available: true },
   { time: "11:30 AM", available: true },
@@ -49,15 +49,9 @@ const timeSlots = [
 ];
 
 export default function BookingPage() {
-  const toastStore = useToastStore();
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [selectedTime, setSelectedTime] = useState<string>("");
   const [partySize, setPartySize] = useState<string>("2");
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [note, setNote] = useState<string>("");
+  const form = useBookingForm();
 
   // load booking data here
   async function loadBookings() {
@@ -72,23 +66,6 @@ export default function BookingPage() {
     loadBookings();
   }, []);
 
-  // Create new booking
-  async function handleCreate(payload: Reservation) {
-    try {
-      const data = await create(payload);
-
-      if (data?.error) {
-        toastStore.error(data.error.message || "Booking failed");
-        return;
-      }
-
-      toastStore.success("Booking confirmed!");
-      await loadBookings();
-      setShowConfirmation(true);
-    } catch (err: any) {
-      toastStore.error(err?.message || "Unexpected error");
-    }
-  }
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ">
       {/* Hero Section */}
@@ -106,7 +83,7 @@ export default function BookingPage() {
       </div>
 
       {/* Confirmation Banner */}
-      {showConfirmation && (
+      {form.showConfirmation && (
         <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
           <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
           <div>
@@ -208,17 +185,21 @@ export default function BookingPage() {
                     <Button
                       key={slot.time}
                       variant={
-                        selectedTime === slot.time ? "default" : "outline"
+                        form.fields.selectedTime === slot.time
+                          ? "default"
+                          : "outline"
                       }
                       disabled={!slot.available}
-                      onClick={() => setSelectedTime(slot.time)}
-                      className={`relative ${
-                        slot.available && selectedTime !== slot.time
+                      onClick={() =>
+                        form.updateField("selectedTime", slot.time)
+                      }
+                      className={`relative text-xs   ${
+                        slot.available && form.fields.selectedTime !== slot.time
                           ? "border-purple-300 bg-purple-50 hover:bg-purple-100"
                           : ""
                       }`}
                     >
-                      <Clock className="w-3 h-3 mr-1" />
+                      <Clock className="w-4 h-4 mr-1" />
                       {slot.time}
                     </Button>
                   ))}
@@ -231,8 +212,8 @@ export default function BookingPage() {
                   <Label htmlFor="name">Full Name</Label>
                   <Input
                     id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={form.fields.name}
+                    onChange={(e) => form.updateField("name", e.target.value)}
                     placeholder="John Doe"
                   />
                 </div>
@@ -241,8 +222,8 @@ export default function BookingPage() {
                   <Input
                     id="email"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={form.fields.email}
+                    onChange={(e) => form.updateField("email", e.target.value)}
                     placeholder="john@example.com"
                   />
                 </div>
@@ -251,8 +232,8 @@ export default function BookingPage() {
                   <Input
                     id="phone"
                     type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    value={form.fields.phone}
+                    onChange={(e) => form.updateField("phone", e.target.value)}
                     placeholder="+1 (555) 000-0000"
                   />
                 </div>
@@ -261,7 +242,8 @@ export default function BookingPage() {
                   <Input
                     id="note"
                     placeholder="Window seat, birthday..."
-                    onChange={(e) => setNote(e.target.value)}
+                    value={form.fields.note}
+                    onChange={(e) => form.updateField("note", e.target.value)}
                   />
                 </div>
               </div>
@@ -269,20 +251,8 @@ export default function BookingPage() {
               <Button
                 className="w-full"
                 size="lg"
-                disabled={!selectedTime || !date}
-                onClick={() =>
-                  handleCreate({
-                    name,
-                    email,
-                    phone,
-                    reservation_date: date
-                      ? date.toISOString().split("T")[0]
-                      : "",
-                    reservation_time: selectedTime,
-                    partySize: parseInt(partySize),
-                    note,
-                  })
-                }
+                disabled={!form.fields.selectedTime || !form.fields.date}
+                onClick={() => form.submit()}
               >
                 Confirm Reservation
               </Button>
@@ -345,12 +315,14 @@ export default function BookingPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600">Time</span>
                   <span className="text-slate-900">
-                    {selectedTime || "Not selected"}
+                    {form.fields.selectedTime || "Not selected"}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600">Party Size</span>
-                  <span className="text-slate-900">{partySize} Guests</span>
+                  <span className="text-slate-900">
+                    {form.fields.partySize} Guests
+                  </span>
                 </div>
               </div>
               <div className="pt-3 border-t">
