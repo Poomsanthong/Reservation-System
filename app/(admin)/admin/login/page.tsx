@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
+import { createClientInstance } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,10 +21,11 @@ export default function AdminLoginPage() {
     setError("");
     setSuccess("");
     setLoading(true);
-    const { data, error } = await createClient().auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } =
+      await createClientInstance().auth.signInWithPassword({
+        email,
+        password,
+      });
     setLoading(false);
     if (error) {
       setError(error.message);
@@ -43,9 +44,12 @@ export default function AdminLoginPage() {
       return;
     }
     setLoading(true);
-    const { error } = await createClient().auth.resetPasswordForEmail(email, {
-      redirectTo: `${location.origin}/admin/reset`,
-    });
+    const { error } = await createClientInstance().auth.resetPasswordForEmail(
+      email,
+      {
+        redirectTo: `${location.origin}/admin/reset`,
+      }
+    );
     setLoading(false);
     if (error) {
       setError(error.message);

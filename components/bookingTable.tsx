@@ -47,6 +47,7 @@ import CancelModal from "./modal/CancelModal";
 import { cancelBooking, get, updateBooking } from "@/lib/api/funtions";
 
 import { useModalStore } from "@/store/useModalStore";
+import { ta } from "date-fns/locale";
 
 export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   const [loading, setLoading] = useState(true);
@@ -58,9 +59,10 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   // -----------------------
   // LOAD BOOKINGS
   // -----------------------
+  const table = "reservations";
   async function loadBookings() {
     try {
-      const res = await get();
+      const res = await get(table);
       setBookingsData(res.data); // must read .data
       setLoading(false);
     } catch (err) {

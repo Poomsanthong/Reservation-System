@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     validateTable(table);
 
     const supabase = await supabaseServer(); // 👈 call the function
-    const { data, error } = await supabase.from("reservations").select("*");
+    const { data, error } = await supabase.from(table!).select("*");
 
     if (error) throw new Error(error.message);
 

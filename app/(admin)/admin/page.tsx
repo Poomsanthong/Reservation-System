@@ -8,8 +8,8 @@ export default async function AdminPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log("AdminPage - user:", user?.email);
-  if (!user?.email) redirect("/admin/login");
+  console.log("AdminPage - user:", user);
+  if (!user) redirect("/admin/login");
   const { data: bookings } = await supabase.from("reservations").select("*");
 
   return <AdminDashboardClient bookings={bookings || []} />;
