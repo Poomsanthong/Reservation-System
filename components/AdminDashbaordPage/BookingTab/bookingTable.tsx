@@ -8,10 +8,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Badge } from "./ui/badge";
+} from "../../ui/card";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Badge } from "../../ui/badge";
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
+} from "../../ui/table";
 
 import {
   Search,
@@ -37,12 +37,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../../ui/dropdown-menu";
 
-import { Reservation } from "@/lib/types";
-import ViewDetailsModal from "./modal/ViewDetailsModal";
-import EditModal from "./modal/EditModal";
-import CancelModal from "./modal/CancelModal";
+import ViewDetailsModal from "../../modal/ViewDetailsModal";
+import EditModal from "../../modal/EditModal";
+import CancelModal from "../../modal/CancelModal";
 
 import { cancelBooking, get, updateBooking } from "@/lib/api/funtions";
 
