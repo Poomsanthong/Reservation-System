@@ -7,7 +7,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Server-side auth check (optional if middleware already protects /admin)
+  // Server-side auth check (optional if middleware/proxy already protects /admin)
   const supabase = await supabaseServer();
   const {
     data: { user },

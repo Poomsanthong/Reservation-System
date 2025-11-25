@@ -1,6 +1,6 @@
 import { supabaseServer } from "@/lib/supabaseServer";
 import { redirect } from "next/navigation";
-import AdminDashboardClient from "@/components/DashBoard";
+import AdminDashboardClient from "@/components/AdminDashbaordPage/DashBoard";
 
 export default async function AdminPage() {
   const supabase = await supabaseServer();
