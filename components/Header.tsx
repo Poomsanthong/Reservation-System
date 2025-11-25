@@ -1,15 +1,30 @@
 "use client"; // This file runs in the browser (not on the server)
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CalendarClock, LayoutDashboard, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import { createClientInstance } from "@/lib/supabaseClient";
+import type { Session } from "@supabase/supabase-js";
+
 function Header() {
   // State: activeView can only be "booking" or "admin"  in ("booking") is the initial value
   // setActiveView changes the value
   const router = useRouter();
   const [activeView, setActiveView] = useState<"booking" | "admin">("booking");
   const [mobileOpen, setMobileOpen] = useState(false); // mobile menu open/close
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    const supabase = createClientInstance();
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, newSession) =>
+      setSession(newSession)
+    );
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 ">
@@ -47,13 +62,24 @@ function Header() {
                 onClick={() => {
                   setActiveView("admin");
                   setMobileOpen(false);
-                  router.push("/admin/login");
+                  router.push(session ? "/admin" : "/login");
                 }}
                 className="gap-2"
               >
                 <LayoutDashboard className="w-4 h-4" />
                 Admin Dashboard
               </Button>
+              {session && (
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    await createClientInstance().auth.signOut();
+                    window.location.replace("/login");
+                  }}
+                >
+                  Logout
+                </Button>
+              )}
             </div>
             <Button
               variant="outline"
@@ -88,7 +114,7 @@ function Header() {
               variant={activeView === "admin" ? "default" : "outline"}
               onClick={() => {
                 setActiveView("admin");
-                router.push("/admin");
+                router.push(session ? "/admin" : "/login");
                 setMobileOpen(false);
               }}
               className="w-full justify-start gap-2"
@@ -96,6 +122,19 @@ function Header() {
               <LayoutDashboard className="w-4 h-4" />
               Admin Dashboard
             </Button>
+            {session && (
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  await createClientInstance().auth.signOut();
+                  setMobileOpen(false);
+                  router.push("/admin/login");
+                }}
+                className="w-full justify-start gap-2"
+              >
+                Logout
+              </Button>
+            )}
           </div>
         )}
       </nav>

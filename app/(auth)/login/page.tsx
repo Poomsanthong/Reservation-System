@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function AdminLoginPage() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const searchParams = useSearchParams();
 
   async function login(e?: React.FormEvent) {
     e?.preventDefault();
@@ -32,9 +34,8 @@ export default function AdminLoginPage() {
       return;
     }
     setSuccess("Login successful. Redirecting...");
-    // IMPORTANT: refresh server-side auth
-    router.refresh();
-    router.push("/admin");
+    // Smooth client-side navigation; replace full reload
+    window.location.href = "/admin";
   }
 
   async function forgotPassword() {
