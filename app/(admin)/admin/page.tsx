@@ -2,15 +2,27 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import AdminDashboard from "@/components/AdminDashbaordPage/DashBoard";
 import { getStats } from "@/lib/server/stats";
-import { get } from "http";
 import { getBookings } from "@/lib/server/getBooking";
+import { redirect } from "next/navigation";
 export default async function AdminPage() {
+  // Initialize Supabase client for server-side operations
   const supabase = await supabaseServer();
 
+  // Server-side auth check (optional if middleware/proxy already protects /admin)
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  // If no user, redirect to login
+  if (!user) {
+    redirect("/login");
+  }
+  // Fetch statistics and bookings from the server
   const stats = await getStats(supabase);
   const bookings = await getBookings(supabase);
+
   return (
     <AdminDashboard
+      userEmail={user.email ?? null}
       totalBookings={stats.totalBookings ?? 0}
       totalGuests={stats.totalGuests ?? 0}
       previousTotalBookings={stats.previousTotalBookings ?? 0}

@@ -1,3 +1,4 @@
+"use server";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { tr } from "date-fns/locale";
 

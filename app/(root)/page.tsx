@@ -1,4 +1,3 @@
-// app/booking/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -28,11 +27,10 @@ import {
   Sparkles,
   Star,
   CheckCircle2,
-  Phone,
 } from "lucide-react";
 import { get } from "@/lib/api/funtions";
-
 import { useBookingForm } from "@/lib/hooks/useBookingForm";
+
 const timeSlots = [
   { time: "11:00 AM", available: true },
   { time: "11:30 AM", available: true },
@@ -49,11 +47,8 @@ const timeSlots = [
 ];
 
 export default function BookingPage() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [partySize, setPartySize] = useState<string>("2");
   const form = useBookingForm();
 
-  // load booking data here
   async function loadBookings() {
     try {
       const data = await get("reservations");
@@ -62,12 +57,13 @@ export default function BookingPage() {
       console.error("Error loading bookings:", error);
     }
   }
+
   useEffect(() => {
     loadBookings();
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden">
       {/* Hero Section */}
       <div className="mb-8 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-full mb-4">
@@ -82,47 +78,45 @@ export default function BookingPage() {
         </p>
       </div>
 
-      {/* Confirmation Banner */}
       {form.showConfirmation && (
-        <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
-          <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+        <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex gap-3">
+          <CheckCircle2 className="w-5 h-5 text-green-600" />
           <div>
-            <p className="text-green-900">
-              Booking confirmed! Check your email for details.
-            </p>
+            <p className="text-green-900">Booking confirmed!</p>
             <p className="text-sm text-green-700">
-              Confirmation sent to your inbox with calendar invite
+              Confirmation sent to your email.
             </p>
           </div>
         </div>
       )}
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Booking Form */}
+        {/* FORM */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Restaurant Info Card */}
+          {/* Restaurant Card */}
           <Card>
             <CardContent className="p-6 flex gap-4">
-              <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-pink-500 rounded-lg flex-shrink-0" />
+              <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-pink-500 rounded-lg" />
               <div className="flex-1">
                 <div className="flex items-start justify-between mb-2">
                   <div>
                     <h3 className="text-slate-900 mb-1">The Gourmet Kitchen</h3>
                     <div className="flex items-center gap-2 text-sm text-slate-600">
                       <MapPin className="w-4 h-4" />
-                      <span>Downtown Manhattan, NY</span>
+                      Downtown Manhattan, NY
                     </div>
                   </div>
+
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-slate-900">4.8</span>
-                    <span className="text-sm text-slate-500">(342)</span>
                   </div>
                 </div>
+
                 <p className="text-sm text-slate-600 mb-3">
-                  Contemporary American cuisine with seasonal ingredients and
-                  craft cocktails
+                  Contemporary cuisine with seasonal ingredients.
                 </p>
+
                 <div className="flex gap-2">
                   <Badge variant="secondary">Fine Dining</Badge>
                   <Badge variant="secondary">Romantic</Badge>
@@ -136,15 +130,19 @@ export default function BookingPage() {
           <Card>
             <CardHeader>
               <CardTitle>Select Date & Time</CardTitle>
-              <CardDescription>
-                Choose your preferred reservation details
-              </CardDescription>
+              <CardDescription>Choose your reservation details</CardDescription>
             </CardHeader>
+
             <CardContent className="space-y-6">
               {/* Party Size */}
               <div className="space-y-2">
                 <Label>Party Size</Label>
-                <Select value={partySize} onValueChange={setPartySize}>
+                <Select
+                  value={form.fields.partySize}
+                  onValueChange={(value) =>
+                    form.updateField("partySize", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -167,9 +165,9 @@ export default function BookingPage() {
                 <div className="border rounded-lg p-4 flex justify-center">
                   <Calendar
                     mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    disabled={(date) => date < new Date()}
+                    selected={form.fields.date}
+                    onSelect={(d) => form.updateField("date", d)}
+                    disabled={(d) => d < new Date()}
                     className="rounded-md w-full max-w-md"
                   />
                 </div>
@@ -177,9 +175,7 @@ export default function BookingPage() {
 
               {/* Time Slots */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Available Times</Label>
-                </div>
+                <Label>Available Times</Label>
                 <div className="grid grid-cols-4 gap-2">
                   {timeSlots.map((slot) => (
                     <Button
@@ -193,11 +189,7 @@ export default function BookingPage() {
                       onClick={() =>
                         form.updateField("selectedTime", slot.time)
                       }
-                      className={`relative text-xs   ${
-                        slot.available && form.fields.selectedTime !== slot.time
-                          ? "border-purple-300 bg-purple-50 hover:bg-purple-100"
-                          : ""
-                      }`}
+                      className="text-xs"
                     >
                       <Clock className="w-4 h-4 mr-1" />
                       {slot.time}
@@ -217,6 +209,7 @@ export default function BookingPage() {
                     placeholder="John Doe"
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -227,6 +220,7 @@ export default function BookingPage() {
                     placeholder="john@example.com"
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
                   <Input
@@ -234,9 +228,10 @@ export default function BookingPage() {
                     type="tel"
                     value={form.fields.phone}
                     onChange={(e) => form.updateField("phone", e.target.value)}
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+1 555 000 0000"
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="note">Special Requests</Label>
                   <Input
@@ -251,7 +246,12 @@ export default function BookingPage() {
               <Button
                 className="w-full"
                 size="lg"
-                disabled={!form.fields.selectedTime || !form.fields.date}
+                disabled={
+                  !form.fields.selectedTime ||
+                  !form.fields.date ||
+                  !form.fields.name ||
+                  !form.fields.email
+                }
                 onClick={() => form.submit()}
               >
                 Confirm Reservation
@@ -262,73 +262,31 @@ export default function BookingPage() {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Tip Card */}
-          <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                <CardTitle className="text-purple-900">Tip</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="bg-white rounded-lg p-3 text-sm">
-                <p className="text-slate-700">
-                  <span className="text-purple-600">💡 Tip:</span> Tuesday
-                  evenings at 7 PM have the best atmosphere with live jazz
-                  music!
-                </p>
-              </div>
-              <div className="bg-white rounded-lg p-3 text-sm">
-                <p className="text-slate-700">
-                  <span className="text-purple-600">🎉 Special:</span> Book for
-                  4+ guests and get a complimentary appetizer platter.
-                </p>
-              </div>
-              <div className="bg-white rounded-lg p-3 text-sm">
-                <p className="text-slate-700">
-                  <span className="text-purple-600">⏰ Popular:</span> 6:00 PM
-                  and 7:00 PM slots fill up fast on weekends!
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Booking Summary */}
+          {/* Summary */}
           <Card>
             <CardHeader>
               <CardTitle>Booking Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Restaurant</span>
-                  <span className="text-slate-900">The Gourmet Kitchen</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Date</span>
-                  <span className="text-slate-900">
-                    {date ? date.toLocaleDateString() : "Not selected"}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Time</span>
-                  <span className="text-slate-900">
-                    {form.fields.selectedTime || "Not selected"}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Party Size</span>
-                  <span className="text-slate-900">
-                    {form.fields.partySize} Guests
-                  </span>
-                </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Date</span>
+                <span className="text-slate-900">
+                  {form.fields.date
+                    ? form.fields.date.toLocaleDateString()
+                    : "Not selected"}
+                </span>
               </div>
-              <div className="pt-3 border-t">
-                <p className="text-xs text-slate-600">
-                  Free cancellation up to 2 hours before reservation time
-                </p>
+
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Time</span>
+                <span className="text-slate-900">
+                  {form.fields.selectedTime || "Not selected"}
+                </span>
+              </div>
+
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Guests</span>
+                <span className="text-slate-900">{form.fields.partySize}</span>
               </div>
             </CardContent>
           </Card>

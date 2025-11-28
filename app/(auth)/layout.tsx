@@ -6,8 +6,10 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen text-gray-400 ">
-      <div className="container mx-auto ">{children}</div>
+    <div className="w-full max-w-full overflow-x-hidden ">
+      <div className="container  max-w-7xl mx-auto overflow-auto rounded-lg p-4  bg-white mt-8 mb-8">
+        {children}
+      </div>
     </div>
   );
 }
