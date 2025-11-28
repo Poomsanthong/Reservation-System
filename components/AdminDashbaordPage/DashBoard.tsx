@@ -71,20 +71,24 @@ const recentActivity = [
 ];
 
 export default function AdminDashboard({
-  bookings,
   totalBookings,
   totalGuests,
+  previousTotalBookings,
+  previousTotalGuests,
+  bookings,
 }: {
+  totalBookings: number;
+  totalGuests: number;
+  previousTotalBookings: number;
+  previousTotalGuests: number;
   bookings: Reservation[];
-  totalBookings: number | null;
-  totalGuests: number | null;
 }) {
   const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h2 className="text-slate-900 mb-2">Admin Dashboard</h2>
+        <h2 className="text-slate-900 mb-2"> Dashboard</h2>
         <p className="text-slate-600">
           Manage reservations and track performance
         </p>
@@ -113,7 +117,12 @@ export default function AdminDashboard({
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
           {/* Stats Cards */}
-          <StatsCard totalBookings={totalBookings} totalGuests={totalGuests} />
+          <StatsCard
+            totalBookings={totalBookings}
+            totalGuests={totalGuests}
+            previousTotalBookings={previousTotalBookings}
+            previousTotalGuests={previousTotalGuests}
+          />
           <div className="h-6" /> {/* Spacer  */}
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Booking Trends Chart */}

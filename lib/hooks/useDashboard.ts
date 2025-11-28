@@ -1,14 +1,16 @@
+import { supabaseServer } from "@/lib/server/supabaseServer";
+import { getWeekRanges } from "../dateHelper";
+
 // used to calculate percentage change and trend direction
-function calculateChange(current: number, previous: number) {
-  if (previous === 0) return { change: "0%", trend: "up" }; // avoid division-by-zero
+export function calculateChange(
+  current: number | null,
+  previous: number | null
+) {
+  if (previous === 0) return { change: "N/A", trend: "up" }; // avoid division by 0
 
-  const percent = ((current - previous) / previous) * 100;
-  const rounded = percent.toFixed(1) + "%";
+  const diff = (current ?? 0) - (previous ?? 0);
+  const change = ((diff / (previous ?? 1)) * 100).toFixed(1) + "%"; // e.g. "12.5%"
+  const trend = diff >= 0 ? "up" : "down";
 
-  return {
-    change: rounded,
-    trend: percent >= 0 ? "up" : "down",
-  };
+  return { change, trend };
 }
-
-export { calculateChange };

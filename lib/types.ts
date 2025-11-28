@@ -58,6 +58,12 @@ declare global {
     label: string;
     value: string;
     change: string;
-    trend: "up" | "down";
+    trend: string;
+  };
+  type StatsCardPropsType = {
+    totalBookings: number | null;
+    totalGuests: number | null;
+    previousTotalBookings: number | null;
+    previousTotalGuests: number | null;
   };
 }
