@@ -1,6 +1,6 @@
 // app/api/reservations/check-duplicate/route.ts
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabaseServer";
+import { supabaseServer } from "@/lib/server/supabaseServer";
 
 export async function POST(req: Request) {
   try {

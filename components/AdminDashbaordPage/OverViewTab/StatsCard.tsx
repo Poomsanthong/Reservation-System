@@ -1,9 +1,44 @@
 import React from "react";
 import { Card, CardContent } from "../../ui/card";
 import { Badge } from "../../ui/badge";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Calendar, Users } from "lucide-react";
+import { calculateChange } from "@/lib/hooks/useDashboard";
 
-const StatsCard = ({ statsData }: { statsData: statsDataType[] }) => {
+const StatsCard = ({
+  totalBookings,
+  totalGuests,
+  previousTotalBookings,
+  previousTotalGuests,
+}: StatsCardPropsType) => {
+  // calculate changes and trends
+
+  const { change: bookingsChange, trend: bookingsTrend } = calculateChange(
+    totalBookings,
+    previousTotalBookings
+  );
+
+  const { change: guestsChange, trend: guestsTrend } = calculateChange(
+    totalGuests,
+    previousTotalGuests
+  );
+
+  const statsData: statsDataType[] = [
+    {
+      icon: Calendar,
+      label: "Total Bookings",
+      value: totalBookings?.toString() ?? "N/A",
+      change: bookingsChange,
+      trend: bookingsTrend,
+    },
+    {
+      icon: Users,
+      label: "Total Guests",
+      value: totalGuests?.toString() ?? "N/A",
+      change: guestsChange,
+      trend: guestsTrend,
+    },
+  ];
+
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {statsData.map((stat, idx) => (

@@ -1,4 +1,4 @@
-import { supabaseServer } from "@/lib/supabaseServer";
+import { supabaseServer } from "@/lib/server/supabaseServer";
 import { success, fail, validateTable } from "@/lib/utils";
 
 export async function GET(req: Request) {

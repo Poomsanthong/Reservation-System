@@ -1,4 +1,4 @@
-import { supabaseServer } from "@/lib/supabaseServer";
+import { supabaseServer } from "@/lib/server/supabaseServer";
 import { success, fail, validateTable, requireFields } from "@/lib/utils";
 
 export async function DELETE(req: Request) {

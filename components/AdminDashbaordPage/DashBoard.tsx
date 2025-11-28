@@ -40,37 +40,6 @@ import MessageTemplate from "./CommunicationTab/MessageTemplate";
 import CommunicationHistory from "./CommunicationTab/CommunicationHistory";
 // Mock data for dashboard stats and charts - to be replaced with real data later dynamically
 
-const statsData: statsDataType[] = [
-  {
-    icon: Calendar,
-    label: "Total Bookings",
-    value: "2,847",
-    change: "+12.5%",
-    trend: "up",
-  },
-  {
-    icon: Users,
-    label: "Total Guests",
-    value: "8,432",
-    change: "+8.2%",
-    trend: "up",
-  },
-  // {
-  //   icon: DollarSign,
-  //   label: "Revenue",
-  //   value: "$142,580",
-  //   change: "+15.3%",
-  //   trend: "up",
-  // },
-  // {
-  //   icon: Clock,
-  //   label: "Avg Wait Time",
-  //   value: "8 min",
-  //   change: "-22%",
-  //   trend: "down",
-  // },
-];
-
 const bookingTrends = [
   { month: "Jan", bookings: 245, revenue: 9800 },
   { month: "Feb", bookings: 312, revenue: 12500 },
@@ -102,8 +71,16 @@ const recentActivity = [
 ];
 
 export default function AdminDashboard({
+  totalBookings,
+  totalGuests,
+  previousTotalBookings,
+  previousTotalGuests,
   bookings,
 }: {
+  totalBookings: number;
+  totalGuests: number;
+  previousTotalBookings: number;
+  previousTotalGuests: number;
   bookings: Reservation[];
 }) {
   const [activeTab, setActiveTab] = useState("overview");
@@ -111,7 +88,7 @@ export default function AdminDashboard({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h2 className="text-slate-900 mb-2">Admin Dashboard</h2>
+        <h2 className="text-slate-900 mb-2"> Dashboard</h2>
         <p className="text-slate-600">
           Manage reservations and track performance
         </p>
@@ -140,7 +117,12 @@ export default function AdminDashboard({
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
           {/* Stats Cards */}
-          <StatsCard statsData={statsData} />
+          <StatsCard
+            totalBookings={totalBookings}
+            totalGuests={totalGuests}
+            previousTotalBookings={previousTotalBookings}
+            previousTotalGuests={previousTotalGuests}
+          />
           <div className="h-6" /> {/* Spacer  */}
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Booking Trends Chart */}
