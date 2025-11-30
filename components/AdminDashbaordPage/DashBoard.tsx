@@ -64,6 +64,7 @@ export default function AdminDashboard({
   previousTotalGuests,
   bookings,
   bookingTrends,
+  timeDistribution,
 }: {
   userEmail: string | null;
   totalBookings: number;
@@ -72,6 +73,7 @@ export default function AdminDashboard({
   previousTotalGuests: number;
   bookings: Reservation[];
   bookingTrends: { month: string; bookings: number }[];
+  timeDistribution: { time: string; value: number; color: string }[];
 }) {
   const [activeTab, setActiveTab] = useState("overview");
 
