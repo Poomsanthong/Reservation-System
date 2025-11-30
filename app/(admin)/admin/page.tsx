@@ -4,6 +4,7 @@ import AdminDashboard from "@/components/AdminDashbaordPage/DashBoard";
 import { getStats } from "@/lib/server/stats";
 import { getBookings } from "@/lib/server/getBooking";
 import { redirect } from "next/navigation";
+import { getBookingTrends } from "@/lib/server/getBookingTrends";
 export default async function AdminPage() {
   // Initialize Supabase client for server-side operations
   const supabase = await supabaseServer();
@@ -19,7 +20,8 @@ export default async function AdminPage() {
   // Fetch statistics and bookings from the server
   const stats = await getStats(supabase);
   const bookings = await getBookings(supabase);
-
+  const bookingTrends = await getBookingTrends(supabase);
+  console.log("bookingTrends:", bookingTrends);
   return (
     <AdminDashboard
       userEmail={user.email ?? null}
@@ -28,6 +30,7 @@ export default async function AdminPage() {
       previousTotalBookings={stats.previousTotalBookings ?? 0}
       previousTotalGuests={stats.previousTotalGuests ?? 0}
       bookings={bookings ?? []}
+      bookingTrends={bookingTrends ?? []}
     />
   );
 }
