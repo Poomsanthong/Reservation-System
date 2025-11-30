@@ -26,7 +26,7 @@ import {
 const BookTrendChart = ({
   bookingTrends,
 }: {
-  bookingTrends: { month: string; bookings: number; revenue: number }[];
+  bookingTrends: { month: string; bookings: number }[];
 }) => {
   return (
     <Card>

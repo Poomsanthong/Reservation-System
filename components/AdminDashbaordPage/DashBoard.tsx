@@ -39,16 +39,6 @@ import Comunication from "./CommunicationTab/Comunication";
 import MessageTemplate from "./CommunicationTab/MessageTemplate";
 import CommunicationHistory from "./CommunicationTab/CommunicationHistory";
 
-// Mock data
-const bookingTrends = [
-  { month: "Jan", bookings: 245, revenue: 9800 },
-  { month: "Feb", bookings: 312, revenue: 12500 },
-  { month: "Mar", bookings: 279, revenue: 11300 },
-  { month: "Apr", bookings: 340, revenue: 14200 },
-  { month: "May", bookings: 390, revenue: 15800 },
-  { month: "Jun", bookings: 450, revenue: 17500 },
-];
-
 const timeDistribution = [
   { time: "Lunch (11-2)", value: 28, color: "#3b82f6" },
   { time: "Afternoon (2-5)", value: 22, color: "#10b981" },
@@ -73,6 +63,7 @@ export default function AdminDashboard({
   previousTotalBookings,
   previousTotalGuests,
   bookings,
+  bookingTrends,
 }: {
   userEmail: string | null;
   totalBookings: number;
@@ -80,6 +71,7 @@ export default function AdminDashboard({
   previousTotalBookings: number;
   previousTotalGuests: number;
   bookings: Reservation[];
+  bookingTrends: { month: string; bookings: number }[];
 }) {
   const [activeTab, setActiveTab] = useState("overview");
 

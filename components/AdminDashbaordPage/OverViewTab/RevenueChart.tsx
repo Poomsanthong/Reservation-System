@@ -19,7 +19,7 @@ import {
 const RevenueChart = ({
   bookingTrends,
 }: {
-  bookingTrends: { month: string; revenue: number }[];
+  bookingTrends: { month: string; bookings: number }[];
 }) => {
   return (
     <Card>
