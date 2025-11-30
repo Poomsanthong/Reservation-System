@@ -6,6 +6,7 @@ import { getBookings } from "@/lib/server/getBooking";
 import { redirect } from "next/navigation";
 import { getBookingTrends } from "@/lib/server/getBookingTrends";
 import { getTimeDistribution } from "@/lib/server/getTimeDistribution";
+import { getRecentActivity } from "@/lib/server/getRecentActivity";
 export default async function AdminPage() {
   // Initialize Supabase client for server-side operations
   const supabase = await supabaseServer();
@@ -23,7 +24,8 @@ export default async function AdminPage() {
   const bookings = await getBookings(supabase);
   const bookingTrends = await getBookingTrends(supabase);
   const timeDistribution = await getTimeDistribution(supabase);
-  console.log("Time Distribution:", timeDistribution);
+  const recentActivity = await getRecentActivity(supabase);
+  console.log("Recent Activity:", recentActivity);
   return (
     <AdminDashboard
       userEmail={user.email ?? null}
@@ -34,6 +36,7 @@ export default async function AdminPage() {
       bookings={bookings ?? []}
       bookingTrends={bookingTrends ?? []}
       timeDistribution={timeDistribution ?? []}
+      recentActivity={recentActivity ?? []}
     />
   );
 }

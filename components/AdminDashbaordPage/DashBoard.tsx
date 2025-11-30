@@ -39,22 +39,15 @@ import Comunication from "./CommunicationTab/Comunication";
 import MessageTemplate from "./CommunicationTab/MessageTemplate";
 import CommunicationHistory from "./CommunicationTab/CommunicationHistory";
 
-const timeDistribution = [
-  { time: "Lunch (11-2)", value: 28, color: "#3b82f6" },
-  { time: "Afternoon (2-5)", value: 22, color: "#10b981" },
-  { time: "Dinner (5-9)", value: 35, color: "#f59e0b" },
-  { time: "Late Night (9-12)", value: 15, color: "#ef4444" },
-];
-
-const recentActivity = [
-  {
-    type: "booking",
-    guest: "Emily Chen",
-    action: "New booking for 4 guests",
-    time: "2 min ago",
-    status: "confirmed",
-  },
-];
+// const recentActivity = [
+//   {
+//     type: "booking",
+//     guest: "Emily Chen",
+//     action: "New booking for 4 guests",
+//     time: "2 min ago",
+//     status: "confirmed",
+//   },
+// ];
 
 export default function AdminDashboard({
   userEmail,
@@ -65,6 +58,7 @@ export default function AdminDashboard({
   bookings,
   bookingTrends,
   timeDistribution,
+  recentActivity,
 }: {
   userEmail: string | null;
   totalBookings: number;
@@ -74,6 +68,13 @@ export default function AdminDashboard({
   bookings: Reservation[];
   bookingTrends: { month: string; bookings: number }[];
   timeDistribution: { time: string; value: number; color: string }[];
+  recentActivity: {
+    type: string;
+    guest: string;
+    action: string;
+    time: string;
+    status: string;
+  }[];
 }) {
   const [activeTab, setActiveTab] = useState("overview");
 
