@@ -25,7 +25,6 @@ export default async function AdminPage() {
   const bookingTrends = await getBookingTrends(supabase);
   const timeDistribution = await getTimeDistribution(supabase);
   const recentActivity = await getRecentActivity(supabase);
-  console.log("Recent Activity:", recentActivity);
   return (
     <AdminDashboard
       userEmail={user.email ?? null}

@@ -33,7 +33,7 @@ function Header() {
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 shadow-sm">
       {/* navigation content goes here */}
-      <nav className="border-b shadow-sm w-screen ">
+      <nav className="border-b shadow-sm ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 px-2 sm:px-4">
             <div className="flex items-center gap-3">

@@ -131,9 +131,9 @@ export default function AdminDashboard({
                 <BookTrendChart bookingTrends={bookingTrends} />
               </div>
 
-              <div className="min-w-0 overflow-x-auto">
+              {/* <div className="min-w-0 overflow-x-auto">
                 <RevenueChart bookingTrends={bookingTrends} />
-              </div>
+              </div> */}
             </div>
 
             <div className="grid lg:grid-cols-3 gap-6 min-w-0">

@@ -66,7 +66,13 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
 
       if (res.error) throw res.error;
 
-      setBookingsData(res.data || []);
+      // Sort by created_at desc
+      const sorted = (res.data || []).sort(
+        (a: any, b: any) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+
+      setBookingsData(sorted);
     } catch (err) {
       setBookingsData([]); // fallback
     } finally {
