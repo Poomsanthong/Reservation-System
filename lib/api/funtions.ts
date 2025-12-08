@@ -1,5 +1,6 @@
 export async function get(table: string) {
   const res = await fetch(`/api/crud/get?table=${table}`);
+
   if (!res.ok) throw new Error("Failed to load bookings");
   return res.json();
 }

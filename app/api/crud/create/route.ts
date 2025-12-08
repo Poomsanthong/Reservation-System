@@ -6,6 +6,7 @@ import { success, fail, validateTable, requireFields } from "@/lib/utils";
 export async function POST(req: Request) {
   try {
     const { table, data } = await req.json();
+    console.log("Create Request Data:", { table, data });
 
     requireFields({ table, data }, ["table", "data"]);
     validateTable(table);
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
 
     return success(created);
   } catch (error: any) {
+    console.error("Error in CREATE route:", error);
     return fail(error);
   }
 }

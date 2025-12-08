@@ -23,8 +23,9 @@ declare global {
 
   type BlackoutDate = {
     id?: string;
-    date: string; // YYYY-MM-DD
-    reason?: string | null;
+    date: string;
+    reason: string | null;
+    created_at: string;
   };
 
   type Setting = {

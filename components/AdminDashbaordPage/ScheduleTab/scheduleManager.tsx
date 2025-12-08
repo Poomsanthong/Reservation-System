@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Clock, Users, Plus, Settings, AlertCircle } from "lucide-react";
 import Setting from "./Setting";
+import CalendarSetting from "./CalendarSetting";
 const timeSlots = [
   "11:00 AM",
   "11:30 AM",
@@ -90,30 +91,7 @@ export function ScheduleManager() {
       <Setting />
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Calendar */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Select Date</CardTitle>
-            <CardDescription>View schedule for specific date</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              className="rounded-md border"
-            />
-            <div className="mt-4 space-y-2">
-              <Button variant="outline" className="w-full gap-2">
-                <Plus className="w-4 h-4" />
-                Block Time Slot
-              </Button>
-              <Button variant="outline" className="w-full gap-2">
-                <Clock className="w-4 h-4" />
-                Set Special Hours
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <CalendarSetting />
 
         {/* Daily Schedule */}
         <Card className="lg:col-span-2">
