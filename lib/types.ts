@@ -67,4 +67,11 @@ declare global {
     previousTotalBookings: number | null;
     previousTotalGuests: number | null;
   };
+  type ScheduleSlot = {
+    time: string;
+    booked: number;
+    capacity: number;
+    status: "available" | "filling" | "full";
+    waitlist?: number;
+  };
 }

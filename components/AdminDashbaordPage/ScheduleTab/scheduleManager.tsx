@@ -22,6 +22,7 @@ import {
 import { Clock, Users, Plus, Settings, AlertCircle } from "lucide-react";
 import Setting from "./Setting";
 import CalendarSetting from "./CalendarSetting";
+import DailySchedule from "./DailySchedule";
 const timeSlots = [
   "11:00 AM",
   "11:30 AM",
@@ -94,91 +95,7 @@ export function ScheduleManager() {
         <CalendarSetting />
 
         {/* Daily Schedule */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Daily Schedule</CardTitle>
-                <CardDescription>
-                  {selectedDate?.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </CardDescription>
-              </div>
-              <div className="flex gap-2">
-                <Badge variant="outline" className="gap-1">
-                  <Users className="w-3 h-3" />
-                  45 Total Bookings
-                </Badge>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {/* Legend */}
-            <div className="flex gap-4 mb-4 p-3 bg-slate-50 rounded-lg">
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="text-slate-600">Available</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                <span className="text-slate-600">Filling Up</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <span className="text-slate-600">Fully Booked</span>
-              </div>
-            </div>
-
-            {/* Schedule Grid */}
-            <div className="space-y-2 max-h-[500px] overflow-y-auto">
-              {mockSchedule.map((slot, idx) => (
-                <div
-                  key={idx}
-                  className={`flex items-center justify-between p-3 rounded-lg border ${getStatusColor(
-                    slot.status
-                  )}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-20">
-                      <p className="text-sm">{slot.time}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      <span className="text-sm">
-                        {slot.booked}/{slot.capacity} tables
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {slot.status === "full" && waitlistEnabled && (
-                      <Badge variant="outline" className="text-xs">
-                        Waitlist: 3
-                      </Badge>
-                    )}
-                    <Badge
-                      variant={
-                        slot.status === "available"
-                          ? "default"
-                          : slot.status === "filling"
-                          ? "secondary"
-                          : "destructive"
-                      }
-                    >
-                      {slot.status}
-                    </Badge>
-                    <Button variant="ghost" size="sm">
-                      Edit
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <DailySchedule />
       </div>
 
       {/* Quick Stats */}
