@@ -97,7 +97,7 @@ export function useBookingForm() {
       const { error } = await create(payload);
 
       if (error) {
-        toastStore.error(error.message || "Booking failed");
+        toastStore.error(error.message || "Failed to create booking.");
         return;
       }
 

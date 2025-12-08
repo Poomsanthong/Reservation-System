@@ -23,8 +23,9 @@ declare global {
 
   type BlackoutDate = {
     id?: string;
-    date: string; // YYYY-MM-DD
-    reason?: string | null;
+    date: string;
+    reason: string | null;
+    created_at: string;
   };
 
   type Setting = {
@@ -65,5 +66,12 @@ declare global {
     totalGuests: number | null;
     previousTotalBookings: number | null;
     previousTotalGuests: number | null;
+  };
+  type ScheduleSlot = {
+    time: string;
+    booked: number;
+    capacity: number;
+    status: "available" | "filling" | "full";
+    waitlist?: number;
   };
 }

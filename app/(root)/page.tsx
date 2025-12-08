@@ -48,6 +48,8 @@ const timeSlots = [
 
 export default function BookingPage() {
   const form = useBookingForm();
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string>("");
 
   async function loadBookings() {
     try {
@@ -61,6 +63,30 @@ export default function BookingPage() {
   useEffect(() => {
     loadBookings();
   }, []);
+
+  async function handleSubmit() {
+    setSubmitError("");
+    if (submitLoading) return;
+    setSubmitLoading(true);
+    try {
+      // form.submit should throw on error (see lib/api/funtions.ts improvements)
+      await form.submit();
+      // success state is handled inside the hook (form.showConfirmation)
+    } catch (err: any) {
+      // surface a readable message
+      const msg =
+        typeof err === "string"
+          ? err
+          : err?.message ||
+            (err && typeof err === "object"
+              ? JSON.stringify(err)
+              : "Unknown error");
+      console.error("Booking failed:", err);
+      setSubmitError(msg);
+    } finally {
+      setSubmitLoading(false);
+    }
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden">
@@ -250,12 +276,19 @@ export default function BookingPage() {
                   !form.fields.selectedTime ||
                   !form.fields.date ||
                   !form.fields.name ||
-                  !form.fields.email
+                  !form.fields.email ||
+                  submitLoading
                 }
-                onClick={() => form.submit()}
+                onClick={handleSubmit}
               >
-                Confirm Reservation
+                {submitLoading ? "Booking..." : "Confirm Reservation"}
               </Button>
+
+              {submitError && (
+                <div className="mt-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2">
+                  {submitError}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

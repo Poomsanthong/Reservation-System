@@ -20,7 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Clock, Users, Plus, Settings, AlertCircle } from "lucide-react";
-
+import Setting from "./Setting";
+import CalendarSetting from "./CalendarSetting";
+import DailySchedule from "./DailySchedule";
 const timeSlots = [
   "11:00 AM",
   "11:30 AM",
@@ -69,7 +71,6 @@ export function ScheduleManager() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     new Date()
   );
-  const [autoAccept, setAutoAccept] = useState(true);
   const [waitlistEnabled, setWaitlistEnabled] = useState(true);
 
   const getStatusColor = (status: string) => {
@@ -88,226 +89,13 @@ export function ScheduleManager() {
   return (
     <div className="space-y-6">
       {/* Settings Card */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Schedule Settings</CardTitle>
-              <CardDescription>
-                Configure availability and booking rules
-              </CardDescription>
-            </div>
-            <Button variant="outline" className="gap-2">
-              <Settings className="w-4 h-4" />
-              Advanced Settings
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Basic Settings */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Auto-Accept Bookings</Label>
-                  <p className="text-sm text-slate-600">
-                    Automatically confirm reservations
-                  </p>
-                </div>
-                <Switch checked={autoAccept} onCheckedChange={setAutoAccept} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Enable Waitlist</Label>
-                  <p className="text-sm text-slate-600">
-                    Allow guests to join waitlist
-                  </p>
-                </div>
-                <Switch
-                  checked={waitlistEnabled}
-                  onCheckedChange={setWaitlistEnabled}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Default Table Capacity</Label>
-                <Select defaultValue="8">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="4">4 Tables</SelectItem>
-                    <SelectItem value="6">6 Tables</SelectItem>
-                    <SelectItem value="8">8 Tables</SelectItem>
-                    <SelectItem value="10">10 Tables</SelectItem>
-                    <SelectItem value="12">12 Tables</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Timing Settings */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Booking Window</Label>
-                <Select defaultValue="60">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="7">7 days ahead</SelectItem>
-                    <SelectItem value="14">14 days ahead</SelectItem>
-                    <SelectItem value="30">30 days ahead</SelectItem>
-                    <SelectItem value="60">60 days ahead</SelectItem>
-                    <SelectItem value="90">90 days ahead</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Minimum Notice</Label>
-                <Select defaultValue="2">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 hour</SelectItem>
-                    <SelectItem value="2">2 hours</SelectItem>
-                    <SelectItem value="4">4 hours</SelectItem>
-                    <SelectItem value="24">24 hours</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Average Table Duration</Label>
-                <Select defaultValue="90">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="60">60 minutes</SelectItem>
-                    <SelectItem value="75">75 minutes</SelectItem>
-                    <SelectItem value="90">90 minutes</SelectItem>
-                    <SelectItem value="120">120 minutes</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
+      <Setting />
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Calendar */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Select Date</CardTitle>
-            <CardDescription>View schedule for specific date</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              className="rounded-md border"
-            />
-            <div className="mt-4 space-y-2">
-              <Button variant="outline" className="w-full gap-2">
-                <Plus className="w-4 h-4" />
-                Block Time Slot
-              </Button>
-              <Button variant="outline" className="w-full gap-2">
-                <Clock className="w-4 h-4" />
-                Set Special Hours
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <CalendarSetting />
 
         {/* Daily Schedule */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Daily Schedule</CardTitle>
-                <CardDescription>
-                  {selectedDate?.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </CardDescription>
-              </div>
-              <div className="flex gap-2">
-                <Badge variant="outline" className="gap-1">
-                  <Users className="w-3 h-3" />
-                  45 Total Bookings
-                </Badge>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {/* Legend */}
-            <div className="flex gap-4 mb-4 p-3 bg-slate-50 rounded-lg">
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="text-slate-600">Available</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                <span className="text-slate-600">Filling Up</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <span className="text-slate-600">Fully Booked</span>
-              </div>
-            </div>
-
-            {/* Schedule Grid */}
-            <div className="space-y-2 max-h-[500px] overflow-y-auto">
-              {mockSchedule.map((slot, idx) => (
-                <div
-                  key={idx}
-                  className={`flex items-center justify-between p-3 rounded-lg border ${getStatusColor(
-                    slot.status
-                  )}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-20">
-                      <p className="text-sm">{slot.time}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      <span className="text-sm">
-                        {slot.booked}/{slot.capacity} tables
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {slot.status === "full" && waitlistEnabled && (
-                      <Badge variant="outline" className="text-xs">
-                        Waitlist: 3
-                      </Badge>
-                    )}
-                    <Badge
-                      variant={
-                        slot.status === "available"
-                          ? "default"
-                          : slot.status === "filling"
-                          ? "secondary"
-                          : "destructive"
-                      }
-                    >
-                      {slot.status}
-                    </Badge>
-                    <Button variant="ghost" size="sm">
-                      Edit
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <DailySchedule />
       </div>
 
       {/* Quick Stats */}

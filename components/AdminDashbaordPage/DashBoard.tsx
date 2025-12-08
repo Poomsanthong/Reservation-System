@@ -32,7 +32,7 @@ import { BookingsTable } from "@/components/AdminDashbaordPage/BookingTab/bookin
 import { ScheduleManager } from "@/components/AdminDashbaordPage/ScheduleTab/scheduleManager";
 import StatsCard from "@/components/AdminDashbaordPage/OverViewTab/StatsCard";
 import BookTrendChart from "./OverViewTab/BookTrendChart";
-import RevenueChart from "./OverViewTab/RevenueChart";
+// import RevenueChart from "./OverViewTab/RevenueChart";
 import TimeConstribution from "./OverViewTab/TimeConstribution";
 import RecentActivity from "./OverViewTab/RecentActivity";
 import Comunication from "./CommunicationTab/Comunication";
