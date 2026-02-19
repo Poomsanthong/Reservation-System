@@ -23,7 +23,7 @@ function Header() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) =>
-      setSession(newSession)
+      setSession(newSession),
     );
     console.log("Current session:", sessionData);
 
@@ -31,18 +31,19 @@ function Header() {
   }, []);
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-slate-100 shadow-sm">
+    <div className="bg-background text-foreground shadow-sm">
+      {" "}
       {/* navigation content goes here */}
       <nav className="border-b shadow-sm ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 px-2 sm:px-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
                 <CalendarClock className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-slate-900">Booking System</h1>
-                <p className="hidden text-sm text-slate-500 sm:inline">
+                <h1 className="text-primary">Booking System</h1>
+                <p className="hidden text-sm text-primary-500 sm:inline">
                   Manage your bookings efficiently
                 </p>
               </div>
@@ -56,7 +57,7 @@ function Header() {
                   setMobileOpen(false);
                   router.push("/");
                 }}
-                className="gap-2"
+                className="bg-primary text-primary-foreground"
               >
                 <CalendarClock className="w-4 h-4" />
                 Book Now

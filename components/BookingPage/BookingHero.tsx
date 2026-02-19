@@ -10,7 +10,7 @@ const BookingHero = () => {
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-full mb-4">
           <Sparkles className="w-4 h-4 text-blue-600" />
           <span className="text-sm text-blue-700">
-            AI-Powered Smart Booking
+            AI-Powered Smart Bookings
           </span>
         </div>
         <h2 className="text-slate-900 mb-2">Reserve Your Table</h2>
