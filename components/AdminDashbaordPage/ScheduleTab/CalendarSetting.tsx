@@ -44,8 +44,12 @@ const CalendarSetting = () => {
   // Load blackout dates
   // -----------------------------------------
   const loadBlackouts = async () => {
-    const data = await getBlackoutDates();
-    setBlackouts(data);
+    try {
+      const data = await getBlackoutDates();
+      setBlackouts(data);
+    } catch (error) {
+      console.error("Failed to load blackout dates:", error);
+    }
   };
 
   useEffect(() => {
@@ -89,6 +93,10 @@ const CalendarSetting = () => {
     loadBlackouts();
   };
 
+  const [showAll, setShowAll] = useState(false);
+
+  const displayedBlackouts = showAll ? blackouts : blackouts.slice(0, 5);
+
   return (
     <>
       <Card>
@@ -97,9 +105,10 @@ const CalendarSetting = () => {
           <CardDescription>Manage blocked days</CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="space-y-2 flex flex-col items-center">
           <Calendar
             mode="single"
+            fixedWeeks
             selected={selectedDate}
             onSelect={handleDateClick}
             modifiers={{
@@ -113,7 +122,34 @@ const CalendarSetting = () => {
             }}
           />
 
-          <div className="mt-4">
+          {/* List of blocked dates */}
+          <div className="space-y-2 max-h-[500px] overflow-y-auto mt-4 w-full">
+            {displayedBlackouts.map((b, i) => (
+              <div
+                key={b.date}
+                className="flex flex-col sm:flex-row justify-between p-3 border rounded-lg  border-gray-200 "
+              >
+                <span className="font-medium">{b.date}</span>
+                <span className="text-primary-600 text-sm">
+                  {b.reason || "No reason provided"}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* // Show "See All" if there are more than 5 blackouts */}
+          {blackouts.length > 5 && (
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                {showAll ? "See Less" : `See All (${blackouts.length})`}
+              </button>
+            </div>
+          )}
+
+          <div className="w-full">
             <Button
               variant="outline"
               className="w-full gap-2"
