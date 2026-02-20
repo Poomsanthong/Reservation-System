@@ -69,7 +69,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
       // Sort by created_at desc
       const sorted = (res.data || []).sort(
         (a: any, b: any) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
 
       setBookingsData(sorted);
@@ -89,7 +89,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   // -----------------------
   function handleAction(
     type: "view" | "edit" | "cancel" | "send_reminder",
-    booking: Reservation
+    booking: Reservation,
   ) {
     if (type === "send_reminder") {
       alert(`Reminder sent to ${booking.email}`);
@@ -162,7 +162,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
         {/* Search */}
         <div className="flex gap-3 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400" />
             <Input
               placeholder="Search by name, ID, or email…"
               value={searchTerm}

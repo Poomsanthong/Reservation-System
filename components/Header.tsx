@@ -42,7 +42,7 @@ function Header() {
                 <CalendarClock className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-primary">Booking System</h1>
+                <h1 className="text-primary-900">Booking System</h1>
                 <p className="hidden text-sm text-primary-500 sm:inline">
                   Manage your bookings efficiently
                 </p>
@@ -57,7 +57,7 @@ function Header() {
                   setMobileOpen(false);
                   router.push("/");
                 }}
-                className="bg-primary text-primary-foreground"
+                className="gap-2"
               >
                 <CalendarClock className="w-4 h-4" />
                 Book Now

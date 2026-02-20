@@ -24,8 +24,8 @@ const Comunication = () => {
               <Mail className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-slate-600">Confirmations Sent</p>
-              <p className="text-xl text-slate-900">1,847</p>
+              <p className="text-sm text-primary-600">Confirmations Sent</p>
+              <p className="text-xl text-primary-900">1,847</p>
             </div>
           </div>
           <Badge className="bg-green-100 text-green-700">98.5% delivered</Badge>
@@ -36,8 +36,8 @@ const Comunication = () => {
               <MessageSquare className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm text-slate-600">Reminders Sent</p>
-              <p className="text-xl text-slate-900">2,143</p>
+              <p className="text-sm text-primary-600">Reminders Sent</p>
+              <p className="text-xl text-primary-900">2,143</p>
             </div>
           </div>
           <Badge className="bg-green-100 text-green-700">97.2% opened</Badge>
@@ -48,8 +48,8 @@ const Comunication = () => {
               <TrendingUp className="w-5 h-5 text-orange-600" />
             </div>
             <div>
-              <p className="text-sm text-slate-600">Recommendations</p>
-              <p className="text-xl text-slate-900">892</p>
+              <p className="text-sm text-primary-600">Recommendations</p>
+              <p className="text-xl text-primary-900">892</p>
             </div>
           </div>
           <Badge className="bg-green-100 text-green-700">42% conversion</Badge>

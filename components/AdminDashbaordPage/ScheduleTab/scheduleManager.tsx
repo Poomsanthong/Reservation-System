@@ -69,7 +69,7 @@ const mockSchedule = [
 
 export function ScheduleManager() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    new Date()
+    new Date(),
   );
   const [waitlistEnabled, setWaitlistEnabled] = useState(true);
 
@@ -82,7 +82,7 @@ export function ScheduleManager() {
       case "full":
         return "bg-red-100 text-red-700 border-red-200";
       default:
-        return "bg-slate-100 text-slate-700 border-slate-200";
+        return "bg-primary-100 text-primary-700 border-primary-200";
     }
   };
 
@@ -107,8 +107,8 @@ export function ScheduleManager() {
                 <Users className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-slate-600">Total Capacity</p>
-                <p className="text-xl text-slate-900">112 guests</p>
+                <p className="text-sm text-primary-600">Total Capacity</p>
+                <p className="text-xl text-primary-900">112 guests</p>
               </div>
             </div>
           </CardContent>
@@ -120,8 +120,8 @@ export function ScheduleManager() {
                 <Clock className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-slate-600">Avg Table Turn</p>
-                <p className="text-xl text-slate-900">85 min</p>
+                <p className="text-sm text-primary-600">Avg Table Turn</p>
+                <p className="text-xl text-primary-900">85 min</p>
               </div>
             </div>
           </CardContent>
@@ -133,8 +133,8 @@ export function ScheduleManager() {
                 <AlertCircle className="w-5 h-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm text-slate-600">Peak Hours</p>
-                <p className="text-xl text-slate-900">6-8 PM</p>
+                <p className="text-sm text-primary-600">Peak Hours</p>
+                <p className="text-xl text-primary-900">6-8 PM</p>
               </div>
             </div>
           </CardContent>

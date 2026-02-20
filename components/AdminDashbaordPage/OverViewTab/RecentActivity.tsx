@@ -19,7 +19,7 @@ type Activity = {
 };
 
 const statusBadge = (
-  status: string
+  status: string,
 ): {
   variant: "default" | "destructive" | "secondary";
   icon: React.ReactNode;
@@ -79,15 +79,17 @@ const RecentActivity = ({ recentActivity }: { recentActivity: Activity[] }) => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm text-slate-900">{activity.guest}</p>
-                    <p className="text-sm text-slate-600">{activity.action}</p>
+                    <p className="text-sm text-primary-900">{activity.guest}</p>
+                    <p className="text-sm text-primary-600">
+                      {activity.action}
+                    </p>
                   </div>
                   <Badge variant={variant}>
                     {icon}
                     {activity.status}
                   </Badge>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">{activity.time}</p>
+                <p className="text-xs text-primary-500 mt-1">{activity.time}</p>
               </div>
             </div>
           );

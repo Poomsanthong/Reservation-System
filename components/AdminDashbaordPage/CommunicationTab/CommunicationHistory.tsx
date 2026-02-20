@@ -54,17 +54,17 @@ const CommunicationHistory = () => {
           ].map((comm, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+              className="flex items-center justify-between p-3 bg-primary-50 rounded-lg"
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                   <Mail className="w-4 h-4 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-slate-900">
+                  <p className="text-sm text-primary-900">
                     {comm.type} → {comm.recipient}
                   </p>
-                  <p className="text-xs text-slate-500">{comm.time}</p>
+                  <p className="text-xs text-primary-500">{comm.time}</p>
                 </div>
               </div>
               <Badge

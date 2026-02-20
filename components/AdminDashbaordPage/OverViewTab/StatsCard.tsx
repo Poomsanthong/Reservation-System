@@ -14,12 +14,12 @@ const StatsCard = ({
 
   const { change: bookingsChange, trend: bookingsTrend } = calculateChange(
     totalBookings,
-    previousTotalBookings
+    previousTotalBookings,
   );
 
   const { change: guestsChange, trend: guestsTrend } = calculateChange(
     totalGuests,
-    previousTotalGuests
+    previousTotalGuests,
   );
 
   const statsData: statsDataType[] = [
@@ -45,7 +45,7 @@ const StatsCard = ({
         <Card key={idx}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
-              <stat.icon className="w-5 h-5 text-slate-600" />
+              <stat.icon className="w-5 h-5 text-primary-600" />
               <Badge
                 variant="secondary"
                 className={
@@ -62,8 +62,8 @@ const StatsCard = ({
                 {stat.change}
               </Badge>
             </div>
-            <div className="text-2xl text-slate-900 mb-1">{stat.value}</div>
-            <p className="text-sm text-slate-600">{stat.label}</p>
+            <div className="text-2xl text-primary-900 mb-1">{stat.value}</div>
+            <p className="text-sm text-primary-600">{stat.label}</p>
           </CardContent>
         </Card>
       ))}

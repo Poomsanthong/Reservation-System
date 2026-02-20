@@ -19,32 +19,32 @@ const MessageTemplate = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="p-3 bg-slate-50 rounded-lg border">
+        <div className="p-3 bg-primary-50 rounded-lg border">
           <div className="flex items-center justify-between mb-2">
             <Badge variant="secondary">Confirmation</Badge>
-            <span className="text-xs text-slate-500">Active</span>
+            <span className="text-xs text-primary-500">Active</span>
           </div>
-          <p className="text-sm text-slate-700">
+          <p className="text-sm text-primary-700">
             "Hi [Name]! Your table for [Party Size] at [Restaurant] is confirmed
             for [Date] at [Time]. See you soon! 🎉"
           </p>
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border">
+        <div className="p-3 bg-primary-50 rounded-lg border">
           <div className="flex items-center justify-between mb-2">
             <Badge variant="secondary">Reminder</Badge>
-            <span className="text-xs text-slate-500">Active</span>
+            <span className="text-xs text-primary-500">Active</span>
           </div>
-          <p className="text-sm text-slate-700">
+          <p className="text-sm text-primary-700">
             "Reminder: Your reservation at [Restaurant] is tomorrow at [Time].
             We can't wait to see you! ✨"
           </p>
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border">
+        <div className="p-3 bg-primary-50 rounded-lg border">
           <div className="flex items-center justify-between mb-2">
             <Badge variant="secondary">Waitlist Update</Badge>
-            <span className="text-xs text-slate-500">Active</span>
+            <span className="text-xs text-primary-500">Active</span>
           </div>
-          <p className="text-sm text-slate-700">
+          <p className="text-sm text-primary-700">
             "Great news [Name]! A table just opened up for [Date] at [Time].
             Reply YES to claim it! ⏰"
           </p>

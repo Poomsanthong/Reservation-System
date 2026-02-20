@@ -12,8 +12,8 @@ const BookingSummary = ({ form }: { form: any }) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-600">Date</span>
-            <span className="text-slate-900">
+            <span className="text-primary-600">Date</span>
+            <span className="text-primary-900">
               {form.fields.date
                 ? form.fields.date.toLocaleDateString()
                 : "Not selected"}
@@ -21,15 +21,15 @@ const BookingSummary = ({ form }: { form: any }) => {
           </div>
 
           <div className="flex justify-between text-sm">
-            <span className="text-slate-600">Time</span>
-            <span className="text-slate-900">
+            <span className="text-primary-600">Time</span>
+            <span className="text-primary-900">
               {form.fields.selectedTime || "Not selected"}
             </span>
           </div>
 
           <div className="flex justify-between text-sm">
-            <span className="text-slate-600">Guests</span>
-            <span className="text-slate-900">{form.fields.partySize}</span>
+            <span className="text-primary-600">Guests</span>
+            <span className="text-primary-900">{form.fields.partySize}</span>
           </div>
         </CardContent>
       </Card>

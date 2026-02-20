@@ -50,9 +50,9 @@ const TimeConstribution = ({
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="text-slate-600">{item.time}</span>
+                <span className="text-primary-600">{item.time}</span>
               </div>
-              <span className="text-slate-900">{item.value}%</span>
+              <span className="text-primary-900">{item.value}%</span>
             </div>
           ))}
         </div>

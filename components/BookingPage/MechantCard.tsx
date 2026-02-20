@@ -12,8 +12,8 @@ const MerchantCard = () => {
           <div className="flex-1">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <h3 className="text-slate-900 mb-1">The Gourmet Kitchen</h3>
-                <div className="flex items-center gap-2 text-sm text-slate-600">
+                <h3 className="text-primary-900 mb-1">The Gourmet Kitchen</h3>
+                <div className="flex items-center gap-2 text-sm text-primary-600">
                   <MapPin className="w-4 h-4" />
                   Downtown Manhattan, NY
                 </div>
@@ -21,11 +21,11 @@ const MerchantCard = () => {
 
               <div className="flex items-center gap-1">
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-slate-900">4.8</span>
+                <span className="text-primary-900">4.8</span>
               </div>
             </div>
 
-            <p className="text-sm text-slate-600 mb-3">
+            <p className="text-sm text-primary-600 mb-3">
               Contemporary cuisine with seasonal ingredients.
             </p>
 

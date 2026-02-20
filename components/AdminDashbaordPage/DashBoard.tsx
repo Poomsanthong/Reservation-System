@@ -82,10 +82,10 @@ export default function AdminDashboard({
     <div className="w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0">
         <div className="mb-8 min-w-0">
-          <h2 className="text-slate-900 mb-2">
+          <h2 className="text-primary-900 mb-2">
             Welcome, <span className="text-3xl break-words">{userEmail}</span>
           </h2>
-          <p className="text-slate-600">
+          <p className="text-primary-600">
             Manage reservations and track performance
           </p>
         </div>

@@ -13,8 +13,8 @@ const BookingHero = () => {
             AI-Powered Smart Bookings
           </span>
         </div>
-        <h2 className="text-slate-900 mb-2">Reserve Your Table</h2>
-        <p className="text-slate-600">
+        <h2 className="text-primary-900 mb-2">Reserve Your Table</h2>
+        <p className="text-primary-600">
           Find the perfect time with AI recommendations
         </p>
       </div>
