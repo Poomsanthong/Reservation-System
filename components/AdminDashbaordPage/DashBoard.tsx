@@ -83,7 +83,8 @@ export default function AdminDashboard({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0">
         <div className="mb-8 min-w-0">
           <h2 className="text-primary-900 mb-2">
-            Welcome, <span className="text-3xl break-words">{userEmail}</span>
+            Welcome,{" "}
+            <span className="text-3xl wrap-break-words">{userEmail}</span>
           </h2>
           <p className="text-primary-600">
             Manage reservations and track performance
@@ -109,12 +110,13 @@ export default function AdminDashboard({
               <Clock className="w-4 h-4 mr-2" />
               Schedule
             </TabsTrigger>
-            <TabsTrigger value="communications">
+
+            {/* //todo: implement communication and message template */}
+            {/* <TabsTrigger value="communications">
               <MessageSquare className="w-4 h-4 mr-2" />
               Communications
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
-
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6 min-w-0">
             <StatsCard
@@ -130,10 +132,6 @@ export default function AdminDashboard({
               <div className="min-w-0 overflow-x-auto">
                 <BookTrendChart bookingTrends={bookingTrends} />
               </div>
-
-              {/* <div className="min-w-0 overflow-x-auto">
-                <RevenueChart bookingTrends={bookingTrends} />
-              </div> */}
             </div>
 
             <div className="grid lg:grid-cols-3 gap-6 min-w-0">
@@ -155,14 +153,15 @@ export default function AdminDashboard({
           </TabsContent>
 
           {/* Communications Tab */}
-          <TabsContent value="communications" className="space-y-6 min-w-0">
+          {/* todo: impleament communication and message template */}
+          {/* <TabsContent value="communications" className="space-y-6 min-w-0">
             <div className="grid lg:grid-cols-2 gap-6 min-w-0">
               <Comunication />
               <MessageTemplate />
             </div>
 
             <CommunicationHistory />
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </div>
     </div>

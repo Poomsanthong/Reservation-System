@@ -89,7 +89,7 @@ export function ScheduleManager() {
   return (
     <div className="space-y-6">
       {/* Settings Card */}
-      <Setting />
+      {/* <Setting /> */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Calendar */}
         <CalendarSetting />
