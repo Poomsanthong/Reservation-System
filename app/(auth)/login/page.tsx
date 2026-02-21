@@ -2,21 +2,17 @@
 
 import { useState } from "react";
 import { createClientInstance } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const searchParams = useSearchParams();
 
   async function login(e?: React.FormEvent) {
     e?.preventDefault();
@@ -50,7 +46,7 @@ export default function AdminLoginPage() {
       email,
       {
         redirectTo: `${location.origin}/admin/reset`,
-      }
+      },
     );
     setLoading(false);
     if (error) {

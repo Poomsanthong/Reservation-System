@@ -1,3 +1,4 @@
+import { ScheduleSlot } from "@/lib/types";
 export function groupBookingsByTime(bookings: any[]): ScheduleSlot[] {
   // group bookings by time slot
   const map = new Map<string, ScheduleSlot>();

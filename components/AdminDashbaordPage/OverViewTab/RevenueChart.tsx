@@ -15,7 +15,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-
 const RevenueChart = ({
   bookingTrends,
 }: {

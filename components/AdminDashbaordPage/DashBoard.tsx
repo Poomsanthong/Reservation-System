@@ -27,6 +27,7 @@ import {
   ArrowDownRight,
   Book,
 } from "lucide-react";
+import { Reservation } from "@/lib/types";
 
 import { BookingsTable } from "@/components/AdminDashbaordPage/BookingTab/bookingTable";
 import { ScheduleManager } from "@/components/AdminDashbaordPage/ScheduleTab/scheduleManager";
@@ -35,19 +36,10 @@ import BookTrendChart from "./OverViewTab/BookTrendChart";
 // import RevenueChart from "./OverViewTab/RevenueChart";
 import TimeConstribution from "./OverViewTab/TimeConstribution";
 import RecentActivity from "./OverViewTab/RecentActivity";
+
 import Comunication from "./CommunicationTab/Comunication";
 import MessageTemplate from "./CommunicationTab/MessageTemplate";
 import CommunicationHistory from "./CommunicationTab/CommunicationHistory";
-
-// const recentActivity = [
-//   {
-//     type: "booking",
-//     guest: "Emily Chen",
-//     action: "New booking for 4 guests",
-//     time: "2 min ago",
-//     status: "confirmed",
-//   },
-// ];
 
 export default function AdminDashboard({
   userEmail,

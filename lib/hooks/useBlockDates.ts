@@ -5,6 +5,7 @@ import {
   unblockDate,
 } from "@/lib/server/calendar";
 import { toSqlDate } from "@/lib/dateHelper";
+import { BlackoutDate } from "@/lib/types";
 
 export function useBlockoutDates() {
   const [blackouts, setBlackouts] = useState<BlackoutDate[]>([]);
