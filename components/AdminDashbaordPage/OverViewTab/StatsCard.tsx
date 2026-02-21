@@ -3,7 +3,8 @@ import { Card, CardContent } from "../../ui/card";
 import { Badge } from "../../ui/badge";
 import { ArrowDownRight, ArrowUpRight, Calendar, Users } from "lucide-react";
 import { calculateChange } from "@/lib/hooks/useDashboard";
-
+import { statsDataType } from "@/lib/types";
+import { StatsCardPropsType } from "@/lib/types";
 const StatsCard = ({
   totalBookings,
   totalGuests,

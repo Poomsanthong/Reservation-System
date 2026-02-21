@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useToastStore } from "@/store/useToastStore";
 import { checkDuplicate, create, get } from "@/lib/api/funtions";
-
+import { Reservation } from "@/lib/types";
 export function useBookingForm() {
   const toastStore = useToastStore();
 
@@ -74,13 +74,13 @@ export function useBookingForm() {
     const duplicateCheck = await checkDuplicate(
       fields.date.toISOString().split("T")[0],
       fields.selectedTime,
-      fields.name
+      fields.name,
     );
 
     // handle API load failure
     if (duplicateCheck.error) {
       toastStore.error(
-        duplicateCheck.error || "Failed to check duplicate bookings."
+        duplicateCheck.error || "Failed to check duplicate bookings.",
       );
       return;
     }
@@ -88,7 +88,7 @@ export function useBookingForm() {
     // is duplicate?
     if (duplicateCheck.exists) {
       toastStore.error(
-        "Duplicate booking detected for this date, time, and name."
+        "Duplicate booking detected for this date, time, and name.",
       );
       return;
     } // 3.BUILD PAYLOAD & SUBMIT
