@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -21,72 +21,54 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import {
-  addBlackoutDate,
-  getBlackoutDates,
-  unblockDate,
-} from "@/lib/server/calendar";
-
-import { toLocalDate, toSqlDate } from "@/lib/dateHelper";
+import { toLocalDate } from "@/lib/dateHelper";
+import { useBlockoutDates } from "@/lib/hooks/useBlockDates";
 
 const CalendarSetting = () => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [blackouts, setBlackouts] = useState<BlackoutDate[]>([]);
-
-  const [blockReason, setBlockReason] = useState("");
+  const {
+    blackouts,
+    selectedDate,
+    setSelectedDate,
+    blockReason,
+    setBlockReason,
+    blockDate,
+    unblockSelectedDate,
+    getBlackoutByDate,
+  } = useBlockoutDates();
 
   const [openBlock, setOpenBlock] = useState(false);
   const [openUnblock, setOpenUnblock] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
-  const sqlDate = toSqlDate(selectedDate);
+  const displayedBlackouts = showAll ? blackouts : blackouts.slice(0, 5);
 
-  // -----------------------------------------
-  // Load blackout dates
-  // -----------------------------------------
-  const loadBlackouts = async () => {
-    const data = await getBlackoutDates();
-    setBlackouts(data);
-  };
+  // UI-only logic
 
-  useEffect(() => {
-    loadBlackouts();
-  }, []);
-
-  // -----------------------------------------
-  // Date click handler
-  // -----------------------------------------
+  // When a date is clicked on the calendar
   const handleDateClick = (date?: Date) => {
     if (!date) return;
 
     setSelectedDate(date);
 
-    const sql = toSqlDate(date);
-    const exists = blackouts.find((b) => b.date === sql);
+    const existing = getBlackoutByDate(date);
 
-    if (exists) {
-      setBlockReason(exists.reason || "");
+    if (existing) {
+      setBlockReason(existing.reason || "");
       setOpenUnblock(true);
+    } else {
+      setOpenBlock(true);
     }
   };
 
-  // -----------------------------------------
-  // Block a date
-  // -----------------------------------------
+  // When "Block Date" is confirmed in the modal
   const handleBlock = async () => {
-    await addBlackoutDate(sqlDate, blockReason);
-    setBlockReason("");
+    await blockDate();
     setOpenBlock(false);
-    loadBlackouts();
   };
-
-  // -----------------------------------------
-  // Unblock a date
-  // -----------------------------------------
+  // When "Unblock" is confirmed in the modal
   const handleUnblock = async () => {
-    await unblockDate(sqlDate);
-    setBlackouts((prev) => prev.filter((b) => b.date !== sqlDate));
+    await unblockSelectedDate();
     setOpenUnblock(false);
-    loadBlackouts();
   };
 
   return (
@@ -97,9 +79,10 @@ const CalendarSetting = () => {
           <CardDescription>Manage blocked days</CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="space-y-4 flex flex-col items-center">
           <Calendar
             mode="single"
+            fixedWeeks
             selected={selectedDate}
             onSelect={handleDateClick}
             modifiers={{
@@ -113,7 +96,33 @@ const CalendarSetting = () => {
             }}
           />
 
-          <div className="mt-4">
+          {/* Blocked list */}
+          <div className="space-y-2 max-h-[500px] overflow-y-auto w-full">
+            {displayedBlackouts.map((b) => (
+              <div
+                key={b.date}
+                className="flex flex-col sm:flex-row justify-between p-3 border rounded-lg border-gray-200"
+              >
+                <span className="font-medium">{b.date}</span>
+                <span className="text-primary-600 text-sm">
+                  {b.reason || "No reason provided"}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {blackouts.length > 5 && (
+            <div className="text-center">
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                {showAll ? "See Less" : `See All (${blackouts.length})`}
+              </button>
+            </div>
+          )}
+
+          <div className="w-full">
             <Button
               variant="outline"
               className="w-full gap-2"
@@ -135,7 +144,7 @@ const CalendarSetting = () => {
 
           <Label>Reason (optional)</Label>
           <Input
-            placeholder="Holiday, maintenance, etc."
+            placeholder="Holiday, maintenance..."
             value={blockReason}
             onChange={(e) => setBlockReason(e.target.value)}
           />
