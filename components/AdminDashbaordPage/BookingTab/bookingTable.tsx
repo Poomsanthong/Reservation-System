@@ -141,9 +141,6 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
     return "secondary";
   };
 
-  // -----------------------
-  // RENDER
-  // -----------------------
   return (
     <Card>
       <CardHeader>

@@ -14,7 +14,7 @@ import { ViewDetailsModalProps } from "@/lib/types";
 
 const labelCls =
   "text-xs font-medium uppercase tracking-wide text-muted-foreground";
-const valueCls = "text-sm font-medium text-slate-900";
+const valueCls = "text-sm font-medium text-primary-900";
 
 const Field: React.FC<{ label: string; children: React.ReactNode }> = ({
   label,
