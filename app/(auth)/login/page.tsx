@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 
 export default function AdminLoginPage() {
   const router = useRouter();
