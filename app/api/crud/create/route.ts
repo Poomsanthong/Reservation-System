@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/server/supabaseServer";
+import { inngest } from "@/lib/inngest/inngest"; // 👈 add this
 
 import { success, fail, validateTable, requireFields } from "@/lib/utils";
 
@@ -15,9 +16,22 @@ export async function POST(req: Request) {
     const { data: created, error } = await supabase
       .from(table)
       .insert(data)
-      .select();
+      .select()
+      .single(); //  add .single() to get the created record directly
 
     if (error) throw new Error(error.message);
+
+    // Trigger an Inngest event after successful creation
+    if (table === "reservations") {
+      inngest.send({
+        name: "reservation.created",
+        data: created,
+      });
+      console.log(
+        "Inngest event 'reservation.created' sent with data:",
+        created,
+      );
+    }
 
     return success(created);
   } catch (error: any) {
