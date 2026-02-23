@@ -74,9 +74,8 @@ export default function AdminDashboard({
     <div className="w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0">
         <div className="mb-8 min-w-0">
-          <h2 className="text-primary-900 mb-2">
-            Welcome,{" "}
-            <span className="text-3xl wrap-break-words">{userEmail}</span>
+          <h2 className="text-primary-900 mb-2 text-lg sm:text-xl md:text-2xl lg:text-3xl break-words">
+            Welcome, <span className="font-semibold ">{userEmail}</span>
           </h2>
           <p className="text-primary-600">
             Manage reservations and track performance
@@ -89,17 +88,26 @@ export default function AdminDashboard({
           onValueChange={setActiveTab}
           className="min-w-0"
         >
-          <TabsList className="mb-6 flex flex-wrap min-w-0">
-            <TabsTrigger value="overview">
-              <BarChart3 className="w-4 h-4 mr-2" />
+          <TabsList className="mb-4 flex flex-wrap gap-2 justify-start">
+            <TabsTrigger
+              className="flex-1 min-w-0 text-sm sm:text-base"
+              value="overview"
+            >
+              <BarChart3 className="w-4 h-4 mr-1" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="bookings">
-              <Calendar className="w-4 h-4 mr-2" />
+            <TabsTrigger
+              className="flex-1 min-w-0 text-sm sm:text-base"
+              value="bookings"
+            >
+              <Calendar className="w-4 h-4 mr-1" />
               Bookings
             </TabsTrigger>
-            <TabsTrigger value="schedule">
-              <Clock className="w-4 h-4 mr-2" />
+            <TabsTrigger
+              className="flex-1 min-w-0 text-sm sm:text-base"
+              value="schedule"
+            >
+              <Clock className="w-4 h-4 mr-1" />
               Schedule
             </TabsTrigger>
 
