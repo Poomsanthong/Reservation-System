@@ -16,7 +16,6 @@ export default function AdminLoginPage() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const searchParams = useSearchParams();
 
   async function login(e?: React.FormEvent) {
     e?.preventDefault();
