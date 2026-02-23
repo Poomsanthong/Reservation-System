@@ -51,6 +51,7 @@ export default function BookingForm({ form }: { form: any }) {
           <div className="border rounded-lg p-4 flex justify-center">
             <Calendar
               mode="single"
+              fixedWeeks
               selected={form.fields.date}
               onSelect={(d) => form.updateField("date", d)}
               disabled={(d) => d < new Date()}
