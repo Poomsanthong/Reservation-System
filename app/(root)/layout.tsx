@@ -4,9 +4,10 @@ import Footer from "@/components/Footer";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="min-h-screen text-gray-400flex flex-col">
+    <div className="min-h-screen text-gray-400 flex flex-col">
       {" "}
-      <div className="container mx-auto flex flex-col items-center justify-center">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center">
+        {" "}
         {children}
       </div>{" "}
     </div>

@@ -25,7 +25,7 @@ export default function TimeSlotGrid({ form }: { form: any }) {
       {/* Time Slots */}
       <div className="space-y-2">
         <Label>Available Times</Label>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
           {timeSlots.map((slot) => (
             <Button
               key={slot.time}
@@ -34,7 +34,7 @@ export default function TimeSlotGrid({ form }: { form: any }) {
               }
               disabled={!slot.available}
               onClick={() => form.updateField("selectedTime", slot.time)}
-              className="text-xs"
+              className="text-xs sm:text-sm flex items-center justify-center w-full"
             >
               <Clock className="w-4 h-4 mr-1" />
               {slot.time}

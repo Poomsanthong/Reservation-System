@@ -19,6 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Reservation System",
   description: "A simple reservation system built with Next.js and Supabase.",
+  viewport: "width=device-width, initial-scale=1.0",
 };
 
 export default function RootLayout({

@@ -41,10 +41,9 @@ export default function BookingForm({ form }: { form: any }) {
     }
   }
   return (
-    <Card>
+    <Card className="w-full max-w-md mx-auto">
       <PartSizeTab form={form} />
-
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 sm:space-y-6">
         {/* Calendar */}
         <div className="space-y-2">
           <Label>Date</Label>
