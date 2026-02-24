@@ -8,51 +8,36 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { getDailyBookings } from "@/lib/server/getBooking";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const DailyBooking: React.FC = () => {
-  const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [schedule, setSchedule] = useState<any[]>([]);
 
   const selectedDate = new Date();
   const sqlDate = selectedDate.toISOString().split("T")[0]; // YYYY-MM-DD
 
   useEffect(() => {
-    async function fetchBookings() {
+    async function fetchSchedule() {
       try {
-        const data = await getDailyBookings(sqlDate);
-        setBookings(data);
+        const res = await fetch(`/api/reservations/schedule?date=${sqlDate}`);
+        if (!res.ok) throw new Error("Failed to fetch schedule");
+        const data = await res.json();
+        setSchedule(data);
       } catch (err) {
-        console.error("Failed to load daily bookings:", err);
+        console.error("Failed to load schedule:", err);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchBookings();
+    fetchSchedule();
   }, [sqlDate]);
 
+  console.log(sqlDate);
   if (loading) return <p>Loading...</p>;
 
-  // Mock schedule data for demonstration purposes only - will be replaced with dynamic data later
-  const mockSchedule = [
-    { time: "11:00 AM", booked: 0, capacity: 8, status: "available" },
-    { time: "11:30 AM", booked: 2, capacity: 8, status: "available" },
-    { time: "12:00 PM", booked: 5, capacity: 8, status: "filling" },
-    { time: "12:30 PM", booked: 7, capacity: 8, status: "filling" },
-    { time: "1:00 PM", booked: 8, capacity: 8, status: "full" },
-    { time: "1:30 PM", booked: 6, capacity: 8, status: "filling" },
-    { time: "2:00 PM", booked: 3, capacity: 8, status: "available" },
-    { time: "2:30 PM", booked: 1, capacity: 8, status: "available" },
-    { time: "6:00 PM", booked: 7, capacity: 8, status: "filling" },
-    { time: "6:30 PM", booked: 8, capacity: 8, status: "full" },
-    { time: "7:00 PM", booked: 8, capacity: 8, status: "full" },
-    { time: "7:30 PM", booked: 8, capacity: 8, status: "full" },
-    { time: "8:00 PM", booked: 6, capacity: 8, status: "filling" },
-    { time: "8:30 PM", booked: 4, capacity: 8, status: "available" },
-  ];
   return (
     <Card className="lg:col-span-2 ">
       <CardHeader className="flex justify-between items-center">
@@ -83,12 +68,12 @@ const DailyBooking: React.FC = () => {
           </div>
         </div>
         <div className="text-sm font-medium">
-          Total: {bookings.length} Reservations
+          Total: {schedule.length} Reservations
         </div>
       </CardHeader>
 
       <CardContent className="space-y-2 max-h-[500px] overflow-y-auto">
-        {mockSchedule.map((slot, i) => (
+        {schedule.map((slot, i) => (
           <div
             key={i}
             className="flex flex-col sm:flex-row justify-between p-3 border rounded-lg border-gray-200"

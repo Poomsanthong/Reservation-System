@@ -1,4 +1,3 @@
-// app/api/reservations/check-duplicate/route.ts
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/server/supabaseServer";
 
@@ -10,7 +9,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const supabase = await supabaseServer();
+    const supabase = await supabaseServer(); // Initialize Supabase  on the server
     const { data, error } = await supabase
       .from("reservations")
       .select("*")
@@ -28,7 +27,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message || "Server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
