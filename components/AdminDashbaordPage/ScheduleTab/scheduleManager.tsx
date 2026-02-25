@@ -25,9 +25,6 @@ import CalendarSetting from "./CalendarSetting";
 import DailySchedule from "./DailySchedule";
 
 export function ScheduleManager() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    new Date(),
-  );
   const [waitlistEnabled, setWaitlistEnabled] = useState(true);
 
   const getStatusColor = (status: string) => {

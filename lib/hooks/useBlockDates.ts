@@ -6,10 +6,11 @@ import {
 } from "@/lib/server/calendar";
 import { toSqlDate } from "@/lib/dateHelper";
 import { BlackoutDate } from "@/lib/types";
+import { useDateStore } from "@/store/useSelectedData";
 
 export function useBlockoutDates() {
   const [blackouts, setBlackouts] = useState<BlackoutDate[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const { selectedDate, setSelectedDate } = useDateStore();
   const [blockReason, setBlockReason] = useState("");
   const [loading, setLoading] = useState(false);
 

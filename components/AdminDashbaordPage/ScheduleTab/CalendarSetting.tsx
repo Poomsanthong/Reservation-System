@@ -56,7 +56,7 @@ const CalendarSetting = () => {
       setBlockReason(existing.reason || "");
       setOpenUnblock(true);
     } else {
-      setOpenBlock(true);
+      // setOpenBlock(true);
     }
   };
 

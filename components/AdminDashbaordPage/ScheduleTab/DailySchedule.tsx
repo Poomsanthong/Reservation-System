@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-const DailyBooking: React.FC = () => {
+import { useDateStore } from "@/store/useSelectedData";
+const DailyBooking = () => {
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState<any[]>([]);
-
-  const selectedDate = new Date();
-  const sqlDate = selectedDate.toISOString().split("T")[0]; // YYYY-MM-DD
+  const { selectedDate, setSelectedDate } = useDateStore();
+  const sqlDate = selectedDate.toISOString().split("T")[0];
+  if (!selectedDate) return null;
 
   useEffect(() => {
     async function fetchSchedule() {
@@ -33,9 +33,8 @@ const DailyBooking: React.FC = () => {
     }
 
     fetchSchedule();
-  }, [sqlDate]);
+  }, [selectedDate]);
 
-  console.log(sqlDate);
   if (loading) return <p>Loading...</p>;
 
   return (
