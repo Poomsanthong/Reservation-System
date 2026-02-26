@@ -10,8 +10,8 @@ import TimeSlotGrid from "@/components/BookingPage/TimeSlotGrid";
 import GuestDetails from "@/components/BookingPage/GuestDetails";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
-import PartSizeTab from "./PartSizeTab";
 import { useState } from "react";
+import PartySizeTab from "./PartySizeTab";
 
 export default function BookingForm({ form }: { form: any }) {
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -42,7 +42,7 @@ export default function BookingForm({ form }: { form: any }) {
   }
   return (
     <Card className="w-full max-w-md mx-auto">
-      <PartSizeTab form={form} />
+      <PartySizeTab form={form} />
       <CardContent className="space-y-4 sm:space-y-6">
         {/* Calendar */}
         <div className="space-y-2">

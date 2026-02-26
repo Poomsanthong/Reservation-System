@@ -15,7 +15,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Users } from "lucide-react";
-const PartSizeTab = ({ form }: { form: any }) => {
+const PartySizeTab = ({ form }: { form: any }) => {
   return (
     <div>
       <>
@@ -53,4 +53,4 @@ const PartSizeTab = ({ form }: { form: any }) => {
   );
 };
 
-export default PartSizeTab;
+export default PartySizeTab;

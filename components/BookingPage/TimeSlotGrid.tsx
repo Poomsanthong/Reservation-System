@@ -1,32 +1,37 @@
 import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
 import { Label } from "../ui/label";
-
-// Data for demo purposes - in a real app, this would come from the backend based on the selected date and restaurant
-// todo: integrate with backend to fetch real availability based on selected date and restaurant
-const timeSlots = [
-  { time: "11:00 AM", available: true },
-  { time: "11:30 AM", available: true },
-  { time: "12:00 PM", available: true },
-  { time: "12:30 PM", available: true },
-  { time: "1:00 PM", available: true },
-  { time: "1:30 PM", available: false },
-  { time: "2:00 PM", available: true },
-  { time: "2:30 PM", available: true },
-  { time: "6:00 PM", available: true },
-  { time: "6:30 PM", available: true },
-  { time: "7:00 PM", available: true },
-  { time: "7:30 PM", available: false },
-];
+import { useEffect, useState } from "react";
 
 export default function TimeSlotGrid({ form }: { form: any }) {
+  const [schedule, setSchedule] = useState<any[]>([]);
+  const sqlDate = form.fields.date?.toISOString().split("T")[0];
+  const [loading, setLoading] = useState(true);
+  if (!form.fields.date) return null;
+  useEffect(() => {
+    async function fetchSchedule() {
+      try {
+        const res = await fetch(`/api/reservations/schedule?date=${sqlDate}`);
+        if (!res.ok) throw new Error("Failed to fetch schedule");
+        const data = await res.json();
+
+        setSchedule(data);
+      } catch (err) {
+        console.error("Failed to load schedule:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSchedule();
+  }, [form.fields.date]);
   return (
     <div>
       {/* Time Slots */}
       <div className="space-y-2">
         <Label>Available Times</Label>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-          {timeSlots.map((slot) => (
+          {schedule.map((slot) => (
             <Button
               key={slot.time}
               variant={

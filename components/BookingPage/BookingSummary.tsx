@@ -10,7 +10,7 @@ const BookingSummary = ({ form }: { form: any }) => {
         <CardHeader>
           <CardTitle>Booking Summary</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 ">
           <div className="flex justify-between text-sm">
             <span className="text-primary-600">Date</span>
             <span className="text-primary-900">

@@ -23,54 +23,8 @@ import { Clock, Users, Plus, Settings, AlertCircle } from "lucide-react";
 import Setting from "./Setting";
 import CalendarSetting from "./CalendarSetting";
 import DailySchedule from "./DailySchedule";
-const timeSlots = [
-  "11:00 AM",
-  "11:30 AM",
-  "12:00 PM",
-  "12:30 PM",
-  "1:00 PM",
-  "1:30 PM",
-  "2:00 PM",
-  "2:30 PM",
-  "3:00 PM",
-  "3:30 PM",
-  "4:00 PM",
-  "4:30 PM",
-  "5:00 PM",
-  "5:30 PM",
-  "6:00 PM",
-  "6:30 PM",
-  "7:00 PM",
-  "7:30 PM",
-  "8:00 PM",
-  "8:30 PM",
-  "9:00 PM",
-  "9:30 PM",
-  "10:00 PM",
-];
-
-// Mock schedule data for demonstration purposes only - will be replaced with dynamic data later
-const mockSchedule = [
-  { time: "11:00 AM", booked: 0, capacity: 8, status: "available" },
-  { time: "11:30 AM", booked: 2, capacity: 8, status: "available" },
-  { time: "12:00 PM", booked: 5, capacity: 8, status: "filling" },
-  { time: "12:30 PM", booked: 7, capacity: 8, status: "filling" },
-  { time: "1:00 PM", booked: 8, capacity: 8, status: "full" },
-  { time: "1:30 PM", booked: 6, capacity: 8, status: "filling" },
-  { time: "2:00 PM", booked: 3, capacity: 8, status: "available" },
-  { time: "2:30 PM", booked: 1, capacity: 8, status: "available" },
-  { time: "6:00 PM", booked: 7, capacity: 8, status: "filling" },
-  { time: "6:30 PM", booked: 8, capacity: 8, status: "full" },
-  { time: "7:00 PM", booked: 8, capacity: 8, status: "full" },
-  { time: "7:30 PM", booked: 8, capacity: 8, status: "full" },
-  { time: "8:00 PM", booked: 6, capacity: 8, status: "filling" },
-  { time: "8:30 PM", booked: 4, capacity: 8, status: "available" },
-];
 
 export function ScheduleManager() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    new Date(),
-  );
   const [waitlistEnabled, setWaitlistEnabled] = useState(true);
 
   const getStatusColor = (status: string) => {
@@ -95,6 +49,7 @@ export function ScheduleManager() {
         <CalendarSetting />
 
         {/* Daily Schedule */}
+
         <DailySchedule />
       </div>
 

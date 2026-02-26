@@ -58,3 +58,31 @@ export async function checkDuplicate(date: string, time: string, name: string) {
   });
   return res.json();
 }
+
+export async function checkAvailability(date: string, time: string) {
+  const res = await fetch("/api/reservations/availability", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ date, time }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to check availability");
+  }
+
+  return res.json();
+}
+
+export async function getSchedule(date: string) {
+  const res = await fetch("/api/reservations/schedule", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ date }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to load schedule");
+  }
+
+  return res.json();
+}
