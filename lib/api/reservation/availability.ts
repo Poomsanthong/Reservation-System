@@ -1,5 +1,4 @@
 import { createClientInstance } from "@/lib/supabaseClient";
-import { error } from "console";
 
 const MAX_TABLES = 8;
 export async function checkAvailability(date: string, time: string) {

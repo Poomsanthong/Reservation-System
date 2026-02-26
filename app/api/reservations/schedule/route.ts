@@ -9,6 +9,7 @@ export async function GET(req: Request) {
 
   try {
     const schedule = await getSchedule(date);
+    // console.log("Schedule for", date, ":", schedule);
     return NextResponse.json(schedule);
   } catch (err) {
     return NextResponse.json(

@@ -21,14 +21,21 @@ const CAPACITY = 8;
 
 export async function getSchedule(date: string) {
   const bookings = await getDailyBookings(date);
-
   return TIMESLOTS.map((time) => {
     const booked = bookings.filter((b) => b.reservation_time === time).length;
     let status: "available" | "filling" | "full" = "available";
-
     if (booked >= CAPACITY) status = "full";
     else if (booked >= CAPACITY - 2) status = "filling";
-
-    return { time, booked, capacity: CAPACITY, status };
+    console.log(
+      "DB booking times:",
+      bookings.map((b) => b.reservation_date + " " + b.reservation_time),
+    );
+    return {
+      time,
+      booked,
+      capacity: CAPACITY,
+      status,
+      available: status !== "full",
+    };
   });
 }

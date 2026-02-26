@@ -67,7 +67,8 @@ const DailyBooking = () => {
           </div>
         </div>
         <div className="text-sm font-medium">
-          Total: {schedule.length} Reservations
+          Reservations:{" "}
+          {schedule.reduce((total, slot) => total + slot.booked, 0)}
         </div>
       </CardHeader>
 
@@ -88,6 +89,13 @@ const DailyBooking = () => {
             {/* Status Badge */}
             <div className="flex items-center gap-2">
               <Badge
+                className={
+                  slot.status === "available"
+                    ? "bg-green-500 text-white"
+                    : slot.status === "filling"
+                      ? "bg-yellow-500 text-white"
+                      : "bg-red-500 text-white"
+                }
                 variant={
                   slot.status === "available"
                     ? "default"
