@@ -10,6 +10,7 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center">
         {" "}
         {children}
+        <Analytics />
       </div>{" "}
     </div>
   );
