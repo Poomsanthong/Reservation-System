@@ -46,7 +46,7 @@ reservation-system/
 ├── lib/                # Helpers, utilities, and actions
 ├── public/             # Static assets
 ├── store/              # Zustand stores for state management
-├── ...                 # Config and setup files
+├── ...                 # Config and setup file
 ```
 
 ## Getting Started
