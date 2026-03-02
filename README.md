@@ -19,6 +19,7 @@ A modern web application for managing reservations, built with Next.js, TypeScri
 - Modal dialogs for editing, viewing, and canceling bookings
 - State management with custom hooks and stores
 - Responsive UI with reusable components
+- Email automation ( need to use live domain otherwise it only work in dev mode)
 
 ## Tech Stack
 
