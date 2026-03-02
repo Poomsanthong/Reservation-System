@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
+import { getSchedule } from "@/lib/api/funtions";
 
 export default function TimeSlotGrid({ form }: { form: any }) {
   const [schedule, setSchedule] = useState<any[]>([]);
@@ -11,10 +12,7 @@ export default function TimeSlotGrid({ form }: { form: any }) {
   useEffect(() => {
     async function fetchSchedule() {
       try {
-        const res = await fetch(`/api/reservations/schedule?date=${sqlDate}`);
-        if (!res.ok) throw new Error("Failed to fetch schedule");
-        const data = await res.json();
-
+        const data = await getSchedule(sqlDate);
         setSchedule(data);
       } catch (err) {
         console.error("Failed to load schedule:", err);
@@ -42,7 +40,7 @@ export default function TimeSlotGrid({ form }: { form: any }) {
               className="text-xs sm:text-sm flex items-center justify-center w-full"
             >
               <Clock className="w-4 h-4 mr-1" />
-              {slot.time}
+              {slot.displayTime}
             </Button>
           ))}
         </div>

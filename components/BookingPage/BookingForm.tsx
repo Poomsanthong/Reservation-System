@@ -12,11 +12,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import PartySizeTab from "./PartySizeTab";
+import { useBlockoutDates } from "@/lib/hooks/useBlockDates";
 
 export default function BookingForm({ form }: { form: any }) {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string>("");
-
+  const { blackouts } = useBlockoutDates(); // to disable blocked dates on calendar;
   async function handleSubmit() {
     setSubmitError("");
     if (submitLoading) return;
@@ -53,7 +54,12 @@ export default function BookingForm({ form }: { form: any }) {
               fixedWeeks
               selected={form.fields.date}
               onSelect={(d) => form.updateField("date", d)}
-              disabled={(d) => d < new Date()}
+              disabled={(d) =>
+                d < new Date() ||
+                blackouts.some(
+                  (b) => new Date(b.date).toDateString() === d.toDateString(),
+                )
+              }
               className="rounded-md w-full max-w-md"
             />
           </div>

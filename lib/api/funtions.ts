@@ -74,11 +74,7 @@ export async function checkAvailability(date: string, time: string) {
 }
 
 export async function getSchedule(date: string) {
-  const res = await fetch("/api/reservations/schedule", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ date }),
-  });
+  const res = await fetch("/api/reservations/schedule?date=" + date);
 
   if (!res.ok) {
     throw new Error("Failed to load schedule");
