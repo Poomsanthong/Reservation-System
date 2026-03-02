@@ -31,11 +31,26 @@ export async function getSchedule(date: string) {
       bookings.map((b) => b.reservation_date + " " + b.reservation_time),
     );
     return {
-      time,
+      time, // "HH:MM:SS" format for backend
+      displayTime: formatTo12Hour(time), // "h:mm AM/PM" for frontend
       booked,
       capacity: CAPACITY,
       status,
       available: status !== "full",
     };
+  });
+}
+
+function formatTo12Hour(time: string) {
+  const [hour, minute] = time.split(":").map(Number);
+
+  const date = new Date();
+  date.setHours(hour);
+  date.setMinutes(minute);
+
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
   });
 }

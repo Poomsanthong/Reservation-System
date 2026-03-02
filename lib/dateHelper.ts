@@ -1,5 +1,3 @@
-// lib/stats/dateHelpers.ts
-
 export function getWeekRanges() {
   const today = new Date();
   const day = today.getDay();

@@ -11,12 +11,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useDateStore } from "@/store/useSelectedData";
+import { getBookings } from "@/lib/server/getBooking";
 const DailyBooking = () => {
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState<any[]>([]);
   const { selectedDate, setSelectedDate } = useDateStore();
-  const sqlDate = selectedDate.toISOString().split("T")[0];
+
   if (!selectedDate) return null;
+  const sqlDate = selectedDate.toISOString().split("T")[0];
 
   useEffect(() => {
     async function fetchSchedule() {
@@ -38,56 +40,62 @@ const DailyBooking = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <Card className="lg:col-span-2 ">
-      <CardHeader className="flex justify-between items-center">
-        <div>
-          <CardTitle>Daily Bookings</CardTitle>
-          <CardDescription>
-            {selectedDate.toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </CardDescription>
+    <Card className="lg:col-span-2">
+      <CardHeader className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+          <div>
+            <CardTitle className="text-lg sm:text-xl">Daily Bookings</CardTitle>
+            <CardDescription className="text-sm">
+              {selectedDate.toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </CardDescription>
+          </div>
+
+          <div className="text-sm font-medium text-primary-700">
+            Reservations:{" "}
+            {schedule.reduce((total, slot) => total + slot.booked, 0)}
+          </div>
         </div>
+
         {/* Legend */}
-        <div className="flex gap-4 mb-4 p-3 bg-primary-50 rounded-lg">
-          <div className="flex items-center gap-2 text-sm">
+        <div className="flex flex-wrap gap-3 p-3 bg-primary-50 rounded-lg text-xs sm:text-sm">
+          <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-green-500" />
-            <span className="text-primary-600">Available</span>
+            <span>Available</span>
           </div>
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-yellow-500" />
-            <span className="text-primary-600">Filling Up</span>
+            <span>Filling Up</span>
           </div>
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-red-500" />
-            <span className="text-primary-600">Fully Booked</span>
+            <span>Fully Booked</span>
           </div>
-        </div>
-        <div className="text-sm font-medium">
-          Reservations:{" "}
-          {schedule.reduce((total, slot) => total + slot.booked, 0)}
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-2 max-h-[500px] overflow-y-auto">
+      <CardContent className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
         {schedule.map((slot, i) => (
           <div
             key={i}
-            className="flex flex-col sm:flex-row justify-between p-3 border rounded-lg border-gray-200"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 border rounded-xl border-gray-200"
           >
-            {/* Time and Booking Info */}
-            <div className="flex items-center gap-3">
-              <span className="font-medium">{slot.time}</span>
+            {/* Time + Info */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+              <span className="font-semibold text-base">
+                {slot.displayTime ?? slot.time}
+              </span>
               <span className="text-primary-600 text-sm">
                 {slot.booked} / {slot.capacity} tables
               </span>
             </div>
 
-            {/* Status Badge */}
-            <div className="flex items-center gap-2">
+            {/* Status + Action */}
+            <div className="flex items-center justify-between sm:justify-end gap-3">
               <Badge
                 className={
                   slot.status === "available"
@@ -96,23 +104,17 @@ const DailyBooking = () => {
                       ? "bg-yellow-500 text-white"
                       : "bg-red-500 text-white"
                 }
-                variant={
-                  slot.status === "available"
-                    ? "default"
-                    : slot.status === "filling"
-                      ? "secondary"
-                      : "destructive"
-                }
               >
                 {slot.status}
               </Badge>
-              <Button
+
+              {/* <Button
                 size="sm"
                 variant="ghost"
                 className="text-primary-600 hover:text-primary-800"
               >
-                edit{" "}
-              </Button>
+                Edit
+              </Button> */}
             </div>
           </div>
         ))}

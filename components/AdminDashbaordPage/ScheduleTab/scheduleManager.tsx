@@ -25,34 +25,17 @@ import CalendarSetting from "./CalendarSetting";
 import DailySchedule from "./DailySchedule";
 
 export function ScheduleManager() {
-  const [waitlistEnabled, setWaitlistEnabled] = useState(true);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "available":
-        return "bg-green-100 text-green-700 border-green-200";
-      case "filling":
-        return "bg-yellow-100 text-yellow-700 border-yellow-200";
-      case "full":
-        return "bg-red-100 text-red-700 border-red-200";
-      default:
-        return "bg-primary-100 text-primary-700 border-primary-200";
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Settings Card */}
+      {/* //todo advanced settings like waitlist, max party size, etc */}
       {/* <Setting /> */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Calendar */}
         <CalendarSetting />
-
         {/* Daily Schedule */}
-
         <DailySchedule />
       </div>
-
       {/* Quick Stats */}
       <div className="grid sm:grid-cols-3 gap-6">
         <Card>
