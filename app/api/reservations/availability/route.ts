@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/server/supabaseServer";
 import { checkAvailability } from "@/lib/api/reservation/availability";
 
 export async function POST(req: Request) {

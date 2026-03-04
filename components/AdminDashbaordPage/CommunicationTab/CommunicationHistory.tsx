@@ -14,9 +14,7 @@ const CommunicationHistory = () => {
     <Card>
       <CardHeader>
         <CardTitle>Recent Communications</CardTitle>
-        <CardDescription>
-          Automated messages sent by the AI assistant
-        </CardDescription>
+        <CardDescription>Automated messages sent</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
