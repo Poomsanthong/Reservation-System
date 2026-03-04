@@ -82,3 +82,11 @@ export async function getSchedule(date: string) {
 
   return res.json();
 }
+
+export async function getMessageStats() {
+  const res = await fetch("/api/message-stats");
+  if (!res.ok) {
+    throw new Error("Failed to load message stats");
+  }
+  return res.json();
+}
