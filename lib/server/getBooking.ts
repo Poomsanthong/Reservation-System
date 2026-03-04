@@ -17,7 +17,8 @@ export async function getDailyBookings(date: string) {
   const { data, error } = await supabase
     .from("reservations")
     .select("*")
-    .eq("reservation_date", date);
+    .eq("reservation_date", date)
+    .eq("status", "confirmed"); // Only count confirmed bookings
 
   if (error) throw error;
 

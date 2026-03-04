@@ -26,10 +26,7 @@ export async function getSchedule(date: string) {
     let status: "available" | "filling" | "full" = "available";
     if (booked >= CAPACITY) status = "full";
     else if (booked >= CAPACITY - 2) status = "filling";
-    console.log(
-      "DB booking times:",
-      bookings.map((b) => b.reservation_date + " " + b.reservation_time),
-    );
+
     return {
       time, // "HH:MM:SS" format for backend
       displayTime: formatTo12Hour(time), // "h:mm AM/PM" for frontend
