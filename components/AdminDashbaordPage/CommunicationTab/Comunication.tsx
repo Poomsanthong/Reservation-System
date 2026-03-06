@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { use, useEffect, useState } from "react";
 import { Badge } from "../../ui/badge";
 import { Mail, MessageSquare, TrendingUp } from "lucide-react";
 import {
@@ -9,12 +9,27 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-
+import { getMessageStats } from "../../../lib/api/functions";
 const Comunication = () => {
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    // Fetch message stats from the API
+    async function fetchStats() {
+      try {
+        const stats = await getMessageStats();
+        console.log("Message Stats:", stats);
+        setStats(stats);
+      } catch (error) {
+        console.error("Error fetching message stats:", error);
+      }
+    }
+    fetchStats();
+  }, []);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>AI Communication Stats</CardTitle>
+        <CardTitle>Communication Stats</CardTitle>
         <CardDescription>Automated messaging performance</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -25,10 +40,16 @@ const Comunication = () => {
             </div>
             <div>
               <p className="text-sm text-primary-600">Confirmations Sent</p>
-              <p className="text-xl text-primary-900">1,847</p>
+              <p className="text-xl text-primary-900">
+                {stats ? stats.confirmations.total : "Loading..."}
+              </p>
             </div>
           </div>
-          <Badge className="bg-green-100 text-green-700">98.5% delivered</Badge>
+          <Badge className="bg-green-100 text-green-700">
+            {stats
+              ? `${stats.confirmations.deliveredPercentage || 0}% delivered`
+              : "Loading..."}
+          </Badge>
         </div>
         <div className="flex items-center justify-between pb-4 border-b">
           <div className="flex items-center gap-3">
@@ -37,22 +58,16 @@ const Comunication = () => {
             </div>
             <div>
               <p className="text-sm text-primary-600">Reminders Sent</p>
-              <p className="text-xl text-primary-900">2,143</p>
+              <p className="text-xl text-primary-900">
+                {stats ? stats.reminders.total : "Loading..."}
+              </p>
             </div>
           </div>
-          <Badge className="bg-green-100 text-green-700">97.2% opened</Badge>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-orange-600" />
-            </div>
-            <div>
-              <p className="text-sm text-primary-600">Recommendations</p>
-              <p className="text-xl text-primary-900">892</p>
-            </div>
-          </div>
-          <Badge className="bg-green-100 text-green-700">42% conversion</Badge>
+          <Badge className="bg-green-100 text-green-700">
+            {stats
+              ? `${stats.reminders.openedPercentage || 0}% opened`
+              : "Loading..."}
+          </Badge>
         </div>
       </CardContent>
     </Card>

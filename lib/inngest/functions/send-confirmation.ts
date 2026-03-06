@@ -14,7 +14,7 @@ export const sendconfirmation = inngest.createFunction(
 
     try {
       const result = await resend.emails.send({
-        from: "onboarding@resend.dev", // replace with your verified sender , this is just an example and tested with resend's onboarding email
+        from: "NoReply@bookflow.poomsan.site", // replace with your verified sender , this is just an example and tested with resend's onboarding email
         to: email,
         subject: "Your Reservation Confirmation",
         html: `<h1>Hello ${name}</h1>

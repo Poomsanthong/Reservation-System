@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     // Trigger an Inngest event after successful creation
     if (table === "reservations") {
-      inngest.send({
+      await inngest.send({
         name: "reservation.created",
         data: created,
       });

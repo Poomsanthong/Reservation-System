@@ -111,11 +111,10 @@ export default function AdminDashboard({
               Schedule
             </TabsTrigger>
 
-            {/* //todo: implement communication and message template */}
-            {/* <TabsTrigger value="communications">
+            <TabsTrigger value="communications">
               <MessageSquare className="w-4 h-4 mr-2" />
               Communications
-            </TabsTrigger> */}
+            </TabsTrigger>
           </TabsList>
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6 min-w-0">
@@ -153,15 +152,14 @@ export default function AdminDashboard({
           </TabsContent>
 
           {/* Communications Tab */}
-          {/* todo: impleament communication and message template */}
-          {/* <TabsContent value="communications" className="space-y-6 min-w-0">
+          <TabsContent value="communications" className="space-y-6 min-w-0">
             <div className="grid lg:grid-cols-2 gap-6 min-w-0">
               <Comunication />
               <MessageTemplate />
             </div>
 
             <CommunicationHistory />
-          </TabsContent> */}
+          </TabsContent>
         </Tabs>
       </div>
     </div>
