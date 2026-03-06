@@ -44,7 +44,7 @@ import EditModal from "../../modal/EditModal";
 import CancelModal from "../../modal/CancelModal";
 import { Reservation } from "@/lib/types";
 
-import { cancelBooking, get, updateBooking } from "@/lib/api/funtions";
+import { cancelBooking, get, updateBooking } from "@/lib/api/functions";
 
 import { useModalStore } from "@/store/useModalStore";
 

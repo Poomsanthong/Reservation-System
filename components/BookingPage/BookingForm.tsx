@@ -23,7 +23,7 @@ export default function BookingForm({ form }: { form: any }) {
     if (submitLoading) return;
     setSubmitLoading(true);
     try {
-      // form.submit should throw on error (see lib/api/funtions.ts improvements)
+      // form.submit should throw on error (see lib/api/functions.ts improvements)
       await form.submit();
       // success state is handled inside the hook (form.showConfirmation)
     } catch (err: any) {

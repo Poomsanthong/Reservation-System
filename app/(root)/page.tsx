@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import BookingHero from "@/components/BookingPage/BookingHero";
 import BookingForm from "@/components/BookingPage/BookingForm";
 import BookingSummary from "@/components/BookingPage/BookingSummary";
-import { get } from "@/lib/api/funtions";
+import { get } from "@/lib/api/functions";
 import { useBookingForm } from "@/lib/hooks/useBookingForm";
 import MerchantCard from "@/components/BookingPage/MechantCard";
 

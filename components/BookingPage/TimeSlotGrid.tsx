@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
-import { getSchedule } from "@/lib/api/funtions";
+import { getSchedule } from "@/lib/api/functions";
 
 export default function TimeSlotGrid({ form }: { form: any }) {
   const [schedule, setSchedule] = useState<any[]>([]);
