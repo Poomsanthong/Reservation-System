@@ -25,7 +25,14 @@ export async function POST(req: Request) {
     if (table === "reservations") {
       await inngest.send({
         name: "reservation.created",
-        data: created,
+        data: {
+          email: created.email,
+          booking_id: created.id, // use the actual created record's ID
+          name: created.name,
+          reservation_date: created.date,
+          reservation_time: created.time,
+          partySize: created.partySize,
+        },
       });
       console.log(
         "Inngest event 'reservation.created' sent with data:",

@@ -1,3 +1,4 @@
+import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
 import { inngest } from "../inngest";
 import { Resend } from "resend";
 
@@ -7,8 +8,14 @@ export const sendconfirmation = inngest.createFunction(
   { id: "send-confirmation-email" },
   { event: "reservation.created" }, // match exactly what you send
   async ({ event }) => {
-    const { email, name, reservation_date, reservation_time, partySize } =
-      event.data;
+    const {
+      email,
+      booking_id,
+      name,
+      reservation_date,
+      reservation_time,
+      partySize,
+    } = event.data;
 
     console.log("FUNCTION TRIGGERED", event.data);
 
@@ -27,10 +34,23 @@ export const sendconfirmation = inngest.createFunction(
                <p>We look forward to serving you!</p>`,
       });
 
-      console.log("Email sent result:", result);
+      console.log("Email sent result:", booking_id);
+
+      // save email sent status to database
+      await supabaseAdmin.from("messages").insert({
+        booking_id,
+        type: "confirmation",
+        delivered: true,
+      });
       return { success: true };
     } catch (err) {
       console.error("Email failed:", err);
+      //  Save failed message attempt
+      await supabaseAdmin.from("messages").insert({
+        booking_id,
+        type: "confirmation",
+        delivered: false,
+      });
       throw err;
     }
   },
