@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-import { getMessageStats } from "../../../lib/api/funtions";
+import { getMessageStats } from "../../../lib/api/functions";
 const Comunication = () => {
   const [stats, setStats] = useState<any>(null);
 

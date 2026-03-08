@@ -23,14 +23,26 @@ export async function POST(req: Request) {
 
     // Trigger an Inngest event after successful creation
     if (table === "reservations") {
-      inngest.send({
-        name: "reservation.created",
-        data: created,
-      });
-      console.log(
-        "Inngest event 'reservation.created' sent with data:",
-        created,
-      );
+      try {
+        await inngest.send({
+          name: "reservation.created",
+          data: {
+            email: created.email,
+            booking_id: created.id,
+            name: created.name,
+            reservation_date: created.date,
+            reservation_time: created.time,
+            partySize: created.partySize,
+          },
+        });
+
+        console.log(
+          "Inngest event 'reservation.created' sent with data:",
+          created,
+        );
+      } catch (err) {
+        console.error("Inngest failed:", err);
+      }
     }
 
     return success(created);
