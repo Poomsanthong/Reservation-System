@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/server/supabaseServer";
-import { inngest } from "@/lib/inngest/inngest"; // 👈 add this
-
+import { inngest } from "@/lib/inngest/inngest";
 import { success, fail, validateTable, requireFields } from "@/lib/utils";
 
 export async function POST(req: Request) {
@@ -26,16 +25,19 @@ export async function POST(req: Request) {
       try {
         // trigger the reminder function to schedule a reminder email
         const bookingTime = new Date(
-          data.reservation_date + "T" + data.reservation_time,
+          created.reservation_date + "T" + created.reservation_time,
         );
+
         const reminderTime = new Date(bookingTime);
-        reminderTime.setHours(reminderTime.getHours() - 5); // Set reminder for 5 hours before
-        console.log(
-          "created time " +
-            bookingTime.toISOString() +
-            " reminder time " +
-            reminderTime.toISOString(),
-        );
+
+        // TEST MODE:30 seconds from now ,
+        reminderTime.setSeconds(reminderTime.getSeconds() + 30);
+
+        reminderTime.setHours(reminderTime.getHours() - 6); // Schedule reminder 6 hours before the booking time
+
+        console.log("Scheduling reminder for:" + reminderTime.toISOString());
+        console.log("Booking time:" + bookingTime.toISOString());
+
         await supabase.from("messages").insert({
           booking_id: created.id,
           type: "reminder",
@@ -47,6 +49,11 @@ export async function POST(req: Request) {
           name: "reservation/reminder.scheduled",
           data: {
             booking_id: created.id,
+            email: created.email,
+            name: created.name,
+            reservation_date: created.reservation_date,
+            reservation_time: created.reservation_time,
+            partySize: created.partySize,
             reminderTime: reminderTime.toISOString(),
           },
         });
