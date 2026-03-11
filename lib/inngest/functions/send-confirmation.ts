@@ -17,7 +17,7 @@ export const sendconfirmation = inngest.createFunction(
       partySize,
     } = event.data;
 
-    console.log("FUNCTION TRIGGERED", event.data);
+    // console.log("FUNCTION TRIGGERED", event.data);
 
     try {
       const result = await resend.emails.send({
