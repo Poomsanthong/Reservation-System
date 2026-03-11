@@ -21,8 +21,40 @@ export async function POST(req: Request) {
 
     if (error) throw new Error(error.message);
 
-    // Trigger an Inngest event after successful creation
+    // Trigger  Inngest event after successful creation
     if (table === "reservations") {
+      try {
+        // trigger the reminder function to schedule a reminder email
+        const bookingTime = new Date(
+          data.reservation_date + "T" + data.reservation_time,
+        );
+        const reminderTime = new Date(bookingTime);
+        reminderTime.setHours(reminderTime.getHours() - 5); // Set reminder for 5 hours before
+        console.log(
+          "created time " +
+            bookingTime.toISOString() +
+            " reminder time " +
+            reminderTime.toISOString(),
+        );
+        await supabase.from("messages").insert({
+          booking_id: created.id,
+          type: "reminder",
+          reminder_state: "scheduled",
+          delivered: false,
+        });
+
+        await inngest.send({
+          name: "reservation/reminder.scheduled",
+          data: {
+            booking_id: created.id,
+            reminderTime: reminderTime.toISOString(),
+          },
+        });
+      } catch (err) {
+        console.error("reminder failed:", err);
+      }
+
+      // Trigger the reservation.created event for other functions to listen to
       try {
         await inngest.send({
           name: "reservation.created",
@@ -30,8 +62,8 @@ export async function POST(req: Request) {
             email: created.email,
             booking_id: created.id,
             name: created.name,
-            reservation_date: created.date,
-            reservation_time: created.time,
+            reservation_date: created.reservation_date,
+            reservation_time: created.reservation_time,
             partySize: created.partySize,
           },
         });
@@ -41,7 +73,7 @@ export async function POST(req: Request) {
           created,
         );
       } catch (err) {
-        console.error("Inngest failed:", err);
+        console.error("send email failed:", err);
       }
     }
 
