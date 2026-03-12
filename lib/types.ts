@@ -5,7 +5,7 @@ export type Reservation = {
   email?: string | null;
   reservation_date: string; // YYYY-MM-DD
   reservation_time: string; // HH:MM:SS
-  partySize: number;
+  partysize: number;
   status?: "confirmed" | "cancelled";
   note?: string | null;
   created_at?: string;

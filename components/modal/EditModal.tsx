@@ -90,10 +90,10 @@ const EditModal: React.FC<EditModalProps> = ({
 
             <Field label="Party Size">
               <Input
-                value={form.partySize?.toString() || ""}
+                value={form.partysize?.toString() || ""}
                 type="number"
                 onChange={(e) =>
-                  handleChange("partySize", parseInt(e.target.value))
+                  handleChange("partysize", parseInt(e.target.value))
                 }
               />
             </Field>

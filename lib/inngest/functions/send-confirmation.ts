@@ -14,27 +14,30 @@ export const sendconfirmation = inngest.createFunction(
       name,
       reservation_date,
       reservation_time,
-      partySize,
+      partysize,
     } = event.data;
 
-    // console.log("FUNCTION TRIGGERED", event.data);
+    const { data: template } = await supabaseAdmin
+      .from("email_templates")
+      .select("*")
+      .eq("type", "confirmation")
+      .single();
+
+    let emailContent = template?.html || "";
+    emailContent = emailContent
+      .replace("{{name}}", name)
+      .replace("{{reservation_date}}", reservation_date)
+      .replace("{{reservation_time}}", reservation_time)
+      .replace("{{booking_id}}", booking_id)
+      .replace("{{partysize}}", partysize.toString());
 
     try {
       const result = await resend.emails.send({
         from: "NoReply@bookflow.poomsan.site", // replace with your verified sender , this is just an example and tested with resend's onboarding email
         to: email,
-        subject: "Your Reservation Confirmation",
-        html: `<h1>Hello ${name}</h1>
-               <p>Your reservation has been confirmed:</p>
-               <ul>
-                 <li>Date: ${reservation_date}</li>
-                 <li>Time: ${reservation_time}</li>
-                 <li>Party Size: ${partySize}</li>
-               </ul>
-               <p>We look forward to serving you!</p>`,
+        subject: template.subject,
+        html: emailContent,
       });
-
-      console.log("Email sent result:", booking_id);
 
       // save email sent status to database
       await supabaseAdmin.from("messages").insert({

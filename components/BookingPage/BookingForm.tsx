@@ -11,7 +11,7 @@ import GuestDetails from "@/components/BookingPage/GuestDetails";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import PartySizeTab from "./PartySizeTab";
+import PartysizeTab from "./PartySizeTab";
 import { useBlockoutDates } from "@/lib/hooks/useBlockDates";
 
 export default function BookingForm({ form }: { form: any }) {
@@ -43,7 +43,7 @@ export default function BookingForm({ form }: { form: any }) {
   }
   return (
     <Card className="w-full max-w-md mx-auto">
-      <PartySizeTab form={form} />
+      <PartysizeTab form={form} />
       <CardContent className="space-y-4 sm:space-y-6">
         {/* Calendar */}
         <div className="space-y-2">
