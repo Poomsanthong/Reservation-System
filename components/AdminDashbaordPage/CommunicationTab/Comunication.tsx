@@ -59,7 +59,7 @@ const Comunication = () => {
             <div>
               <p className="text-sm text-primary-600">Reminders Sent</p>
               <p className="text-xl text-primary-900">
-                {stats ? stats.reminders.total : "Loading..."}
+                {stats ? stats.reminders.delivered : "Loading..."}
               </p>
             </div>
           </div>

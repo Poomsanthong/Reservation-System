@@ -27,6 +27,8 @@ async function getMessageStats(type: "confirmation" | "reminder") {
   );
   return {
     total: totalCount || 0,
+    delivered: deliveredCount || 0,
+    opened: openedCount || 0,
     deliveredPercent: totalCount
       ? Math.round((deliveredCount! / totalCount) * 100)
       : 0,
