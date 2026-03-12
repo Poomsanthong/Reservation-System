@@ -19,7 +19,8 @@ export const sendReminder = inngest.createFunction(
       reminderTime,
     } = event.data;
 
-    // await step.sleep("30s", 3000); // Initial sleep to ensure the database record is created
+    console.log("Reminder Time is " + reminderTime);
+    // await step.sleep("30s", 3000); // Initial sleep to ensure the database record is created , Test with 30s, then change to sleepUntil with the actual reminder time
     await step.sleepUntil("waiting for reminder time", new Date(reminderTime));
     try {
       const result = await resend.emails.send({
