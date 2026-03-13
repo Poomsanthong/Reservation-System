@@ -9,7 +9,26 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
+import { useEffect, useState } from "react";
+type Template = {
+  id: string;
+  type: string;
+  subject: string;
+  html: string;
+};
 const MessageTemplate = () => {
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [loading, setLoading] = useState(true);
+  // fetch Templates from API
+  useEffect(() => {
+    async function fetchTemplates() {
+      const res = await fetch("/api/templates");
+      const data = await res.json();
+      setTemplates(data || []);
+      setLoading(false);
+    }
+    fetchTemplates();
+  }, []);
   return (
     <Card>
       <CardHeader>
@@ -19,37 +38,24 @@ const MessageTemplate = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="p-3 bg-primary-50 rounded-lg border">
-          <div className="flex items-center justify-between mb-2">
-            <Badge variant="secondary">Confirmation</Badge>
-            <span className="text-xs text-primary-500">Active</span>
+        {templates.map((template) => (
+          <div className="p-3 bg-primary-50 rounded-lg border">
+            <div className="flex items-center justify-between mb-2">
+              <Badge variant="secondary">{template.type}</Badge>
+              <span className="text-xs text-primary-500">Active</span>
+            </div>
+            <p className="text-sm text-primary-700">{template.subject}</p>
+            <p className="text-xs text-primary-500 mt-1 line-clamp-2">
+              {template.html.replace(/<[^>]+>/g, "")}
+            </p>
           </div>
-          <p className="text-sm text-primary-700">
-            "Hi [Name]! Your table for [Party Size] at [Restaurant] is confirmed
-            for [Date] at [Time]. See you soon! 🎉"
-          </p>
-        </div>
-        <div className="p-3 bg-primary-50 rounded-lg border">
-          <div className="flex items-center justify-between mb-2">
-            <Badge variant="secondary">Reminder</Badge>
-            <span className="text-xs text-primary-500">Active</span>
-          </div>
-          <p className="text-sm text-primary-700">
-            "Reminder: Your reservation at [Restaurant] is tomorrow at [Time].
-            We can't wait to see you! ✨"
-          </p>
-        </div>
-        <div className="p-3 bg-primary-50 rounded-lg border">
-          <div className="flex items-center justify-between mb-2">
-            <Badge variant="secondary">Waitlist Update</Badge>
-            <span className="text-xs text-primary-500">Active</span>
-          </div>
-          <p className="text-sm text-primary-700">
-            "Great news [Name]! A table just opened up for [Date] at [Time].
-            Reply YES to claim it! ⏰"
-          </p>
-        </div>
-        <Button variant="outline" className="w-full">
+        ))}
+
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => alert("Manage Templates clicked")}
+        >
           Manage Templates
         </Button>
       </CardContent>
