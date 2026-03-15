@@ -15,7 +15,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Users } from "lucide-react";
-const PartySizeTab = ({ form }: { form: any }) => {
+const PartysizeTab = ({ form }: { form: any }) => {
   return (
     <div>
       <>
@@ -29,8 +29,8 @@ const PartySizeTab = ({ form }: { form: any }) => {
           <div className="space-y-2">
             <Label>Party Size</Label>
             <Select
-              value={form.fields.partySize}
-              onValueChange={(value) => form.updateField("partySize", value)}
+              value={form.fields.partysize}
+              onValueChange={(value) => form.updateField("partysize", value)}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -53,4 +53,4 @@ const PartySizeTab = ({ form }: { form: any }) => {
   );
 };
 
-export default PartySizeTab;
+export default PartysizeTab;

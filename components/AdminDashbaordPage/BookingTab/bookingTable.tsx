@@ -201,7 +201,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
                     <TableCell>{booking.name}</TableCell>
                     <TableCell>{booking.email}</TableCell>
                     <TableCell>{booking.reservation_date}</TableCell>
-                    <TableCell>{booking.partySize} guests</TableCell>
+                    <TableCell>{booking.partysize} guests</TableCell>
 
                     <TableCell>
                       <Badge variant={getStatusVariant(booking.status!)}>

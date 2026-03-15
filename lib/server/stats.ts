@@ -10,9 +10,9 @@ export async function getStats(supabase: SupabaseClient) {
   // Total guests
   const { data: guestsData } = await supabase
     .from("reservations")
-    .select("partySize, created_at");
+    .select("partysize, created_at");
   const totalGuests =
-    guestsData?.reduce((sum, r) => sum + (r.partySize || 0), 0) ?? 0;
+    guestsData?.reduce((sum, r) => sum + (r.partysize || 0), 0) ?? 0;
 
   // Previous week bookings for trend
   const today = new Date();
@@ -37,7 +37,7 @@ export async function getStats(supabase: SupabaseClient) {
         const createdAt = new Date(r.created_at);
         return createdAt >= startOfLastWeek && createdAt < startOfThisWeek;
       })
-      .reduce((sum, r) => sum + (r.partySize || 0), 0) ?? 0;
+      .reduce((sum, r) => sum + (r.partysize || 0), 0) ?? 0;
 
   return {
     totalBookings,

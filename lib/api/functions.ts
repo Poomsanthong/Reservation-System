@@ -28,6 +28,18 @@ export async function updateBooking(id: any, updates: any) {
   return res.json();
 }
 
+export async function updateTemplate(id: any, updates: any) {
+  const res = await fetch("/api/crud/edit", {
+    method: "PATCH",
+    body: JSON.stringify({
+      table: "email_templates",
+      id,
+      data: updates,
+    }),
+  });
+  return res.json();
+}
+
 export async function cancelBooking(id: any, status: string) {
   const res = await fetch("/api/crud/edit", {
     method: "PATCH",

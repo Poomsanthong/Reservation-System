@@ -32,7 +32,7 @@ export async function POST(req: Request) {
             name: created.name,
             reservation_date: created.reservation_date,
             reservation_time: created.reservation_time,
-            partySize: created.partySize,
+            partysize: created.partysize,
           },
         });
 
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
             name: created.name,
             reservation_date: created.reservation_date,
             reservation_time: created.reservation_time,
-            partySize: created.partySize,
+            partysize: created.partysize,
             reminderTime: reminderTime.toISOString(),
           },
         });

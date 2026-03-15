@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { inngest } from "../inngest";
 import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
+import { error } from "console";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -15,9 +16,23 @@ export const sendReminder = inngest.createFunction(
       name,
       reservation_date,
       reservation_time,
-      partySize,
+      partysize,
       reminderTime,
     } = event.data;
+
+    const { data: template } = await supabaseAdmin
+      .from("email_templates")
+      .select("*")
+      .eq("type", "reminder")
+      .single();
+
+    let emailContent = template?.html || "";
+    emailContent = emailContent
+      .replace("{{name}}", name)
+      .replace("{{reservation_date}}", reservation_date)
+      .replace("{{reservation_time}}", reservation_time)
+      .replace("{{booking_id}}", booking_id)
+      .replace("{{partysize}}", partysize.toString());
 
     console.log("Reminder Time is " + reminderTime);
     // await step.sleep("30s", 3000); // Initial sleep to ensure the database record is created , Test with 30s, then change to sleepUntil with the actual reminder time
@@ -26,13 +41,8 @@ export const sendReminder = inngest.createFunction(
       const result = await resend.emails.send({
         from: "NoReply@bookflow.poomsan.site",
         to: email,
-        subject: "Reminder: Your Reservation is Approaching",
-        html: `
-          <p>Hi ${name},</p>
-          <p>This is a reminder that your reservation is approaching on ${reservation_date} at ${reservation_time}.</p>
-          <p>Party Size: ${partySize}</p>   
-          <p>Booking ID: ${booking_id}</p>
-        `,
+        subject: template.subject,
+        html: emailContent,
       });
 
       console.log("Reminder email sent result:", booking_id);
