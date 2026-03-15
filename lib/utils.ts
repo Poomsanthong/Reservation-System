@@ -15,11 +15,16 @@ export function success(data: any) {
 export function fail(error: any) {
   return NextResponse.json(
     { success: false, error: error.message || "Unknown error" },
-    { status: 400 }
+    { status: 400 },
   );
 }
 // Allowed tables for CRUD operations
-export const allowedTables = ["reservations", "bookings", "users"]; // extend as needed
+export const allowedTables = [
+  "reservations",
+  "bookings",
+  "users",
+  "email_templates",
+]; // extend as needed
 
 export function validateTable(table?: string | null) {
   if (!table) throw new Error("Table name is required");
