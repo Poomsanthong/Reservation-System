@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { inngest } from "../inngest";
 import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
 import { error } from "console";
+import { toast } from "sonner";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -37,24 +38,29 @@ export const sendReminder = inngest.createFunction(
     console.log("Reminder Time is " + reminderTime);
     // await step.sleep("30s", 3000); // Initial sleep to ensure the database record is created , Test with 30s, then change to sleepUntil with the actual reminder time
     await step.sleepUntil("waiting for reminder time", new Date(reminderTime));
+
     try {
-      const result = await resend.emails.send({
-        from: "NoReply@bookflow.poomsan.site",
-        to: email,
-        subject: template.subject,
-        html: emailContent,
+      await step.run("send-email", async () => {
+        return resend.emails.send({
+          from: "NoReply@bookflow.poomsan.site",
+          to: email,
+          subject: template.subject,
+          html: emailContent,
+        });
       });
 
-      console.log("Reminder email sent result:", booking_id);
+      // console.log("Reminder email sent result:", booking_id);
 
-      await supabaseAdmin
-        .from("messages")
-        .update({
-          reminder_state: "delivered",
-          delivered: true,
-        })
-        .eq("booking_id", booking_id)
-        .eq("type", "reminder");
+      await step.run("update-message", async () => {
+        await supabaseAdmin
+          .from("messages")
+          .update({
+            reminder_state: "delivered",
+            delivered: true,
+          })
+          .eq("booking_id", booking_id)
+          .eq("type", "reminder");
+      });
     } catch (error) {
       await supabaseAdmin
         .from("messages")
