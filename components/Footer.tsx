@@ -14,10 +14,10 @@ const Footer = () => {
           </p>
         </div>
         <nav className="flex gap-4 text-sm text-primary-600">
-          <a href="#" className="hover:text-primary-900">
+          <a href="/" className="hover:text-primary-900">
             Bookings
           </a>
-          <a href="#" className="hover:text-primary-900">
+          <a href="/admin" className="hover:text-primary-900">
             Admin
           </a>
           <a href="#" className="hover:text-primary-900">

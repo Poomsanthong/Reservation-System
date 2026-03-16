@@ -8,7 +8,11 @@ const MerchantCard = () => {
       {" "}
       <Card>
         <CardContent className="p-6 flex gap-4">
-          <div className="w-24 h-24 bg-linear-to-br from-orange-400 to-pink-500 rounded-lg" />
+          <img
+            src="/logo.jpg"
+            alt="Restaurant Image"
+            className="w-24 h-24 rounded-lg object-cover"
+          />
           <div className="flex-1">
             <div className="flex items-start justify-between mb-2">
               <div>

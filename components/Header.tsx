@@ -38,8 +38,8 @@ function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 px-2 sm:px-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-                <CalendarClock className="w-6 h-6 text-white" />
+              <div className="w-10 h-10  rounded-xl flex items-center justify-center">
+                <img src="/Logo.jpg" alt="Booking System logo " />
               </div>
               <div>
                 <h1 className="text-primary-900">Booking System</h1>
