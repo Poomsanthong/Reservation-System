@@ -1,5 +1,5 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
-
+import { NextResponse } from "next/server";
 async function getMessageStats(type: "confirmation" | "reminder") {
   // Total messages
   const supabase = await supabaseServer(); // Initialize Supabase on the server
@@ -22,15 +22,14 @@ async function getMessageStats(type: "confirmation" | "reminder") {
     .eq("type", type)
     .eq("opened", true);
 
-  console.log(
-    `Stats for ${type}: Total=${totalCount}, Delivered=${deliveredCount}, Opened=${openedCount}`,
-  );
   return {
     total: totalCount || 0,
-    deliveredPercent: totalCount
+    delivered: deliveredCount || 0,
+    opened: openedCount || 0,
+    deliveredPercentage: totalCount
       ? Math.round((deliveredCount! / totalCount) * 100)
       : 0,
-    openedPercent: totalCount
+    openedPercentage: totalCount
       ? Math.round((openedCount! / totalCount) * 100)
       : 0,
   };
@@ -40,8 +39,8 @@ export async function GET() {
   const confirmations = await getMessageStats("confirmation");
   const reminders = await getMessageStats("reminder");
 
-  return new Response(JSON.stringify({ confirmations, reminders }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
+  return NextResponse.json({
+    confirmations,
+    reminders,
   });
 }

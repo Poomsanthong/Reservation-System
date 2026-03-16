@@ -12,7 +12,7 @@ export function useBookingForm() {
   const [fields, setFields] = useState({
     date: new Date(),
     selectedTime: "",
-    partySize: "2",
+    partysize: "2",
     name: "",
     email: "",
     phone: "",
@@ -60,7 +60,7 @@ export function useBookingForm() {
       phone: fields.phone,
       reservation_date: fields.date.toISOString().split("T")[0],
       reservation_time: fields.selectedTime,
-      partySize: parseInt(fields.partySize),
+      partysize: parseInt(fields.partysize),
       note: fields.note || "",
     };
   }
@@ -119,7 +119,7 @@ export function useBookingForm() {
     setFields({
       date: new Date(),
       selectedTime: "",
-      partySize: "2",
+      partysize: "2",
       name: "",
       email: "",
       phone: "",

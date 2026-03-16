@@ -29,7 +29,7 @@ const BookingSummary = ({ form }: { form: any }) => {
 
           <div className="flex justify-between text-sm">
             <span className="text-primary-600">Guests</span>
-            <span className="text-primary-900">{form.fields.partySize}</span>
+            <span className="text-primary-900">{form.fields.partysize}</span>
           </div>
         </CardContent>
       </Card>

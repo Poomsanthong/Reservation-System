@@ -22,6 +22,29 @@ export async function POST(req: Request) {
 
     // Trigger  Inngest event after successful creation
     if (table === "reservations") {
+      // Trigger the reservation.created event for other functions to listen to
+
+      try {
+        await inngest.send({
+          name: "reservation.created",
+          data: {
+            email: created.email,
+            booking_id: created.id,
+            name: created.name,
+            reservation_date: created.reservation_date,
+            reservation_time: created.reservation_time,
+            partysize: created.partysize,
+          },
+        });
+
+        console.log(
+          "Inngest event 'reservation.created' sent with data:",
+          created,
+        );
+      } catch (err) {
+        console.error("send email failed:", err);
+      }
+
       try {
         // trigger the reminder function to schedule a reminder email
         const bookingTime = new Date(
@@ -31,7 +54,7 @@ export async function POST(req: Request) {
         const reminderTime = new Date(bookingTime);
 
         // TEST MODE:30 seconds from now ,
-        reminderTime.setSeconds(reminderTime.getSeconds() + 30);
+        // reminderTime.setSeconds(reminderTime.getSeconds() + 30);
 
         reminderTime.setHours(reminderTime.getHours() - 6); // Schedule reminder 6 hours before the booking time
 
@@ -53,34 +76,12 @@ export async function POST(req: Request) {
             name: created.name,
             reservation_date: created.reservation_date,
             reservation_time: created.reservation_time,
-            partySize: created.partySize,
+            partysize: created.partysize,
             reminderTime: reminderTime.toISOString(),
           },
         });
       } catch (err) {
         console.error("reminder failed:", err);
-      }
-
-      // Trigger the reservation.created event for other functions to listen to
-      try {
-        await inngest.send({
-          name: "reservation.created",
-          data: {
-            email: created.email,
-            booking_id: created.id,
-            name: created.name,
-            reservation_date: created.reservation_date,
-            reservation_time: created.reservation_time,
-            partySize: created.partySize,
-          },
-        });
-
-        console.log(
-          "Inngest event 'reservation.created' sent with data:",
-          created,
-        );
-      } catch (err) {
-        console.error("send email failed:", err);
       }
     }
 

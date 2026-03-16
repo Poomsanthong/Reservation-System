@@ -59,13 +59,13 @@ const Comunication = () => {
             <div>
               <p className="text-sm text-primary-600">Reminders Sent</p>
               <p className="text-xl text-primary-900">
-                {stats ? stats.reminders.total : "Loading..."}
+                {stats ? stats.reminders.delivered : "Loading..."}
               </p>
             </div>
           </div>
           <Badge className="bg-green-100 text-green-700">
             {stats
-              ? `${stats.reminders.openedPercentage || 0}% opened`
+              ? `${stats.reminders.deliveredPercentage || 0}% delivered`
               : "Loading..."}
           </Badge>
         </div>

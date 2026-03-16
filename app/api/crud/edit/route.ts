@@ -16,7 +16,6 @@ export async function PATCH(req: Request) {
       .select();
 
     if (error) throw new Error(error.message);
-
     return success(updated);
   } catch (error) {
     return fail(error);
