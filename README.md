@@ -1,4 +1,4 @@
-# Reservation System ( In Progress not Complete)
+# Reservation System
 
 A modern web application for managing reservations, built with Next.js, TypeScript, and a modular component architecture.
 
