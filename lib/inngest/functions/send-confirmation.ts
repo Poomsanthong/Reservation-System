@@ -44,6 +44,7 @@ export const sendconfirmation = inngest.createFunction(
         booking_id,
         type: "confirmation",
         delivered: true,
+        reminder_state: "delivered",
       });
       return { success: true };
     } catch (err) {

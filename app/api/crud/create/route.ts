@@ -37,11 +37,6 @@ export async function POST(req: Request) {
           },
         });
 
-        await supabase
-          .from("messages")
-          .update({ reminder_state: "delivered" })
-          .eq("type", "confirmation");
-
         console.log(
           "Inngest event 'reservation.created' sent with data:",
           created,
@@ -95,7 +90,4 @@ export async function POST(req: Request) {
     console.error("Error in CREATE route:", error);
     return fail(error);
   }
-}
-function eq(arg0: string, id: any) {
-  throw new Error("Function not implemented.");
 }
