@@ -29,6 +29,7 @@ const CommunicationHistory = () => {
     async function fetchCommunications() {
       try {
         const data = await getRecentMessages();
+
         setCommunications(data);
         console.log("Fetched communications:", data);
       } catch (error) {
@@ -67,7 +68,7 @@ const CommunicationHistory = () => {
               </div>
               <Badge
                 variant={
-                  comm.reminder_state === "sent" ? "default" : "secondary"
+                  comm.reminder_state === "delivered" ? "default" : "secondary"
                 }
               >
                 {comm.reminder_state}

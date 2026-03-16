@@ -23,6 +23,7 @@ export async function POST(req: Request) {
     // Trigger  Inngest event after successful creation
     if (table === "reservations") {
       // Trigger the reservation.created event for other functions to listen to
+
       try {
         await inngest.send({
           name: "reservation.created",
@@ -36,12 +37,10 @@ export async function POST(req: Request) {
           },
         });
 
-        await supabase.from("messages").insert({
-          booking_id: created.id,
-          type: "confirmation",
-          reminder_state: "sent",
-          delivered: true,
-        });
+        await supabase
+          .from("messages")
+          .update({ reminder_state: "delivered" })
+          .eq("type", "confirmation");
 
         console.log(
           "Inngest event 'reservation.created' sent with data:",
@@ -96,4 +95,7 @@ export async function POST(req: Request) {
     console.error("Error in CREATE route:", error);
     return fail(error);
   }
+}
+function eq(arg0: string, id: any) {
+  throw new Error("Function not implemented.");
 }
