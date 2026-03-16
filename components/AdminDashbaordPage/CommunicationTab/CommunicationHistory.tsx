@@ -48,9 +48,9 @@ const CommunicationHistory = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {communications.map((comm, idx) => (
+          {communications.map((comm) => (
             <div
-              key={idx}
+              key={comm.id}
               className="flex items-center justify-between p-3 bg-primary-50 rounded-lg"
             >
               <div className="flex items-center gap-3">
