@@ -36,6 +36,13 @@ export async function POST(req: Request) {
           },
         });
 
+        await supabase.from("messages").insert({
+          booking_id: created.id,
+          type: "confirmation",
+          reminder_state: "sent",
+          delivered: true,
+        });
+
         console.log(
           "Inngest event 'reservation.created' sent with data:",
           created,

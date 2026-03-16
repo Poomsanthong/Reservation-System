@@ -65,7 +65,7 @@ const Comunication = () => {
           </div>
           <Badge className="bg-green-100 text-green-700">
             {stats
-              ? `${stats.reminders.openedPercentage || 0}% opened`
+              ? `${stats.reminders.deliveredPercentage || 0}% delivered`
               : "Loading..."}
           </Badge>
         </div>

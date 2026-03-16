@@ -8,8 +8,37 @@ import {
 } from "@/components/ui/card";
 import { Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import { getRecentMessages } from "@/lib/api/functions";
+import { timeAgo } from "@/lib/dateHelper";
 
+type Communication = {
+  id: number;
+  type: string;
+  reminder_state: string;
+  created_at: string;
+  booking_id: {
+    name: string;
+    email: string;
+  } | null;
+};
 const CommunicationHistory = () => {
+  const [communications, setCommunications] = useState<Communication[]>([]);
+
+  useEffect(() => {
+    async function fetchCommunications() {
+      try {
+        const data = await getRecentMessages();
+        setCommunications(data);
+        console.log("Fetched communications:", data);
+      } catch (error) {
+        console.error("Error fetching communications:", error);
+      }
+    }
+
+    fetchCommunications();
+  }, []);
+
   return (
     <Card>
       <CardHeader>
@@ -18,38 +47,7 @@ const CommunicationHistory = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {[
-            {
-              type: "Confirmation",
-              recipient: "emily.chen@email.com",
-              status: "Delivered",
-              time: "5 min ago",
-            },
-            {
-              type: "Reminder",
-              recipient: "michael.b@email.com",
-              status: "Opened",
-              time: "12 min ago",
-            },
-            {
-              type: "Waitlist",
-              recipient: "sarah.w@email.com",
-              status: "Delivered",
-              time: "28 min ago",
-            },
-            {
-              type: "Thank You",
-              recipient: "james.wilson@email.com",
-              status: "Opened",
-              time: "1 hr ago",
-            },
-            {
-              type: "Confirmation",
-              recipient: "lisa.anderson@email.com",
-              status: "Delivered",
-              time: "2 hrs ago",
-            },
-          ].map((comm, idx) => (
+          {communications.map((comm, idx) => (
             <div
               key={idx}
               className="flex items-center justify-between p-3 bg-primary-50 rounded-lg"
@@ -60,15 +58,19 @@ const CommunicationHistory = () => {
                 </div>
                 <div>
                   <p className="text-sm text-primary-900">
-                    {comm.type} → {comm.recipient}
+                    {comm.type} → {comm.booking_id?.name || "Unknown"}
                   </p>
-                  <p className="text-xs text-primary-500">{comm.time}</p>
+                  <p className="text-xs text-primary-500">
+                    {timeAgo(comm.created_at)}
+                  </p>
                 </div>
               </div>
               <Badge
-                variant={comm.status === "Opened" ? "default" : "secondary"}
+                variant={
+                  comm.reminder_state === "sent" ? "default" : "secondary"
+                }
               >
-                {comm.status}
+                {comm.reminder_state}
               </Badge>
             </div>
           ))}
