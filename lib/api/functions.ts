@@ -1,3 +1,5 @@
+import { json } from "stream/consumers";
+
 export async function get(table: string) {
   const res = await fetch(`/api/crud/get?table=${table}`);
 
@@ -96,9 +98,18 @@ export async function getSchedule(date: string) {
 }
 
 export async function getMessageStats() {
-  const res = await fetch("/api/message-stats");
+  const res = await fetch("/api/messages/message-stats");
   if (!res.ok) {
     throw new Error("Failed to load message stats");
   }
+  return res.json();
+}
+
+export async function getRecentMessages() {
+  const res = await fetch("/api/messages");
+  if (!res.ok) {
+    throw new Error("Failed to load recent messages");
+  }
+
   return res.json();
 }
