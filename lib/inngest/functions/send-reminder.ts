@@ -34,9 +34,7 @@ export const sendReminder = inngest.createFunction(
       .replace("{{reservation_time}}", reservation_time)
       .replace("{{booking_id}}", booking_id)
       .replace("{{partysize}}", partysize.toString());
-    toast.success(
-      "Reminder time reached, sending email..." + new Date(reminderTime),
-    );
+
     console.log("Reminder Time is " + reminderTime);
     // await step.sleep("30s", 3000); // Initial sleep to ensure the database record is created , Test with 30s, then change to sleepUntil with the actual reminder time
     await step.sleepUntil("waiting for reminder time", new Date(reminderTime));
