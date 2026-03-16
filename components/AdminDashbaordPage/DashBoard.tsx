@@ -88,32 +88,48 @@ export default function AdminDashboard({
           onValueChange={setActiveTab}
           className="min-w-0"
         >
-          <TabsList className="mb-4 flex flex-wrap gap-2 justify-start">
+          <TabsList
+            className="
+    mb-4
+    flex w-full
+    bg-muted/50
+    p-1
+    rounded-xl
+    gap-1
+    overflow-x-auto
+    sm:overflow-visible
+  "
+          >
             <TabsTrigger
-              className="flex-1 min-w-0 text-sm sm:text-base"
               value="overview"
+              className=" flex items-center gap-2 rounded-lg px-3 py-2   text-xs sm:text-sm md:text-base whitespace-nowrap data-[state=active]:bg-white data-[state=active]:shadow"
             >
-              <BarChart3 className="w-4 h-4 mr-1" />
-              Overview
-            </TabsTrigger>
-            <TabsTrigger
-              className="flex-1 min-w-0 text-sm sm:text-base"
-              value="bookings"
-            >
-              <Calendar className="w-4 h-4 mr-1" />
-              Bookings
-            </TabsTrigger>
-            <TabsTrigger
-              className="flex-1 min-w-0 text-sm sm:text-base"
-              value="schedule"
-            >
-              <Clock className="w-4 h-4 mr-1" />
-              Schedule
+              <BarChart3 className="w-4 h-4" />
+              <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
 
-            <TabsTrigger value="communications">
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Communications
+            <TabsTrigger
+              value="bookings"
+              className=" flex items-center gap-2 rounded-lg px-3 py-2   text-xs sm:text-sm md:text-base whitespace-nowrap data-[state=active]:bg-white data-[state=active]:shadow"
+            >
+              <Calendar className="w-4 h-4" />
+              <span className="hidden sm:inline">Bookings</span>
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="schedule"
+              className=" flex items-center gap-2 rounded-lg px-3 py-2   text-xs sm:text-sm md:text-base whitespace-nowrap data-[state=active]:bg-white data-[state=active]:shadow"
+            >
+              <Clock className="w-4 h-4" />
+              <span className="hidden sm:inline">Schedule</span>
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="communications"
+              className=" flex items-center gap-2 rounded-lg px-3 py-2   text-xs sm:text-sm md:text-base whitespace-nowrap data-[state=active]:bg-white data-[state=active]:shadow"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span className="hidden sm:inline">Communications</span>
             </TabsTrigger>
           </TabsList>
           {/* Overview Tab */}
