@@ -9,7 +9,7 @@ const MerchantCard = () => {
       <Card>
         <CardContent className="p-6 flex gap-4">
           <img
-            src="/logo.jpg"
+            src="/Logo.jpg"
             alt="Restaurant Image"
             className="w-24 h-24 rounded-lg object-cover"
           />

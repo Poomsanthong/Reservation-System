@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: "Reservation System",
   description: "A simple reservation system built with Next.js and Supabase.",
   viewport: "width=device-width, initial-scale=1.0",
+  icons: {
+    icon: "/logo.jpg",
+  },
 };
 
 export default function RootLayout({
