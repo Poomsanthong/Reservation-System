@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { useBookingForm } from "@/lib/hooks/useBookingForm";
 
 const BookingSummary = ({ form }: { form: any }) => {
   return (
@@ -15,7 +14,11 @@ const BookingSummary = ({ form }: { form: any }) => {
             <span className="text-primary-600">Date</span>
             <span className="text-primary-900">
               {form.fields.date
-                ? form.fields.date.toLocaleDateString()
+                ? form.fields.date.toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                  })
                 : "Not selected"}
             </span>
           </div>

@@ -42,7 +42,7 @@ export default function BookingForm({ form }: { form: any }) {
     }
   }
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto ">
       <PartysizeTab form={form} />
       <CardContent className="space-y-4 sm:space-y-6">
         {/* Calendar */}
