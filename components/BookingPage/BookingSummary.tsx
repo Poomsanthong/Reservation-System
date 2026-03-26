@@ -5,9 +5,11 @@ const BookingSummary = ({ form }: { form: any }) => {
   const { date, selectedTime, partysize } = form.fields;
 
   return (
-    <div>
+    <div className="flex justify-center w-full">
+      {" "}
       {/* Summary */}
-      <Card>
+      <Card className="w-full max-w-lg">
+        {" "}
         <CardHeader>
           <CardTitle>Booking Summary</CardTitle>
         </CardHeader>

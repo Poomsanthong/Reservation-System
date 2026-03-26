@@ -23,9 +23,8 @@ export default function BookingPage() {
         <div className="lg:col-span-2 space-y-6">
           <MerchantCard />
           <BookingForm form={form} />
+          <BookingSummary form={form} />
         </div>
-
-        <BookingSummary form={form} />
       </div>
     </div>
   );
