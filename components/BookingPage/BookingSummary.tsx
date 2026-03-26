@@ -2,6 +2,8 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 const BookingSummary = ({ form }: { form: any }) => {
+  const { date, selectedTime, partysize } = form.fields;
+
   return (
     <div>
       {/* Summary */}
@@ -13,8 +15,8 @@ const BookingSummary = ({ form }: { form: any }) => {
           <div className="flex justify-between text-sm">
             <span className="text-primary-600">Date</span>
             <span className="text-primary-900">
-              {form.fields.date
-                ? form.fields.date.toLocaleDateString("en-GB", {
+              {date
+                ? date.toLocaleDateString("en-GB", {
                     weekday: "short",
                     day: "numeric",
                     month: "short",
@@ -26,13 +28,13 @@ const BookingSummary = ({ form }: { form: any }) => {
           <div className="flex justify-between text-sm">
             <span className="text-primary-600">Time</span>
             <span className="text-primary-900">
-              {form.fields.selectedTime || "Not selected"}
+              {selectedTime || "Not selected"}
             </span>
           </div>
 
           <div className="flex justify-between text-sm">
             <span className="text-primary-600">Guests</span>
-            <span className="text-primary-900">{form.fields.partysize}</span>
+            <span className="text-primary-900">{partysize}</span>
           </div>
         </CardContent>
       </Card>
