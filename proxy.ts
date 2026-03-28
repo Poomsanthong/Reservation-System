@@ -1,28 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 
-export function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+export async function proxy(req: NextRequest) {
+  const res = NextResponse.next();
 
-  // detect any supabase auth cookie
-  const hasSupabaseCookie = Array.from(req.cookies.getAll()).some((c) =>
-    c.name.includes("auth-token")
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      //  Pass the request and response objects to the Supabase client for cookie handling
+      cookies: {
+        get: (key) => req.cookies.get(key)?.value,
+        set: (key, value, options) => {
+          res.cookies.set(key, value, options);
+        },
+        remove: (key, options) => {
+          res.cookies.set(key, "", options);
+        },
+      },
+    },
   );
 
-  // PROTECT ADMIN ROUTE
-  if (pathname.startsWith("/admin")) {
-    if (!hasSupabaseCookie) {
-      const url = new URL("/login", req.url);
-      url.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(url);
-    }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { pathname } = req.nextUrl;
+
+  //  Protect admin
+  if (pathname.startsWith("/admin") && !user) {
+    const url = new URL("/login", req.url);
+    url.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(url);
   }
 
-  // PREVENT LOGGED-IN USER FROM SEEING LOGIN PAGE
-  if (pathname === "/login" && hasSupabaseCookie) {
+  //  Prevent logged-in users from seeing login
+  if (pathname === "/login" && user) {
     return NextResponse.redirect(new URL("/admin", req.url));
   }
 
-  return NextResponse.next();
+  return res;
 }
 
 export const config = {
