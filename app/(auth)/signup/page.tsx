@@ -16,14 +16,33 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  async function handleSignUp() {
-    await fetch("/api/signup", {
-      method: "POST",
-      body: JSON.stringify({ email, password, organization }),
-      headers: { "Content-Type": "application/json" },
-    });
+  async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
 
-    setSuccess("Sign up successful. Redirecting...");
+    try {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        body: JSON.stringify({ email, password, organization }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error ?? "Failed to create account.");
+        return;
+      }
+
+      setSuccess("Sign up successful. Redirecting to login...");
+      router.push("/login");
+    } catch {
+      setError("Something went wrong while creating your account.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -43,6 +62,7 @@ export default function Page() {
             placeholder="admin@example.com"
             type="email"
             autoComplete="email"
+            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
@@ -56,6 +76,7 @@ export default function Page() {
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               autoComplete="current-password"
+              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
@@ -83,6 +104,7 @@ export default function Page() {
             placeholder="Chargebee Restaurant"
             type="text"
             autoComplete="organization"
+            required
             value={organization}
             onChange={(e) => setOrganization(e.target.value)}
             disabled={loading}
@@ -104,7 +126,7 @@ export default function Page() {
           <Button
             type="submit"
             className="w-full"
-            disabled={loading || !email || !password}
+            disabled={loading || !email || !password || !organization}
           >
             {loading ? "Signing up..." : "Sign Up"}
           </Button>

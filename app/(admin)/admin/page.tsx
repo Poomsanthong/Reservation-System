@@ -7,7 +7,12 @@ import { redirect } from "next/navigation";
 import { getBookingTrends } from "@/lib/server/getBookingTrends";
 import { getTimeDistribution } from "@/lib/server/getTimeDistribution";
 import { getRecentActivity } from "@/lib/server/getRecentActivity";
-export default async function AdminPage() {
+
+export default async function AdminPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   // Initialize Supabase client for server-side operations
   const supabase = await supabaseServer();
 
@@ -19,6 +24,13 @@ export default async function AdminPage() {
   if (!user) {
     redirect("/login");
   }
+
+  const { data: restaurant, error } = await supabase
+    .from("restaurant")
+    .select("*")
+    .eq("slug", params.slug)
+    .single();
+
   // Fetch statistics and bookings from the server
   const stats = await getStats(supabase);
   const bookings = await getBookings(supabase);

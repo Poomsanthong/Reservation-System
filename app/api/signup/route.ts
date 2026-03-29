@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
     console.log("Creating slug for organization:", baseSlug);
 
     const supabase = supabaseAdmin;
+
     const { data: userData, error: signUpError } =
       await supabaseAdmin.auth.admin.createUser({
         email,
@@ -63,19 +64,24 @@ export async function POST(req: NextRequest) {
     }
 
     createdUserId = userData.user.id;
-    console.log("Created user with ID:", createdUserId);
     let slug = baseSlug;
     let counter = 1;
 
     while (true) {
       const { data: existingRestaurant, error: slugCheckError } = await supabase
         .from("restaurants")
-        .select("id")
+        .select("restaurant_id")
         .eq("slug", slug)
         .maybeSingle();
 
       if (slugCheckError) {
-        throw slugCheckError;
+        console.error("Failed while checking restaurant slug:", slugCheckError);
+        return NextResponse.json(
+          {
+            error: `Could not verify restaurant slug: ${slugCheckError.message}`,
+          },
+          { status: 500 },
+        );
       }
 
       if (!existingRestaurant) {
@@ -110,6 +116,7 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     );
   } catch (error: unknown) {
+    console.error("Unexpected signup error:", error);
     const message =
       error instanceof Error ? error.message : "Internal server error";
 

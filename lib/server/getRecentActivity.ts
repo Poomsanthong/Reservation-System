@@ -23,8 +23,8 @@ export async function getRecentActivity(supabase: SupabaseClient) {
       row.status === "confirmed"
         ? "New booking created"
         : row.status === "cancelled"
-        ? "Booking cancelled"
-        : "Updated booking",
+          ? "Booking cancelled"
+          : "Updated booking",
     time: timeAgo(row.created_at),
     status: row.status,
   }));
