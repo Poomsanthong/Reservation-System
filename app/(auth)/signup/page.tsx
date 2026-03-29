@@ -1,78 +1,42 @@
 "use client";
-
-import { useState } from "react";
-import { createClientInstance } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { EyeOff } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export default function AdminLoginPage() {
+export default function Page() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [organization, setOrganization] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  async function login(e?: React.FormEvent) {
-    e?.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
-    const { data, error } =
-      await createClientInstance().auth.signInWithPassword({
-        email,
-        password,
-      });
-    setLoading(false);
-    if (error) {
-      setError(error.message);
-      return;
-    }
-    setSuccess("Login successful. Redirecting...");
-    // Smooth client-side navigation
-    router.push("/admin"); // SPA navigation
-  }
+  async function handleSignUp() {
+    await fetch("/api/signup", {
+      method: "POST",
+      body: JSON.stringify({ email, password, organization }),
+      headers: { "Content-Type": "application/json" },
+    });
 
-  async function forgotPassword() {
-    setError("");
-    setSuccess("");
-    if (!email) {
-      setError("Enter email first.");
-      return;
-    }
-    setLoading(true);
-    const { error } = await createClientInstance().auth.resetPasswordForEmail(
-      email,
-      {
-        redirectTo: `${location.origin}/admin/reset`,
-      },
-    );
-    setLoading(false);
-    if (error) {
-      setError(error.message);
-    } else {
-      setSuccess("Password reset email sent.");
-    }
+    setSuccess("Sign up successful. Redirecting...");
   }
-  const signUp = () => {
-    setError("");
-    setSuccess("");
-    router.push("/signup"); // SPA navigation
-  };
 
   return (
     <div className="flex flex-col max-w-sm mx-auto gap-6 pt-20">
       <div className="space-y-1">
-        <h1 className="text-xl font-semibold">Admin Login</h1>
+        <h1 className="text-xl font-semibold">Sign Up Form</h1>
         <p className="text-sm text-muted-foreground">
-          Sign in with your admin credentials.
+          Create an admin account.
         </p>
       </div>
 
-      <form onSubmit={login} className="space-y-4">
+      <form onSubmit={handleSignUp} className="space-y-4">
+        {/* email */}
         <div className="space-y-2">
           <label className="text-xs font-medium">Email</label>
           <Input
@@ -84,7 +48,7 @@ export default function AdminLoginPage() {
             disabled={loading}
           />
         </div>
-
+        {/* password */}
         <div className="space-y-2">
           <label className="text-xs font-medium">Password</label>
           <div className="relative">
@@ -112,46 +76,40 @@ export default function AdminLoginPage() {
             </button>
           </div>
         </div>
-
+        {/* organization */}
+        <div className="space-y-2">
+          <label className="text-xs font-medium">Organization Name</label>
+          <Input
+            placeholder="Chargebee Restaurant"
+            type="text"
+            autoComplete="organization"
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            disabled={loading}
+          />
+        </div>
+        {/* error */}
         {error && (
           <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-2 py-1">
             {error}
           </p>
         )}
+        {/* success */}
         {success && (
           <p className="text-xs text-green-600 bg-green-50 border border-green-200 rounded px-2 py-1">
             {success}
           </p>
         )}
-
         <div className="flex items-center justify-between">
           <Button
             type="submit"
             className="w-full"
             disabled={loading || !email || !password}
           >
-            {loading ? "Signing in..." : "Login"}
+            {loading ? "Signing up..." : "Sign Up"}
           </Button>
         </div>
       </form>
-
-      <div className="flex justify-between text-xs">
-        <button
-          onClick={forgotPassword}
-          disabled={loading}
-          className="text-blue-600 hover:underline disabled:opacity-50"
-          type="button"
-        >
-          Forgot password?
-        </button>
-        <button
-          onClick={signUp}
-          disabled={loading}
-          className="text-blue-600 hover:underline disabled:opacity-50"
-        >
-          Don't have an account? Sign up
-        </button>
-      </div>
     </div>
   );
 }
