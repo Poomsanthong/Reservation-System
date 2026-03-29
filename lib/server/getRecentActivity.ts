@@ -2,11 +2,15 @@
 
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getRecentActivity(supabase: SupabaseClient) {
+export async function getRecentActivity(
+  supabase: SupabaseClient,
+  restaurantId: string,
+) {
   // Fetch 10 newest bookings (confirmed/cancelled)
   const { data, error } = await supabase
     .from("reservations")
     .select("name, status, created_at")
+    .eq("restaurant_id", restaurantId)
     .order("created_at", { ascending: false })
     .limit(10);
 

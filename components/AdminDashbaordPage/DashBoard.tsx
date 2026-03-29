@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -43,6 +43,7 @@ import CommunicationHistory from "./CommunicationTab/CommunicationHistory";
 
 export default function AdminDashboard({
   userEmail,
+  organizationName,
   totalBookings,
   totalGuests,
   previousTotalBookings,
@@ -53,6 +54,7 @@ export default function AdminDashboard({
   recentActivity,
 }: {
   userEmail: string | null;
+  organizationName: string;
   totalBookings: number;
   totalGuests: number;
   previousTotalBookings: number;
@@ -69,13 +71,36 @@ export default function AdminDashboard({
   }[];
 }) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="w-full overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0">
+          <div className="mb-8 min-w-0">
+            <h2 className="text-primary-900 mb-2 text-lg sm:text-xl md:text-2xl lg:text-3xl break-words">
+              Welcome,{" "}
+              <span className="font-semibold ">{organizationName}</span>
+            </h2>
+            <p className="text-primary-600">
+              Manage reservations and track performance
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0">
         <div className="mb-8 min-w-0">
           <h2 className="text-primary-900 mb-2 text-lg sm:text-xl md:text-2xl lg:text-3xl break-words">
-            Welcome, <span className="font-semibold ">{userEmail}</span>
+            Welcome, <span className="font-semibold ">{organizationName}</span>
           </h2>
           <p className="text-primary-600">
             Manage reservations and track performance

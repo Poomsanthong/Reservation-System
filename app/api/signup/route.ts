@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     while (true) {
       const { data: existingRestaurant, error: slugCheckError } = await supabase
         .from("restaurants")
-        .select("restaurant_id")
+        .select("id")
         .eq("slug", slug)
         .maybeSingle();
 

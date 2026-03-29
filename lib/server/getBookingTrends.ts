@@ -1,7 +1,10 @@
 "use server";
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getBookingTrends(supabase: SupabaseClient) {
+export async function getBookingTrends(
+  supabase: SupabaseClient,
+  restaurantId: string,
+) {
   // last 6 months
   const fromDate = new Date();
   fromDate.setMonth(fromDate.getMonth() - 5);
@@ -10,7 +13,8 @@ export async function getBookingTrends(supabase: SupabaseClient) {
   const { data, error } = await supabase
     .from("reservations")
     .select("created_at")
-    .gte("created_at", fromDate.toISOString());
+    .gte("created_at", fromDate.toISOString())
+    .eq("restaurant_id", restaurantId);
 
   if (error) throw error;
 
