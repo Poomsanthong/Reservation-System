@@ -180,7 +180,7 @@ export default function AdminDashboard({
 
           {/* Schedule Tab */}
           <TabsContent value="schedule" className="min-w-0">
-            <ScheduleManager />
+            <ScheduleManager restaurantId={restaurantId} />
           </TabsContent>
 
           {/* Communications Tab */}

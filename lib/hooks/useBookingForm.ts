@@ -55,6 +55,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
   // ---- BUILD PAYLOAD ----
   function buildPayload(): Reservation {
     return {
+      // Store which restaurant this reservation belongs to.
       restaurant_id: options?.restaurantId,
       name: fields.name,
       email: fields.email,
@@ -76,6 +77,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
       fields.date.toISOString().split("T")[0],
       fields.selectedTime,
       fields.name,
+      // Compare duplicates only inside the current restaurant.
       options?.restaurantId,
     );
 
@@ -105,6 +107,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
 
       toastStore.success("Booking confirmed!");
 
+      // Refresh bookings for just this restaurant after submit.
       await get("reservations", options?.restaurantId); // optional: reload bookings
 
       setShowConfirmation(true);

@@ -15,6 +15,7 @@ export async function GET(req: Request) {
     const supabase = await supabaseServer();
     let query = supabase.from(table!).select("*");
 
+    // Only reservations are scoped by restaurant_id in this generic read route.
     if (table === "reservations" && restaurantId) {
       query = query.eq("restaurant_id", restaurantId);
     }

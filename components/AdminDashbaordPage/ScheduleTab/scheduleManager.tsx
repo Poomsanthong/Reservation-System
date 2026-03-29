@@ -24,7 +24,11 @@ import Setting from "./Setting";
 import CalendarSetting from "./CalendarSetting";
 import DailySchedule from "./DailySchedule";
 
-export function ScheduleManager() {
+export function ScheduleManager({
+  restaurantId,
+}: {
+  restaurantId: string;
+}) {
   return (
     <div className="space-y-6">
       {/* Settings Card */}
@@ -34,7 +38,7 @@ export function ScheduleManager() {
         {/* Calendar */}
         <CalendarSetting />
         {/* Daily Schedule */}
-        <DailySchedule />
+        <DailySchedule restaurantId={restaurantId} />
       </div>
       {/* Quick Stats */}
       <div className="grid sm:grid-cols-3 gap-6">

@@ -1,6 +1,7 @@
 export async function get(table: string, restaurantId?: string) {
   const searchParams = new URLSearchParams({ table });
 
+  // Include the active restaurant so reservation reads can be filtered server-side.
   if (restaurantId) {
     searchParams.set("restaurantId", restaurantId);
   }
@@ -101,6 +102,7 @@ export async function checkAvailability(
 
 export async function getSchedule(date: string, restaurantId?: string) {
   const searchParams = new URLSearchParams({ date });
+  // Schedule data is restaurant-specific, so pass the restaurant when available.
   if (restaurantId) {
     searchParams.set("restaurantId", restaurantId);
   }
