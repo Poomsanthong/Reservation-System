@@ -9,10 +9,11 @@ export default function TimeSlotGrid({ form }: { form: any }) {
   const sqlDate = form.fields.date?.toISOString().split("T")[0];
   const [loading, setLoading] = useState(true);
   if (!form.fields.date) return null;
+
   useEffect(() => {
     async function fetchSchedule() {
       try {
-        const data = await getSchedule(sqlDate);
+        const data = await getSchedule(sqlDate, form.restaurantId);
         setSchedule(data);
       } catch (err) {
         console.error("Failed to load schedule:", err);
@@ -22,7 +23,8 @@ export default function TimeSlotGrid({ form }: { form: any }) {
     }
 
     fetchSchedule();
-  }, [form.fields.date]);
+  }, [form.fields.date, form.restaurantId, sqlDate]);
+
   return (
     <div>
       {/* Time Slots */}

@@ -76,6 +76,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
       fields.date.toISOString().split("T")[0],
       fields.selectedTime,
       fields.name,
+      options?.restaurantId,
     );
 
     // handle API load failure
@@ -130,6 +131,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
 
   return {
     fields,
+    restaurantId: options?.restaurantId,
     updateField,
     submit,
     showConfirmation,

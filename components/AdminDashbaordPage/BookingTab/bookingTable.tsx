@@ -48,7 +48,13 @@ import { cancelBooking, get, updateBooking } from "@/lib/api/functions";
 
 import { useModalStore } from "@/store/useModalStore";
 
-export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
+export function BookingsTable({
+  bookings,
+  restaurant,
+}: {
+  bookings: Reservation[];
+  restaurant: string;
+}) {
   const [loading, setLoading] = useState(true);
   const [bookingsData, setBookingsData] = useState<Reservation[]>(bookings);
   const [searchTerm, setSearchTerm] = useState("");

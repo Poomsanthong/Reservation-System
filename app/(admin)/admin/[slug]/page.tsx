@@ -58,6 +58,7 @@ export default async function AdminPage({
       bookingTrends={bookingTrends ?? []}
       timeDistribution={timeDistribution ?? []}
       recentActivity={recentActivity ?? []}
+      restaurantId={restaurant.id}
     />
   );
 }

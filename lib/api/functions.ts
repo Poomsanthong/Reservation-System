@@ -1,5 +1,3 @@
-import { json } from "stream/consumers";
-
 export async function get(table: string) {
   const res = await fetch(`/api/crud/get?table=${table}`);
 
@@ -64,20 +62,29 @@ export async function deleteBooking(id: any) {
   });
   return res.json();
 }
-export async function checkDuplicate(date: string, time: string, name: string) {
+export async function checkDuplicate(
+  date: string,
+  time: string,
+  name: string,
+  restaurantId?: string,
+) {
   const res = await fetch("/api/reservations/check-duplicate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ date, time, name }),
+    body: JSON.stringify({ date, time, name, restaurantId }),
   });
   return res.json();
 }
 
-export async function checkAvailability(date: string, time: string) {
+export async function checkAvailability(
+  date: string,
+  time: string,
+  restaurantId?: string,
+) {
   const res = await fetch("/api/reservations/availability", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ date, time }),
+    body: JSON.stringify({ date, time, restaurantId }),
   });
 
   if (!res.ok) {
@@ -87,8 +94,13 @@ export async function checkAvailability(date: string, time: string) {
   return res.json();
 }
 
-export async function getSchedule(date: string) {
-  const res = await fetch("/api/reservations/schedule?date=" + date);
+export async function getSchedule(date: string, restaurantId?: string) {
+  const searchParams = new URLSearchParams({ date });
+  if (restaurantId) {
+    searchParams.set("restaurantId", restaurantId);
+  }
+
+  const res = await fetch("/api/reservations/schedule?" + searchParams);
 
   if (!res.ok) {
     throw new Error("Failed to load schedule");
