@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useToastStore } from "@/store/useToastStore";
 import { checkDuplicate, create, get } from "@/lib/api/functions";
 import { Reservation } from "@/lib/types";
-export function useBookingForm() {
+export function useBookingForm(options?: { restaurantId?: string }) {
   const toastStore = useToastStore();
 
   // ---- FORM STATE ----
@@ -55,6 +55,7 @@ export function useBookingForm() {
   // ---- BUILD PAYLOAD ----
   function buildPayload(): Reservation {
     return {
+      restaurant_id: options?.restaurantId,
       name: fields.name,
       email: fields.email,
       phone: fields.phone,

@@ -1,5 +1,6 @@
 export type Reservation = {
   id?: string;
+  restaurant_id?: string;
   name: string;
   phone: string;
   email?: string | null;
