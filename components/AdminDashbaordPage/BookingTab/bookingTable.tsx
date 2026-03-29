@@ -50,10 +50,10 @@ import { useModalStore } from "@/store/useModalStore";
 
 export function BookingsTable({
   bookings,
-  restaurant,
+  restaurant_id,
 }: {
   bookings: Reservation[];
-  restaurant: string;
+  restaurant_id: string;
 }) {
   const [loading, setLoading] = useState(true);
   const [bookingsData, setBookingsData] = useState<Reservation[]>(bookings);
@@ -68,7 +68,7 @@ export function BookingsTable({
     try {
       setLoading(true);
 
-      const res = await get("reservations");
+      const res = await get("reservations", restaurant_id);
 
       if (res.error) throw res.error;
 

@@ -1,6 +1,11 @@
-export async function get(table: string) {
-  const res = await fetch(`/api/crud/get?table=${table}`);
+export async function get(table: string, restaurantId?: string) {
+  const searchParams = new URLSearchParams({ table });
 
+  if (restaurantId) {
+    searchParams.set("restaurantId", restaurantId);
+  }
+
+  const res = await fetch(`/api/crud/get?${searchParams.toString()}`);
   if (!res.ok) throw new Error("Failed to load bookings");
   return res.json();
 }

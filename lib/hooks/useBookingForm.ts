@@ -105,7 +105,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
 
       toastStore.success("Booking confirmed!");
 
-      await get("reservations"); // optional: reload bookings
+      await get("reservations", options?.restaurantId); // optional: reload bookings
 
       setShowConfirmation(true);
       setTimeout(() => setShowConfirmation(false), 4000);

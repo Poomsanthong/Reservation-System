@@ -115,18 +115,7 @@ export default function AdminDashboard({
           onValueChange={setActiveTab}
           className="min-w-0"
         >
-          <TabsList
-            className="
-    mb-4
-    flex w-full
-    bg-muted/50
-    p-1
-    rounded-xl
-    gap-1
-    overflow-x-auto
-    sm:overflow-visible
-  "
-          >
+          <TabsList className=" mb-4 flex w-full bg-muted/50 p-1 rounded-xl  gap-1  overflow-x-auto sm:overflow-visible">
             <TabsTrigger
               value="overview"
               className=" flex items-center gap-2 rounded-lg px-3 py-2   text-xs sm:text-sm md:text-base whitespace-nowrap data-[state=active]:bg-white data-[state=active]:shadow"
@@ -185,7 +174,7 @@ export default function AdminDashboard({
           {/* Bookings Tab */}
           <TabsContent value="bookings" className="min-w-0">
             <div className="overflow-x-auto">
-              <BookingsTable bookings={bookings} restaurant={restaurantId} />
+              <BookingsTable bookings={bookings} restaurant_id={restaurantId} />
             </div>
           </TabsContent>
 
