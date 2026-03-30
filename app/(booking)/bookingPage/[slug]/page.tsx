@@ -19,6 +19,6 @@ export default async function RestaurantBookingPage({ params }: PageProps) {
   if (error || !restaurant) {
     notFound();
   }
-
+  console.log("Fetched restaurant for slug", slug, ":", restaurant); // Debug log to verify fetched restaurant data
   return <BookingPageClient restaurant={restaurant} />;
 }

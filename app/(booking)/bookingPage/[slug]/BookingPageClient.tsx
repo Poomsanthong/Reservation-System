@@ -15,7 +15,7 @@ type Restaurant = {
   description?: string | null;
   location?: string | null;
   cuisine?: string | null;
-  image_url?: string | null;
+  logo_url?: string | null;
   rating?: number | string | null;
 };
 
@@ -72,7 +72,7 @@ export default function BookingPageClient({
           <Card>
             <CardContent className="flex gap-4 p-4 sm:flex-row sm:items-start sm:p-6">
               <img
-                src={restaurant.image_url || "/Logo.jpg"}
+                src={restaurant.logo_url || "/Logo.jpg"}
                 alt={restaurant.name}
                 className="w-24 h-24 rounded-lg object-cover"
               />

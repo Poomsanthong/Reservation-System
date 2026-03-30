@@ -1,6 +1,7 @@
 // app/api/signup/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
+import { randomUUID } from "crypto";
 
 // Utility function to create URL-friendly slugs from organization names
 function slugify(value: string) {
@@ -15,11 +16,29 @@ export async function POST(req: NextRequest) {
   let createdUserId: string | null = null;
 
   try {
-    const body = await req.json();
-    console.log("Received sign-up request with body:", body); // Debug log to inspect incoming data
-    const email = body?.email?.trim();
-    const password = body?.password;
-    const organization = body?.organization?.trim();
+    let email = "";
+    let password = "";
+    let organization = "";
+    let logoUrl: string | null = null;
+    let logoFile: File | null = null;
+
+    // Detect if request is multipart/form-data
+    const contentType = req.headers.get("content-type") || "";
+    if (contentType.includes("multipart/form-data")) {
+      const form = await req.formData();
+      email = (form.get("email") as string)?.trim();
+      password = form.get("password") as string;
+      organization = (form.get("organization") as string)?.trim();
+      const logo = form.get("logo");
+      if (logo && typeof logo === "object" && "arrayBuffer" in logo) {
+        logoFile = logo as File;
+      }
+    } else {
+      const body = await req.json();
+      email = body?.email?.trim();
+      password = body?.password;
+      organization = body?.organization?.trim();
+    }
 
     if (!email || !password || !organization) {
       return NextResponse.json(
@@ -47,6 +66,30 @@ export async function POST(req: NextRequest) {
     console.log("Creating slug for organization:", baseSlug);
     // Check if the slug already exists and append a number if it does
     const supabase = supabaseAdmin;
+
+    // Upload logo if present
+    if (logoFile) {
+      const ext = logoFile.name.split(".").pop() || "png";
+      const fileName = `${baseSlug}-${randomUUID()}.${ext}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("logos")
+        .upload(fileName, Buffer.from(await logoFile.arrayBuffer()), {
+          contentType: logoFile.type,
+          upsert: true,
+        });
+      if (uploadError) {
+        console.error("Logo upload error:", uploadError);
+        return NextResponse.json(
+          { error: "Failed to upload logo." },
+          { status: 500 },
+        );
+      }
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage
+        .from("logos")
+        .getPublicUrl(fileName);
+      logoUrl = publicUrlData?.publicUrl || null;
+    }
 
     const { data: userData, error: signUpError } =
       await supabaseAdmin.auth.admin.createUser({
@@ -104,6 +147,7 @@ export async function POST(req: NextRequest) {
           name: organization,
           slug,
           owner_id: createdUserId,
+          logo_url: logoUrl,
         },
       ])
       .select();

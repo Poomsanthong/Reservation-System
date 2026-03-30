@@ -15,18 +15,22 @@ export default function Page() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [logo, setLogo] = useState<File | null>(null);
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
     setLoading(true);
-    setError("");
-    setSuccess("");
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("organization", organization);
+    if (logo) formData.append("logo", logo);
 
     try {
       const response = await fetch("/api/signup", {
         method: "POST",
-        body: JSON.stringify({ email, password, organization }),
-        headers: { "Content-Type": "application/json" },
+        body: formData,
       });
 
       const result = await response.json();
@@ -107,6 +111,19 @@ export default function Page() {
             required
             value={organization}
             onChange={(e) => setOrganization(e.target.value)}
+            disabled={loading}
+          />
+        </div>
+        {/* restaurant logo */}
+        <div className="space-y-2">
+          <label className="text-xs font-medium ">
+            Restaurant Logo <br />
+          </label>
+          <input
+            className="bg-white text-accent rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm file:bg-transparent file:border-0 file:text-sm file:font-semibold file:cursor-pointer hover:file:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 "
+            type="file"
+            accept="image/*"
+            onChange={(e) => setLogo(e.target.files?.[0] ?? null)}
             disabled={loading}
           />
         </div>
