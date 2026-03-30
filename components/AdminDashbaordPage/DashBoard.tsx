@@ -187,10 +187,10 @@ export default function AdminDashboard({
           <TabsContent value="communications" className="space-y-6 min-w-0">
             <div className="grid lg:grid-cols-2 gap-6 min-w-0">
               <Comunication restaurant_id={restaurantId} />
-              <MessageTemplate />
+              <MessageTemplate restaurantId={restaurantId} />
             </div>
 
-            <CommunicationHistory />
+            <CommunicationHistory restaurant_id={restaurantId} />
           </TabsContent>
         </Tabs>
       </div>

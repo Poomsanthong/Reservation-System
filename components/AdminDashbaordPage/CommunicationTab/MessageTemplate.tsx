@@ -17,13 +17,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { updateTemplate } from "@/lib/api/functions";
+import { getTemplates } from "@/lib/api/functions";
 type Template = {
   id: string;
   type: string;
   subject: string;
   html: string;
 };
-const MessageTemplate = () => {
+const MessageTemplate = ({ restaurantId }: { restaurantId: string }) => {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -37,10 +38,14 @@ const MessageTemplate = () => {
   useEffect(() => {
     setLoading(true);
     async function fetchTemplates() {
-      const res = await fetch("/api/templates");
-      const data = await res.json();
-      setTemplates(data || []);
-      setLoading(false);
+      try {
+        const data = await getTemplates(restaurantId);
+        setTemplates(data);
+      } catch (error) {
+        console.error("Failed to fetch templates:", error);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchTemplates();
   }, []);

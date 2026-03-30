@@ -10,22 +10,23 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useDateStore } from "@/store/useSelectedData";
+import { toSqlDate } from "@/lib/dateHelper";
+
 const DailyBooking = ({ restaurant_id }: { restaurant_id: string }) => {
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState<any[]>([]);
   const { selectedDate } = useDateStore();
 
   if (!selectedDate) return null;
-  const sqlDate = selectedDate.toISOString().split("T")[0];
+  const sqlDate = toSqlDate(selectedDate);
 
   useEffect(() => {
     async function fetchSchedule() {
       try {
         setLoading(true);
-        // Send restaurantId so the schedule tab only shows this restaurant's bookings.
         const searchParams = new URLSearchParams({
           date: sqlDate,
-          restaurant_id,
+          restaurantId: restaurant_id,
         });
         const res = await fetch(`/api/reservations/schedule?${searchParams}`);
         if (!res.ok) throw new Error("Failed to fetch schedule");
@@ -41,7 +42,7 @@ const DailyBooking = ({ restaurant_id }: { restaurant_id: string }) => {
     fetchSchedule();
   }, [sqlDate, restaurant_id]);
 
-  if (loading) return <p>Loading...</p>;
+  // if (loading) return <p>Loading...</p>;
 
   return (
     <Card className="lg:col-span-2">

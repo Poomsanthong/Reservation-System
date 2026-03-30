@@ -22,13 +22,13 @@ type Communication = {
     email: string;
   } | null;
 };
-const CommunicationHistory = () => {
+const CommunicationHistory = ({ restaurant_id }: { restaurant_id: string }) => {
   const [communications, setCommunications] = useState<Communication[]>([]);
 
   useEffect(() => {
     async function fetchCommunications() {
       try {
-        const data = await getRecentMessages();
+        const data = await getRecentMessages(restaurant_id);
 
         setCommunications(data);
         console.log("Fetched communications:", data);

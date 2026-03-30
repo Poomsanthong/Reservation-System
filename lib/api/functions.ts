@@ -1,6 +1,8 @@
+// Centralized API functions for frontend components to interact with backend routes.
+// This file serves as a single source of truth for all API interactions, making it easier to maintain and update endpoints as needed.
+
 export async function get(table: string, restaurantId?: string) {
   const searchParams = new URLSearchParams({ table });
-
   // Include the active restaurant so reservation reads can be filtered server-side.
   if (restaurantId) {
     searchParams.set("restaurantId", restaurantId);
@@ -92,11 +94,7 @@ export async function checkAvailability(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ date, time, restaurantId }),
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to check availability");
-  }
-
+  if (!res.ok) throw new Error("Failed to check availability");
   return res.json();
 }
 
@@ -107,7 +105,9 @@ export async function getSchedule(date: string, restaurantId?: string) {
     searchParams.set("restaurantId", restaurantId);
   }
 
-  const res = await fetch("/api/reservations/schedule?" + searchParams);
+  const res = await fetch(
+    "/api/reservations/schedule?" + searchParams.toString(),
+  );
 
   if (!res.ok) {
     throw new Error("Failed to load schedule");
@@ -121,18 +121,37 @@ export async function getMessageStats(restaurantId?: string) {
   if (restaurantId) {
     searchParams.set("restaurantId", restaurantId);
   }
-  const res = await fetch("/api/messages/message-stats?" + searchParams);
+  const res = await fetch(
+    "/api/messages/message-stats?" + searchParams.toString(),
+  );
   if (!res.ok) {
     throw new Error("Failed to load message stats");
   }
   return res.json();
 }
 
-export async function getRecentMessages() {
-  const res = await fetch("/api/messages");
+export async function getRecentMessages(restaurantId?: string) {
+  const searchParams = new URLSearchParams();
+  if (restaurantId) {
+    searchParams.set("restaurantId", restaurantId);
+  }
+
+  const res = await fetch("/api/messages?" + searchParams.toString());
   if (!res.ok) {
     throw new Error("Failed to load recent messages");
   }
+  return res.json();
+}
 
+export async function getTemplates(restaurantId?: string) {
+  const searchParams = new URLSearchParams();
+  if (restaurantId) {
+    searchParams.set("restaurantId", restaurantId);
+  }
+
+  const res = await fetch("/api/templates?" + searchParams.toString());
+  if (!res.ok) {
+    throw new Error("Failed to load templates");
+  }
   return res.json();
 }
