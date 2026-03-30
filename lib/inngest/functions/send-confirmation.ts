@@ -18,11 +18,20 @@ export const sendconfirmation = inngest.createFunction(
       restaurant_id,
     } = event.data;
 
-    const { data: template } = await supabaseAdmin
+    const { data: template, error: templateError } = await supabaseAdmin
       .from("email_templates")
       .select("*")
       .eq("type", "confirmation")
-      .single();
+      .eq("restaurant_id", restaurant_id)
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (templateError || !template) {
+      throw new Error(
+        templateError?.message || "Confirmation email template not found",
+      );
+    }
 
     let emailContent = template?.html || "";
     emailContent = emailContent
@@ -34,7 +43,7 @@ export const sendconfirmation = inngest.createFunction(
 
     try {
       const result = await resend.emails.send({
-        from: "NoReply@bookflow.poomsan.site", // replace with your verified sender , this is just an example and tested with resend's onboarding email
+        from: "NoReply@bookflow.poomsan.site", // verify this sender in Resend dashboard
         to: email,
         subject: template.subject,
         html: emailContent,

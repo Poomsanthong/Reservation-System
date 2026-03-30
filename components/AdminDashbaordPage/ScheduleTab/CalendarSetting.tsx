@@ -65,6 +65,7 @@ const CalendarSetting = () => {
     await blockDate();
     setOpenBlock(false);
   };
+
   // When "Unblock" is confirmed in the modal
   const handleUnblock = async () => {
     await unblockSelectedDate();

@@ -33,7 +33,7 @@ export default function AdminLoginPage() {
     }
     setSuccess("Login successful. Redirecting...");
     // Smooth client-side navigation
-    router.push("/admin"); // SPA navigation
+    window.location.href = "/admin"; // Use full reload to ensure auth state is properly initialized on the admin page
   }
 
   async function forgotPassword() {

@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { supabaseServer } from "@/lib/server/supabaseServer";
+import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: "Reservation System",
   description: "A simple reservation system built with Next.js and Supabase.",
   icons: {
-    icon: "/logo.jpg",
+    icon: "/BookFlow_favicon.svg",
   },
 };
 export const viewport = {
@@ -33,22 +33,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  let restaurantLogo: string | undefined;
-
-  if (user) {
-    const { data: restaurant } = await supabase
-      .from("restaurants")
-      .select("logo_url")
-      .eq("owner_id", user.id)
-      .single();
-
-    restaurantLogo = restaurant?.logo_url ?? undefined;
-  }
+  const { restaurant } = await getCurrentUserRestaurant();
+  const restaurantLogo = restaurant?.logo_url ?? undefined;
 
   return (
     <html lang="en" suppressHydrationWarning>

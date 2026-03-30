@@ -7,17 +7,24 @@ import {
 import { toSqlDate } from "@/lib/dateHelper";
 import { BlackoutDate } from "@/lib/types";
 import { useDateStore } from "@/store/useSelectedData";
+import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
 export function useBlockoutDates() {
   const [blackouts, setBlackouts] = useState<BlackoutDate[]>([]);
   const { selectedDate, setSelectedDate } = useDateStore();
   const [blockReason, setBlockReason] = useState("");
   const [loading, setLoading] = useState(false);
+  const slug = useTenantSlug();
 
   const loadBlackouts = async () => {
+    if (!slug) {
+      setBlackouts([]);
+      return;
+    }
+
     try {
       setLoading(true);
-      const data = await getBlackoutDates();
+      const data = await getBlackoutDates(slug);
       setBlackouts(data);
     } finally {
       setLoading(false);
@@ -25,8 +32,8 @@ export function useBlockoutDates() {
   };
 
   useEffect(() => {
-    loadBlackouts();
-  }, []);
+    void loadBlackouts();
+  }, [slug]);
 
   const getBlackoutByDate = (date: Date) => {
     const sql = toSqlDate(date);
@@ -34,15 +41,19 @@ export function useBlockoutDates() {
   };
 
   const blockDate = async () => {
+    if (!slug) return;
+
     const sqlDate = toSqlDate(selectedDate);
-    await addBlackoutDate(sqlDate, blockReason);
+    await addBlackoutDate(sqlDate, blockReason, slug);
     await loadBlackouts();
     setBlockReason("");
   };
 
   const unblockSelectedDate = async () => {
+    if (!slug) return;
+
     const sqlDate = toSqlDate(selectedDate);
-    await unblockDate(sqlDate);
+    await unblockDate(sqlDate, slug);
     setBlackouts((prev) => prev.filter((b) => b.date !== sqlDate));
   };
 

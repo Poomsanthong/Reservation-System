@@ -11,11 +11,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useDateStore } from "@/store/useSelectedData";
 import { toSqlDate } from "@/lib/dateHelper";
+import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
-const DailyBooking = ({ restaurant_id }: { restaurant_id: string }) => {
+const DailyBooking = () => {
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState<any[]>([]);
   const { selectedDate } = useDateStore();
+  const slug = useTenantSlug();
 
   if (!selectedDate) return null;
   const sqlDate = toSqlDate(selectedDate);
@@ -26,8 +28,10 @@ const DailyBooking = ({ restaurant_id }: { restaurant_id: string }) => {
         setLoading(true);
         const searchParams = new URLSearchParams({
           date: sqlDate,
-          restaurantId: restaurant_id,
         });
+        if (slug) {
+          searchParams.set("slug", slug);
+        }
         const res = await fetch(`/api/reservations/schedule?${searchParams}`);
         if (!res.ok) throw new Error("Failed to fetch schedule");
         const data = await res.json();
@@ -40,7 +44,7 @@ const DailyBooking = ({ restaurant_id }: { restaurant_id: string }) => {
     }
 
     fetchSchedule();
-  }, [sqlDate, restaurant_id]);
+  }, [sqlDate, slug]);
 
   // if (loading) return <p>Loading...</p>;
 

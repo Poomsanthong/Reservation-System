@@ -1,12 +1,19 @@
 import { getTemplates, updateTemplate } from "@/lib/server/template";
+import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const restaurant_id = searchParams.get("restaurantId") ?? undefined;
+    const slug = searchParams.get("slug") ?? undefined;
+    const restaurant = await getRestaurantBySlug(slug);
+    if (!restaurant) {
+      return new NextResponse(JSON.stringify({ error: "Restaurant not found" }), {
+        status: 404,
+      });
+    }
 
-    const templates = await getTemplates(restaurant_id); // fetch from DB with restaurantId filter
+    const templates = await getTemplates(restaurant.id);
 
     return new NextResponse(JSON.stringify(templates), {
       status: 200,
@@ -24,12 +31,18 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const template = await req.json(); // expects { id, subject, html }
+    const restaurant = await getRestaurantBySlug(template.slug);
+    if (!restaurant) {
+      return new NextResponse(JSON.stringify({ error: "Restaurant not found" }), {
+        status: 404,
+      });
+    }
     // update in DB
     await updateTemplate(
       template.id,
       template.subject,
       template.html,
-      template.restaurantId,
+      restaurant.id,
     );
     return new NextResponse(JSON.stringify({ success: true }), { status: 200 });
   } catch (err) {

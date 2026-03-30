@@ -19,13 +19,21 @@ export const sendReminder = inngest.createFunction(
       reservation_time,
       partysize,
       reminderTime,
+      restaurant_id,
     } = event.data;
 
-    const { data: template } = await supabaseAdmin
+    const { data: template, error: templateError } = await supabaseAdmin
       .from("email_templates")
       .select("*")
       .eq("type", "reminder")
-      .single();
+      .eq("restaurant_id", restaurant_id)
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (templateError || !template) {
+      throw new Error(templateError?.message || "Reminder email template not found");
+    }
 
     let emailContent = template?.html || "";
     emailContent = emailContent

@@ -6,8 +6,8 @@ A modern web application for managing reservations, built with Next.js, TypeScri
 
 **Owner Dashboard**
 
-- Email: owner@test.com
-- Password: Test1234
+- Email: Demo@gmail.com
+- Password: Demo1234
 
 ## Features
 

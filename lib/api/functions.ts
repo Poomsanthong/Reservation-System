@@ -1,11 +1,10 @@
 // Centralized API functions for frontend components to interact with backend routes.
 // This file serves as a single source of truth for all API interactions, making it easier to maintain and update endpoints as needed.
 
-export async function get(table: string, restaurantId?: string) {
+export async function get(table: string, slug?: string) {
   const searchParams = new URLSearchParams({ table });
-  // Include the active restaurant so reservation reads can be filtered server-side.
-  if (restaurantId) {
-    searchParams.set("restaurantId", restaurantId);
+  if (slug) {
+    searchParams.set("slug", slug);
   }
 
   const res = await fetch(`/api/crud/get?${searchParams.toString()}`);
@@ -13,12 +12,14 @@ export async function get(table: string, restaurantId?: string) {
   return res.json();
 }
 
-export async function create(data: any) {
+export async function create(data: any, slug?: string) {
   const res = await fetch("/api/crud/create", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       table: "reservations",
       data,
+      slug,
     }),
   });
   return res.json();
@@ -74,12 +75,12 @@ export async function checkDuplicate(
   date: string,
   time: string,
   name: string,
-  restaurantId?: string,
+  slug?: string,
 ) {
   const res = await fetch("/api/reservations/check-duplicate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ date, time, name, restaurantId }),
+    body: JSON.stringify({ date, time, name, slug }),
   });
   return res.json();
 }
@@ -87,22 +88,21 @@ export async function checkDuplicate(
 export async function checkAvailability(
   date: string,
   time: string,
-  restaurantId?: string,
+  slug?: string,
 ) {
   const res = await fetch("/api/reservations/availability", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ date, time, restaurantId }),
+    body: JSON.stringify({ date, time, slug }),
   });
   if (!res.ok) throw new Error("Failed to check availability");
   return res.json();
 }
 
-export async function getSchedule(date: string, restaurantId?: string) {
+export async function getSchedule(date: string, slug?: string) {
   const searchParams = new URLSearchParams({ date });
-  // Schedule data is restaurant-specific, so pass the restaurant when available.
-  if (restaurantId) {
-    searchParams.set("restaurantId", restaurantId);
+  if (slug) {
+    searchParams.set("slug", slug);
   }
 
   const res = await fetch(
@@ -116,10 +116,10 @@ export async function getSchedule(date: string, restaurantId?: string) {
   return res.json();
 }
 
-export async function getMessageStats(restaurantId?: string) {
+export async function getMessageStats(slug?: string) {
   const searchParams = new URLSearchParams();
-  if (restaurantId) {
-    searchParams.set("restaurantId", restaurantId);
+  if (slug) {
+    searchParams.set("slug", slug);
   }
   const res = await fetch(
     "/api/messages/message-stats?" + searchParams.toString(),
@@ -130,10 +130,10 @@ export async function getMessageStats(restaurantId?: string) {
   return res.json();
 }
 
-export async function getRecentMessages(restaurantId?: string) {
+export async function getRecentMessages(slug?: string) {
   const searchParams = new URLSearchParams();
-  if (restaurantId) {
-    searchParams.set("restaurantId", restaurantId);
+  if (slug) {
+    searchParams.set("slug", slug);
   }
 
   const res = await fetch("/api/messages?" + searchParams.toString());
@@ -143,10 +143,10 @@ export async function getRecentMessages(restaurantId?: string) {
   return res.json();
 }
 
-export async function getTemplates(restaurantId?: string) {
+export async function getTemplates(slug?: string) {
   const searchParams = new URLSearchParams();
-  if (restaurantId) {
-    searchParams.set("restaurantId", restaurantId);
+  if (slug) {
+    searchParams.set("slug", slug);
   }
 
   const res = await fetch("/api/templates?" + searchParams.toString());

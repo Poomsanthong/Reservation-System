@@ -3,30 +3,43 @@
 import React, { useState, useEffect } from "react";
 import { CalendarClock, LayoutDashboard, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
-import { useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { createClientInstance } from "@/lib/supabaseClient";
 import type { Session } from "@supabase/supabase-js";
 
-function Header({ restaurant_logo }: { restaurant_logo?: string }) {
-  const logoSrc = restaurant_logo || "/Logo.jpg";
-  // State: activeView can only be "booking" or "admin"  in ("booking") is the initial value
-  // setActiveView changes the value
+function Header({
+  restaurant_logo,
+  slug,
+}: {
+  restaurant_logo?: string;
+  slug?: string;
+}) {
+  const logoSrc = restaurant_logo || "/BookFlow_Logo.png"; // default logo if none provided
   const router = useRouter();
-  const [activeView, setActiveView] = useState<"booking" | "admin">("booking");
+  const pathname = usePathname();
+  const params = useParams<{ slug?: string | string[] }>();
   const [mobileOpen, setMobileOpen] = useState(false); // mobile menu open/close
   const [session, setSession] = useState<Session | null>(null);
+  const resolvedSlug =
+    slug ??
+    (Array.isArray(params.slug) ? params.slug[0] : params.slug) ??
+    undefined;
+  const bookingHref = resolvedSlug
+    ? `/bookingPage/${resolvedSlug}`
+    : "/bookingPage";
+  const isBookingView = pathname.startsWith("/bookingPage");
+  const isAdminView = pathname.startsWith("/admin");
 
   useEffect(() => {
     const supabase = createClientInstance();
-    const sessionData = supabase.auth
-      .getSession()
-      .then(({ data }) => setSession(data.session));
+    void supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+    });
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) =>
       setSession(newSession),
     );
-    console.log("Current session:", sessionData);
 
     return () => subscription.unsubscribe();
   }, []);
@@ -39,7 +52,7 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 px-2 sm:px-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden bg-muted">
+              <div className="w-15 h-15  rounded-xl flex items-center justify-center overflow-hidden bg-muted">
                 <img
                   src={logoSrc}
                   alt="Restaurant logo"
@@ -47,7 +60,7 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
                 />
               </div>
               <div>
-                <h1 className="text-primary-900">Booking System</h1>
+                <h1 className="text-primary-900">BookFlow System</h1>
                 <p className="hidden text-sm text-primary-500 sm:inline">
                   Manage your bookings efficiently
                 </p>
@@ -56,11 +69,10 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
 
             <div className="hidden sm:flex gap-2">
               <Button
-                variant={activeView === "booking" ? "default" : "outline"}
+                variant={isBookingView ? "default" : "outline"}
                 onClick={() => {
-                  setActiveView("booking");
                   setMobileOpen(false);
-                  router.push("/");
+                  router.push(bookingHref);
                 }}
                 className="gap-2"
               >
@@ -68,9 +80,8 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
                 Book Now
               </Button>
               <Button
-                variant={activeView === "admin" ? "default" : "outline"}
+                variant={isAdminView ? "default" : "outline"}
                 onClick={() => {
-                  setActiveView("admin");
                   setMobileOpen(false);
                   router.push(session ? "/admin" : "/login");
                 }}
@@ -84,7 +95,7 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
                   variant="outline"
                   onClick={async () => {
                     await createClientInstance().auth.signOut();
-                    window.location.replace("/login");
+                    router.replace("/login");
                   }}
                 >
                   Logout
@@ -109,10 +120,9 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
         {mobileOpen && (
           <div className="sm:hidden px-4 pb-4 flex flex-col gap-2">
             <Button
-              variant={activeView === "booking" ? "default" : "outline"}
+              variant={isBookingView ? "default" : "outline"}
               onClick={() => {
-                setActiveView("booking");
-                router.push("/");
+                router.push(bookingHref);
                 setMobileOpen(false);
               }}
               className="w-full justify-start gap-2"
@@ -121,9 +131,8 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
               Book Now
             </Button>
             <Button
-              variant={activeView === "admin" ? "default" : "outline"}
+              variant={isAdminView ? "default" : "outline"}
               onClick={() => {
-                setActiveView("admin");
                 router.push(session ? "/admin" : "/login");
                 setMobileOpen(false);
               }}
@@ -138,7 +147,7 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
                 onClick={async () => {
                   await createClientInstance().auth.signOut();
                   setMobileOpen(false);
-                  router.push("/admin/login");
+                  router.replace("/login");
                 }}
                 className="w-full justify-start gap-2"
               >

@@ -1,24 +1,14 @@
 import { redirect } from "next/navigation";
-import { supabaseServer } from "@/lib/server/supabaseServer";
+import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
 
 export default async function AdminIndexPage() {
-  const supabase = await supabaseServer();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, restaurant } = await getCurrentUserRestaurant();
 
   if (!user) {
     redirect("/login");
   }
 
-  const { data: restaurant, error } = await supabase
-    .from("restaurants")
-    .select("slug")
-    .eq("owner_id", user.id)
-    .single();
-
-  if (error || !restaurant?.slug) {
+  if (!restaurant?.slug) {
     redirect("/login");
   }
 

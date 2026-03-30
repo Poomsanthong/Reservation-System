@@ -10,21 +10,23 @@ import {
   CardTitle,
 } from "../../ui/card";
 import { getMessageStats } from "../../../lib/api/functions";
+import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
-const Comunication = ({ restaurant_id }: { restaurant_id: string }) => {
+const Comunication = () => {
   const [stats, setStats] = useState<any>(null);
+  const slug = useTenantSlug();
 
   useEffect(() => {
     async function fetchStats() {
       try {
-        const stats = await getMessageStats(restaurant_id);
+        const stats = await getMessageStats(slug);
         setStats(stats);
       } catch (error) {
         console.error("Error fetching message stats:", error);
       }
     }
     fetchStats();
-  }, [restaurant_id]);
+  }, [slug]);
   return (
     <Card>
       <CardHeader>
