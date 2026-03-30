@@ -1,16 +1,18 @@
 // lib/server/stats.ts
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getStats(supabase: SupabaseClient) {
+export async function getStats(supabase: SupabaseClient, restaurantId: string) {
   // Total bookings
   const { count: totalBookings } = await supabase
     .from("reservations")
-    .select("*", { count: "exact" });
+    .select("*", { count: "exact" })
+    .eq("restaurant_id", restaurantId);
 
   // Total guests
   const { data: guestsData } = await supabase
     .from("reservations")
-    .select("partysize, created_at");
+    .select("partysize, created_at")
+    .eq("restaurant_id", restaurantId);
   const totalGuests =
     guestsData?.reduce((sum, r) => sum + (r.partysize || 0), 0) ?? 0;
 

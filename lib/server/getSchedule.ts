@@ -19,8 +19,19 @@ const TIMESLOTS = [
 ];
 const CAPACITY = 8;
 
-export async function getSchedule(date: string) {
-  const bookings = await getDailyBookings(date);
+export async function getSchedule(date: string, restaurantId?: string) {
+  if (!restaurantId) {
+    return TIMESLOTS.map((time) => ({
+      time,
+      displayTime: formatTo12Hour(time),
+      booked: 0,
+      capacity: CAPACITY,
+      status: "available" as const,
+      available: true,
+    }));
+  }
+
+  const bookings = await getDailyBookings(date, restaurantId);
   return TIMESLOTS.map((time) => {
     const booked = bookings.filter((b) => b.reservation_time === time).length;
     let status: "available" | "filling" | "full" = "available";

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useToastStore } from "@/store/useToastStore";
 import { checkDuplicate, create, get } from "@/lib/api/functions";
 import { Reservation } from "@/lib/types";
-export function useBookingForm() {
+export function useBookingForm(options?: { restaurantId?: string }) {
   const toastStore = useToastStore();
 
   // ---- FORM STATE ----
@@ -55,6 +55,8 @@ export function useBookingForm() {
   // ---- BUILD PAYLOAD ----
   function buildPayload(): Reservation {
     return {
+      // Store which restaurant this reservation belongs to.
+      restaurant_id: options?.restaurantId,
       name: fields.name,
       email: fields.email,
       phone: fields.phone,
@@ -75,6 +77,8 @@ export function useBookingForm() {
       fields.date.toISOString().split("T")[0],
       fields.selectedTime,
       fields.name,
+      // Compare duplicates only inside the current restaurant.
+      options?.restaurantId,
     );
 
     // handle API load failure
@@ -103,7 +107,8 @@ export function useBookingForm() {
 
       toastStore.success("Booking confirmed!");
 
-      await get("reservations"); // optional: reload bookings
+      // Refresh bookings for just this restaurant after submit.
+      await get("reservations", options?.restaurantId); // optional: reload bookings
 
       setShowConfirmation(true);
       setTimeout(() => setShowConfirmation(false), 4000);
@@ -129,6 +134,7 @@ export function useBookingForm() {
 
   return {
     fields,
+    restaurantId: options?.restaurantId,
     updateField,
     submit,
     showConfirmation,

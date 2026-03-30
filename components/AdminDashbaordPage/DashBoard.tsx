@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -43,6 +43,7 @@ import CommunicationHistory from "./CommunicationTab/CommunicationHistory";
 
 export default function AdminDashboard({
   userEmail,
+  organizationName,
   totalBookings,
   totalGuests,
   previousTotalBookings,
@@ -51,8 +52,10 @@ export default function AdminDashboard({
   bookingTrends,
   timeDistribution,
   recentActivity,
+  restaurantId,
 }: {
   userEmail: string | null;
+  organizationName: string;
   totalBookings: number;
   totalGuests: number;
   previousTotalBookings: number;
@@ -60,6 +63,7 @@ export default function AdminDashboard({
   bookings: Reservation[];
   bookingTrends: { month: string; bookings: number }[];
   timeDistribution: { time: string; value: number; color: string }[];
+  restaurantId: string;
   recentActivity: {
     type: string;
     guest: string;
@@ -69,13 +73,36 @@ export default function AdminDashboard({
   }[];
 }) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="w-full overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0">
+          <div className="mb-8 min-w-0">
+            <h2 className="text-primary-900 mb-2 text-lg sm:text-xl md:text-2xl lg:text-3xl break-words">
+              Welcome,{" "}
+              <span className="font-semibold ">{organizationName}</span>
+            </h2>
+            <p className="text-primary-600">
+              Manage reservations and track performance
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0">
         <div className="mb-8 min-w-0">
           <h2 className="text-primary-900 mb-2 text-lg sm:text-xl md:text-2xl lg:text-3xl break-words">
-            Welcome, <span className="font-semibold ">{userEmail}</span>
+            Welcome, <span className="font-semibold ">{organizationName}</span>
           </h2>
           <p className="text-primary-600">
             Manage reservations and track performance
@@ -88,18 +115,7 @@ export default function AdminDashboard({
           onValueChange={setActiveTab}
           className="min-w-0"
         >
-          <TabsList
-            className="
-    mb-4
-    flex w-full
-    bg-muted/50
-    p-1
-    rounded-xl
-    gap-1
-    overflow-x-auto
-    sm:overflow-visible
-  "
-          >
+          <TabsList className=" mb-4 flex w-full bg-muted/50 p-1 rounded-xl  gap-1  overflow-x-auto sm:overflow-visible">
             <TabsTrigger
               value="overview"
               className=" flex items-center gap-2 rounded-lg px-3 py-2   text-xs sm:text-sm md:text-base whitespace-nowrap data-[state=active]:bg-white data-[state=active]:shadow"
@@ -158,23 +174,23 @@ export default function AdminDashboard({
           {/* Bookings Tab */}
           <TabsContent value="bookings" className="min-w-0">
             <div className="overflow-x-auto">
-              <BookingsTable bookings={bookings} />
+              <BookingsTable bookings={bookings} restaurant_id={restaurantId} />
             </div>
           </TabsContent>
 
           {/* Schedule Tab */}
           <TabsContent value="schedule" className="min-w-0">
-            <ScheduleManager />
+            <ScheduleManager restaurant_id={restaurantId} />
           </TabsContent>
 
           {/* Communications Tab */}
           <TabsContent value="communications" className="space-y-6 min-w-0">
             <div className="grid lg:grid-cols-2 gap-6 min-w-0">
-              <Comunication />
-              <MessageTemplate />
+              <Comunication restaurant_id={restaurantId} />
+              <MessageTemplate restaurantId={restaurantId} />
             </div>
 
-            <CommunicationHistory />
+            <CommunicationHistory restaurant_id={restaurantId} />
           </TabsContent>
         </Tabs>
       </div>

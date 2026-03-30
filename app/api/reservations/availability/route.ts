@@ -3,7 +3,7 @@ import { checkAvailability } from "@/lib/api/reservation/availability";
 
 export async function POST(req: Request) {
   try {
-    const { date, time } = await req.json();
+    const { date, time, restaurantId } = await req.json();
     if (!date || !time) {
       return NextResponse.json(
         { error: "Missing date or time" },
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await checkAvailability(date, time); // Call the availability function
+    const result = await checkAvailability(date, time, restaurantId);
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error checking availability:", error);

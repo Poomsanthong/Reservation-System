@@ -1,6 +1,4 @@
 import React from "react";
-import { supabaseServer } from "@/lib/server/supabaseServer";
-import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
   children,

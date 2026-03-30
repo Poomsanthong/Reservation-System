@@ -9,21 +9,26 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useDateStore } from "@/store/useSelectedData";
-import { getBookings } from "@/lib/server/getBooking";
-const DailyBooking = () => {
+import { toSqlDate } from "@/lib/dateHelper";
+
+const DailyBooking = ({ restaurant_id }: { restaurant_id: string }) => {
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState<any[]>([]);
-  const { selectedDate, setSelectedDate } = useDateStore();
+  const { selectedDate } = useDateStore();
 
   if (!selectedDate) return null;
-  const sqlDate = selectedDate.toISOString().split("T")[0];
+  const sqlDate = toSqlDate(selectedDate);
 
   useEffect(() => {
     async function fetchSchedule() {
       try {
-        const res = await fetch(`/api/reservations/schedule?date=${sqlDate}`);
+        setLoading(true);
+        const searchParams = new URLSearchParams({
+          date: sqlDate,
+          restaurantId: restaurant_id,
+        });
+        const res = await fetch(`/api/reservations/schedule?${searchParams}`);
         if (!res.ok) throw new Error("Failed to fetch schedule");
         const data = await res.json();
         setSchedule(data);
@@ -35,9 +40,9 @@ const DailyBooking = () => {
     }
 
     fetchSchedule();
-  }, [selectedDate]);
+  }, [sqlDate, restaurant_id]);
 
-  if (loading) return <p>Loading...</p>;
+  // if (loading) return <p>Loading...</p>;
 
   return (
     <Card className="lg:col-span-2">

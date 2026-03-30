@@ -1,31 +1,35 @@
 import { supabaseServer } from "./supabaseServer";
 
-// Get all templates
-export const getTemplates = async () => {
+// Fetch all email templates for a given restaurant
+export async function getTemplates(restaurantId?: string) {
   const supabase = await supabaseServer();
-  const { data, error } = await (await supabase)
+  const { data, error } = await supabase
     .from("email_templates")
-    .select("*");
+    .select("*")
+    .eq("restaurant_id", restaurantId);
+
+  console.log("Fetched templates for restaurantId", restaurantId, ":", data); // Debug log to verify fetched templates
 
   if (error) {
     console.error("Supabase fetch error:", error);
     throw error;
   }
-  console.log("Fetched templates:", data);
   return data;
-};
+}
 
-// Update template
+// Update a single email template for a restaurant
 export const updateTemplate = async (
   id: string,
   subject: string,
   html: string,
+  restaurantId: string,
 ) => {
   const supabase = await supabaseServer();
   const { error } = await supabase
     .from("email_templates")
     .update({ subject, html, updated_at: new Date().toISOString() })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("restaurant_id", restaurantId);
   if (error) throw error;
   return true;
 };

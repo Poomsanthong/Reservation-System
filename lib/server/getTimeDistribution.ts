@@ -1,10 +1,13 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getTimeDistribution(supabase: SupabaseClient) {
+export async function getTimeDistribution(
+  supabase: SupabaseClient,
+  restaurantId: string,
+) {
   const { data, error } = await supabase
     .from("reservations")
-    .select("reservation_time");
-
+    .select("reservation_time")
+    .eq("restaurant_id", restaurantId);
   if (error) throw error;
 
   const buckets = {
