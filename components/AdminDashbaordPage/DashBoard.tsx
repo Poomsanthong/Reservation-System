@@ -180,13 +180,13 @@ export default function AdminDashboard({
 
           {/* Schedule Tab */}
           <TabsContent value="schedule" className="min-w-0">
-            <ScheduleManager restaurantId={restaurantId} />
+            <ScheduleManager restaurant_id={restaurantId} />
           </TabsContent>
 
           {/* Communications Tab */}
           <TabsContent value="communications" className="space-y-6 min-w-0">
             <div className="grid lg:grid-cols-2 gap-6 min-w-0">
-              <Comunication />
+              <Comunication restaurant_id={restaurantId} />
               <MessageTemplate />
             </div>
 

@@ -15,6 +15,7 @@ export const sendconfirmation = inngest.createFunction(
       reservation_date,
       reservation_time,
       partysize,
+      restaurant_id,
     } = event.data;
 
     const { data: template } = await supabaseAdmin
@@ -39,22 +40,37 @@ export const sendconfirmation = inngest.createFunction(
         html: emailContent,
       });
 
-      // save email sent status to database
-      await supabaseAdmin.from("messages").insert({
-        booking_id,
-        type: "confirmation",
-        delivered: true,
-        reminder_state: "delivered",
-      });
+      // insert message record with delivered: true if email sent successfully
+      const { error: messageError } = await supabaseAdmin
+        .from("messages")
+        .insert({
+          booking_id,
+          type: "confirmation",
+          delivered: true,
+          reminder_state: "delivered",
+          restaurant_id,
+        });
+
+      if (messageError) {
+        throw new Error(messageError.message);
+      }
+
       return { success: true };
     } catch (err) {
       console.error("Email failed:", err);
-      //  Save failed message attempt
-      await supabaseAdmin.from("messages").insert({
-        booking_id,
-        type: "confirmation",
-        delivered: false,
-      });
+      const { error: messageError } = await supabaseAdmin
+        .from("messages")
+        .insert({
+          booking_id,
+          type: "confirmation",
+          delivered: false,
+          restaurant_id,
+        });
+
+      if (messageError) {
+        console.error("Failed to save confirmation message:", messageError);
+      }
+
       throw err;
     }
   },

@@ -116,8 +116,12 @@ export async function getSchedule(date: string, restaurantId?: string) {
   return res.json();
 }
 
-export async function getMessageStats() {
-  const res = await fetch("/api/messages/message-stats");
+export async function getMessageStats(restaurantId?: string) {
+  const searchParams = new URLSearchParams();
+  if (restaurantId) {
+    searchParams.set("restaurantId", restaurantId);
+  }
+  const res = await fetch("/api/messages/message-stats?" + searchParams);
   if (!res.ok) {
     throw new Error("Failed to load message stats");
   }

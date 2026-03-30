@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useDateStore } from "@/store/useSelectedData";
-const DailyBooking = ({ restaurantId }: { restaurantId: string }) => {
+const DailyBooking = ({ restaurant_id }: { restaurant_id: string }) => {
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState<any[]>([]);
   const { selectedDate } = useDateStore();
@@ -25,7 +25,7 @@ const DailyBooking = ({ restaurantId }: { restaurantId: string }) => {
         // Send restaurantId so the schedule tab only shows this restaurant's bookings.
         const searchParams = new URLSearchParams({
           date: sqlDate,
-          restaurantId,
+          restaurant_id,
         });
         const res = await fetch(`/api/reservations/schedule?${searchParams}`);
         if (!res.ok) throw new Error("Failed to fetch schedule");
@@ -39,7 +39,7 @@ const DailyBooking = ({ restaurantId }: { restaurantId: string }) => {
     }
 
     fetchSchedule();
-  }, [sqlDate, restaurantId]);
+  }, [sqlDate, restaurant_id]);
 
   if (loading) return <p>Loading...</p>;
 

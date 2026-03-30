@@ -1,7 +1,7 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Badge } from "../../ui/badge";
-import { Mail, MessageSquare, TrendingUp } from "lucide-react";
+import { Mail, MessageSquare } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -10,22 +10,21 @@ import {
   CardTitle,
 } from "../../ui/card";
 import { getMessageStats } from "../../../lib/api/functions";
-const Comunication = () => {
+
+const Comunication = ({ restaurant_id }: { restaurant_id: string }) => {
   const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
-    // Fetch message stats from the API
     async function fetchStats() {
       try {
-        const stats = await getMessageStats();
-        console.log("Message Stats:", stats);
+        const stats = await getMessageStats(restaurant_id);
         setStats(stats);
       } catch (error) {
         console.error("Error fetching message stats:", error);
       }
     }
     fetchStats();
-  }, []);
+  }, [restaurant_id]);
   return (
     <Card>
       <CardHeader>

@@ -1,43 +1,44 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import { NextResponse } from "next/server";
-async function getMessageStats(type: "confirmation" | "reminder") {
-  // Total messages
-  const supabase = await supabaseServer(); // Initialize Supabase on the server
-  const { count: totalCount } = await supabase
+
+async function getMessageStats(
+  type: "confirmation" | "reminder",
+  restaurantId?: string,
+) {
+  const supabase = await supabaseServer();
+
+  let query = supabase
     .from("messages")
-    .select("*", { count: "exact" })
+    .select("delivered, opened")
     .eq("type", type);
 
-  // Delivered
-  const { count: deliveredCount } = await supabase
-    .from("messages")
-    .select("*", { count: "exact" })
-    .eq("type", type)
-    .eq("delivered", true);
+  if (restaurantId) {
+    query = query.eq("restaurant_id", restaurantId);
+  }
 
-  // Opened
-  const { count: openedCount } = await supabase
-    .from("messages")
-    .select("*", { count: "exact" })
-    .eq("type", type)
-    .eq("opened", true);
+  const { data, error } = await query;
+
+  if (error) throw error;
+
+  const total = data.length;
+  const delivered = data.filter((m) => m.delivered).length;
+  const opened = data.filter((m) => m.opened).length;
 
   return {
-    total: totalCount || 0,
-    delivered: deliveredCount || 0,
-    opened: openedCount || 0,
-    deliveredPercentage: totalCount
-      ? Math.round((deliveredCount! / totalCount) * 100)
-      : 0,
-    openedPercentage: totalCount
-      ? Math.round((openedCount! / totalCount) * 100)
-      : 0,
+    total,
+    delivered,
+    opened,
+    deliveredPercentage: total ? Math.round((delivered / total) * 100) : 0,
+    openedPercentage: total ? Math.round((opened / total) * 100) : 0,
   };
 }
 
-export async function GET() {
-  const confirmations = await getMessageStats("confirmation");
-  const reminders = await getMessageStats("reminder");
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const restaurantId = searchParams.get("restaurantId") || undefined;
+
+  const confirmations = await getMessageStats("confirmation", restaurantId);
+  const reminders = await getMessageStats("reminder", restaurantId);
 
   return NextResponse.json({
     confirmations,
