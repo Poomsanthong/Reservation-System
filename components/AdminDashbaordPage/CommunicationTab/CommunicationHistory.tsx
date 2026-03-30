@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import { getRecentMessages } from "@/lib/api/functions";
 import { timeAgo } from "@/lib/dateHelper";
+import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
 type Communication = {
   id: number;
@@ -22,13 +23,14 @@ type Communication = {
     email: string;
   } | null;
 };
-const CommunicationHistory = ({ restaurant_id }: { restaurant_id: string }) => {
+const CommunicationHistory = () => {
   const [communications, setCommunications] = useState<Communication[]>([]);
+  const slug = useTenantSlug();
 
   useEffect(() => {
     async function fetchCommunications() {
       try {
-        const data = await getRecentMessages(restaurant_id);
+        const data = await getRecentMessages(slug);
 
         setCommunications(data);
         console.log("Fetched communications:", data);
@@ -38,7 +40,7 @@ const CommunicationHistory = ({ restaurant_id }: { restaurant_id: string }) => {
     }
 
     fetchCommunications();
-  }, []);
+  }, [slug]);
 
   return (
     <Card>

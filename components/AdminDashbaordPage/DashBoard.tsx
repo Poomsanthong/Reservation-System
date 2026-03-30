@@ -52,7 +52,6 @@ export default function AdminDashboard({
   bookingTrends,
   timeDistribution,
   recentActivity,
-  restaurantId,
 }: {
   userEmail: string | null;
   organizationName: string;
@@ -63,7 +62,6 @@ export default function AdminDashboard({
   bookings: Reservation[];
   bookingTrends: { month: string; bookings: number }[];
   timeDistribution: { time: string; value: number; color: string }[];
-  restaurantId: string;
   recentActivity: {
     type: string;
     guest: string;
@@ -174,23 +172,23 @@ export default function AdminDashboard({
           {/* Bookings Tab */}
           <TabsContent value="bookings" className="min-w-0">
             <div className="overflow-x-auto">
-              <BookingsTable bookings={bookings} restaurant_id={restaurantId} />
+              <BookingsTable bookings={bookings} />
             </div>
           </TabsContent>
 
           {/* Schedule Tab */}
           <TabsContent value="schedule" className="min-w-0">
-            <ScheduleManager restaurant_id={restaurantId} />
+            <ScheduleManager />
           </TabsContent>
 
           {/* Communications Tab */}
           <TabsContent value="communications" className="space-y-6 min-w-0">
             <div className="grid lg:grid-cols-2 gap-6 min-w-0">
-              <Comunication restaurant_id={restaurantId} />
-              <MessageTemplate restaurantId={restaurantId} />
+              <Comunication />
+              <MessageTemplate />
             </div>
 
-            <CommunicationHistory restaurant_id={restaurantId} />
+            <CommunicationHistory />
           </TabsContent>
         </Tabs>
       </div>

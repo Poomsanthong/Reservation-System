@@ -23,6 +23,7 @@ export const sendconfirmation = inngest.createFunction(
       .select("*")
       .eq("type", "confirmation")
       .eq("restaurant_id", restaurant_id)
+      .order("updated_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 

@@ -1,23 +1,23 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
+import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { success, fail, validateTable } from "@/lib/utils";
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const table = searchParams.get("table");
-    const restaurantId = searchParams.get("restaurantId");
+    const slug = searchParams.get("slug") || undefined;
 
     validateTable(table);
-
-    console.log(
-      `Fetching data from table: ${table} for restaurantId: ${restaurantId}`,
-    );
     const supabase = await supabaseServer();
     let query = supabase.from(table!).select("*");
 
-    // Only reservations are scoped by restaurant_id in this generic read route.
-    if (table === "reservations" && restaurantId) {
-      query = query.eq("restaurant_id", restaurantId);
+    if (table === "reservations" && slug) {
+      const restaurant = await getRestaurantBySlug(slug);
+      if (!restaurant) {
+        throw new Error("Restaurant not found");
+      }
+      query = query.eq("restaurant_id", restaurant.id);
     }
 
     const { data, error } = await query;

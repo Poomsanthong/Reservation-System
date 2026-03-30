@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
 
-export default async function AdminIndexPage() {
+export default async function ClientIndexPage() {
   const { user, restaurant } = await getCurrentUserRestaurant();
 
   if (!user) {
@@ -12,5 +12,5 @@ export default async function AdminIndexPage() {
     redirect("/login");
   }
 
-  redirect(`/admin/${restaurant.slug}`);
+  redirect(`/bookingPage/${restaurant.slug}`);
 }

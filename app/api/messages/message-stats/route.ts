@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import { NextResponse } from "next/server";
+import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 
 async function getMessageStats(
   type: "confirmation" | "reminder",
@@ -35,10 +36,14 @@ async function getMessageStats(
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const restaurantId = searchParams.get("restaurantId") || undefined;
+  const slug = searchParams.get("slug") || undefined;
+  const restaurant = await getRestaurantBySlug(slug);
+  if (!restaurant) {
+    return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
+  }
 
-  const confirmations = await getMessageStats("confirmation", restaurantId);
-  const reminders = await getMessageStats("reminder", restaurantId);
+  const confirmations = await getMessageStats("confirmation", restaurant.id);
+  const reminders = await getMessageStats("reminder", restaurant.id);
 
   return NextResponse.json({
     confirmations,

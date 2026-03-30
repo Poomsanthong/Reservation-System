@@ -6,7 +6,8 @@ export async function getTemplates(restaurantId?: string) {
   const { data, error } = await supabase
     .from("email_templates")
     .select("*")
-    .eq("restaurant_id", restaurantId);
+    .eq("restaurant_id", restaurantId)
+    .order("updated_at", { ascending: false });
 
   console.log("Fetched templates for restaurantId", restaurantId, ":", data); // Debug log to verify fetched templates
 
@@ -14,7 +15,16 @@ export async function getTemplates(restaurantId?: string) {
     console.error("Supabase fetch error:", error);
     throw error;
   }
-  return data;
+
+  const latestTemplatesByType = new Map<string, (typeof data)[number]>();
+
+  for (const template of data ?? []) {
+    if (!latestTemplatesByType.has(template.type)) {
+      latestTemplatesByType.set(template.type, template);
+    }
+  }
+
+  return Array.from(latestTemplatesByType.values());
 }
 
 // Update a single email template for a restaurant
@@ -25,11 +35,23 @@ export const updateTemplate = async (
   restaurantId: string,
 ) => {
   const supabase = await supabaseServer();
+  const { data: existingTemplate, error: fetchError } = await supabase
+    .from("email_templates")
+    .select("type")
+    .eq("id", id)
+    .eq("restaurant_id", restaurantId)
+    .maybeSingle();
+
+  if (fetchError) throw fetchError;
+  if (!existingTemplate) {
+    throw new Error("Template not found");
+  }
+
   const { error } = await supabase
     .from("email_templates")
     .update({ subject, html, updated_at: new Date().toISOString() })
-    .eq("id", id)
-    .eq("restaurant_id", restaurantId);
+    .eq("restaurant_id", restaurantId)
+    .eq("type", existingTemplate.type);
   if (error) throw error;
   return true;
 };

@@ -18,13 +18,14 @@ import {
 } from "@/components/ui/dialog";
 import { updateTemplate } from "@/lib/api/functions";
 import { getTemplates } from "@/lib/api/functions";
+import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 type Template = {
   id: string;
   type: string;
   subject: string;
   html: string;
 };
-const MessageTemplate = ({ restaurantId }: { restaurantId: string }) => {
+const MessageTemplate = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -33,13 +34,14 @@ const MessageTemplate = ({ restaurantId }: { restaurantId: string }) => {
 
   const [subject, setSubject] = useState("");
   const [html, setHtml] = useState("");
+  const slug = useTenantSlug();
 
   // fetch Templates from API
   useEffect(() => {
     setLoading(true);
     async function fetchTemplates() {
       try {
-        const data = await getTemplates(restaurantId);
+        const data = await getTemplates(slug);
         setTemplates(data);
       } catch (error) {
         console.error("Failed to fetch templates:", error);
@@ -48,7 +50,7 @@ const MessageTemplate = ({ restaurantId }: { restaurantId: string }) => {
       }
     }
     fetchTemplates();
-  }, []);
+  }, [slug]);
 
   const saveTemplate = async () => {
     try {

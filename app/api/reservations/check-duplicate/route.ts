@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { supabaseServer } from "@/lib/server/supabaseServer";
 
 export async function POST(req: Request) {
   try {
-    const { date, time, name, restaurantId } = await req.json();
+    const { date, time, name, slug } = await req.json();
 
     if (!date || !time || !name) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -17,8 +18,12 @@ export async function POST(req: Request) {
       .eq("reservation_time", time)
       .ilike("name", name);
 
-    if (restaurantId) {
-      query = query.eq("restaurant_id", restaurantId);
+    if (slug) {
+      const restaurant = await getRestaurantBySlug(slug);
+      if (!restaurant) {
+        return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
+      }
+      query = query.eq("restaurant_id", restaurant.id);
     }
 
     const { data, error } = await query; // case-insensitive match

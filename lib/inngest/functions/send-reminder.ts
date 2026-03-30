@@ -27,6 +27,7 @@ export const sendReminder = inngest.createFunction(
       .select("*")
       .eq("type", "reminder")
       .eq("restaurant_id", restaurant_id)
+      .order("updated_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 

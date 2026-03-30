@@ -47,17 +47,17 @@ import { Reservation } from "@/lib/types";
 import { cancelBooking, get, updateBooking } from "@/lib/api/functions";
 
 import { useModalStore } from "@/store/useModalStore";
+import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
 export function BookingsTable({
   bookings,
-  restaurant_id,
 }: {
   bookings: Reservation[];
-  restaurant_id: string;
 }) {
   const [loading, setLoading] = useState(true);
   const [bookingsData, setBookingsData] = useState<Reservation[]>(bookings);
   const [searchTerm, setSearchTerm] = useState("");
+  const slug = useTenantSlug();
 
   const { open, type, payload, openModal, closeModal } = useModalStore();
 
@@ -68,7 +68,7 @@ export function BookingsTable({
     try {
       setLoading(true);
 
-      const res = await get("reservations", restaurant_id);
+      const res = await get("reservations", slug);
 
       if (res.error) throw res.error;
 
@@ -88,7 +88,7 @@ export function BookingsTable({
 
   useEffect(() => {
     loadBookings();
-  }, []);
+  }, [slug]);
 
   // -----------------------
   // HANDLE ACTION

@@ -1,4 +1,5 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
+import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { inngest } from "@/lib/inngest/inngest";
 import { success, fail, validateTable, requireFields } from "@/lib/utils";
 
@@ -90,16 +91,29 @@ async function scheduleReservationReminder(
 
 export async function POST(req: Request) {
   try {
-    const { table, data } = await req.json();
-    console.log("Create Request Data:", { table, data });
+    const { table, data, slug } = await req.json();
 
     requireFields({ table, data }, ["table", "data"]);
     validateTable(table);
 
     const supabase = await supabaseServer();
+    let insertData = data;
+
+    if (table === "reservations") {
+      const restaurant = await getRestaurantBySlug(slug);
+      if (!restaurant) {
+        throw new Error("Restaurant not found");
+      }
+
+      insertData = {
+        ...data,
+        restaurant_id: restaurant.id,
+      };
+    }
+
     const { data: created, error } = await supabase
       .from(table)
-      .insert(data)
+      .insert(insertData)
       .select()
       .single();
 

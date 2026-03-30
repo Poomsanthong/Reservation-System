@@ -5,8 +5,11 @@ import { useState } from "react";
 import { useToastStore } from "@/store/useToastStore";
 import { checkDuplicate, create, get } from "@/lib/api/functions";
 import { Reservation } from "@/lib/types";
-export function useBookingForm(options?: { restaurantId?: string }) {
+import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
+
+export function useBookingForm() {
   const toastStore = useToastStore();
+  const slug = useTenantSlug();
 
   // ---- FORM STATE ----
   const [fields, setFields] = useState({
@@ -55,8 +58,6 @@ export function useBookingForm(options?: { restaurantId?: string }) {
   // ---- BUILD PAYLOAD ----
   function buildPayload(): Reservation {
     return {
-      // Store which restaurant this reservation belongs to.
-      restaurant_id: options?.restaurantId,
       name: fields.name,
       email: fields.email,
       phone: fields.phone,
@@ -77,8 +78,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
       fields.date.toISOString().split("T")[0],
       fields.selectedTime,
       fields.name,
-      // Compare duplicates only inside the current restaurant.
-      options?.restaurantId,
+      slug,
     );
 
     // handle API load failure
@@ -98,7 +98,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
     } // 3.BUILD PAYLOAD & SUBMIT
     try {
       const payload = buildPayload();
-      const { error } = await create(payload);
+      const { error } = await create(payload, slug);
 
       if (error) {
         toastStore.error(error.message || "Failed to create booking.");
@@ -108,7 +108,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
       toastStore.success("Booking confirmed!");
 
       // Refresh bookings for just this restaurant after submit.
-      await get("reservations", options?.restaurantId); // optional: reload bookings
+      await get("reservations", slug);
 
       setShowConfirmation(true);
       setTimeout(() => setShowConfirmation(false), 4000);
@@ -134,7 +134,7 @@ export function useBookingForm(options?: { restaurantId?: string }) {
 
   return {
     fields,
-    restaurantId: options?.restaurantId,
+    slug,
     updateField,
     submit,
     showConfirmation,
