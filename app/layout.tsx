@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: "Reservation System",
   description: "A simple reservation system built with Next.js and Supabase.",
   icons: {
-    icon: "/logo.jpg",
+    icon: "/BookFlow_favicon.svg",
   },
 };
 export const viewport = {

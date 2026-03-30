@@ -79,6 +79,7 @@ async function scheduleReservationReminder(
         reservation_date: created.reservation_date,
         reservation_time: created.reservation_time,
         partysize: created.partysize,
+        restaurant_id: created.restaurant_id,
         reminderTime: reminderTime.toISOString(),
       },
     });

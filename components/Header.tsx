@@ -8,7 +8,7 @@ import { createClientInstance } from "@/lib/supabaseClient";
 import type { Session } from "@supabase/supabase-js";
 
 function Header({ restaurant_logo }: { restaurant_logo?: string }) {
-  const logoSrc = restaurant_logo || "/Logo.jpg";
+  const logoSrc = restaurant_logo || "/BookFlow_Logo.png"; // default logo if none provided
   // State: activeView can only be "booking" or "admin"  in ("booking") is the initial value
   // setActiveView changes the value
   const router = useRouter();
@@ -39,7 +39,7 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 px-2 sm:px-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden bg-muted">
+              <div className="w-15 h-15  rounded-xl flex items-center justify-center overflow-hidden bg-muted">
                 <img
                   src={logoSrc}
                   alt="Restaurant logo"
@@ -47,7 +47,7 @@ function Header({ restaurant_logo }: { restaurant_logo?: string }) {
                 />
               </div>
               <div>
-                <h1 className="text-primary-900">Booking System</h1>
+                <h1 className="text-primary-900">BookFlow System</h1>
                 <p className="hidden text-sm text-primary-500 sm:inline">
                   Manage your bookings efficiently
                 </p>
