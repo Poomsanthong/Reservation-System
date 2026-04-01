@@ -3,14 +3,10 @@
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { supabaseServer } from "@/lib/server/supabaseServer";
 
-export async function addBlackoutDate(
-  date: string,
-  reason: string = "",
-  slug: string,
-) {
-  const restaurant = await getRestaurantBySlug(slug);
+export async function addBlackoutDate(date: string, reason: string = "") {
+  const restaurant = await getRestaurantBySlug();
   if (!restaurant) {
-    throw new Error("Valid restaurant slug is required at addBlackoutDate");
+    throw new Error("Tenant context is required at addBlackoutDate");
   }
 
   const supabase = await supabaseServer();
@@ -25,10 +21,10 @@ export async function addBlackoutDate(
   return data;
 }
 
-export async function getBlackoutDates(slug: string) {
-  const restaurant = await getRestaurantBySlug(slug);
+export async function getBlackoutDates() {
+  const restaurant = await getRestaurantBySlug();
   if (!restaurant) {
-    throw new Error("Valid restaurant slug is required at getBlackoutDates");
+    throw new Error("Tenant context is required at getBlackoutDates");
   }
 
   const supabase = await supabaseServer();
@@ -43,10 +39,10 @@ export async function getBlackoutDates(slug: string) {
   return data;
 }
 
-export async function unblockDate(date: string, slug: string) {
-  const restaurant = await getRestaurantBySlug(slug);
+export async function unblockDate(date: string) {
+  const restaurant = await getRestaurantBySlug();
   if (!restaurant) {
-    throw new Error("Valid restaurant slug is required at unblockDate");
+    throw new Error("Tenant context is required at unblockDate");
   }
 
   const supabase = await supabaseServer();

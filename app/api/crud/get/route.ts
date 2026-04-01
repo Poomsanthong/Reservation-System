@@ -6,14 +6,13 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const table = searchParams.get("table");
-    const slug = searchParams.get("slug") || undefined;
 
     validateTable(table);
     const supabase = await supabaseServer();
     let query = supabase.from(table!).select("*");
 
-    if (table === "reservations" && slug) {
-      const restaurant = await getRestaurantBySlug(slug);
+    if (table === "reservations" || table === "email_templates") {
+      const restaurant = await getRestaurantBySlug();
       if (!restaurant) {
         throw new Error("Restaurant not found");
       }

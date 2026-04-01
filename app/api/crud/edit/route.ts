@@ -1,4 +1,5 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
+import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { success, fail, validateTable, requireFields } from "@/lib/utils";
 
 export async function PATCH(req: Request) {
@@ -8,12 +9,19 @@ export async function PATCH(req: Request) {
     requireFields({ table, id, data }, ["table", "id", "data"]);
     validateTable(table);
 
-    const supabase = await supabaseServer(); // 👈 call the function
-    const { data: updated, error } = await supabase
-      .from(table)
-      .update(data)
-      .eq("id", id)
-      .select();
+    const supabase = await supabaseServer();
+    let query = supabase.from(table).update(data).eq("id", id);
+
+    if (table === "reservations" || table === "email_templates") {
+      const restaurant = await getRestaurantBySlug();
+      if (!restaurant) {
+        throw new Error("Restaurant not found");
+      }
+
+      query = query.eq("restaurant_id", restaurant.id);
+    }
+
+    const { data: updated, error } = await query.select();
 
     if (error) throw new Error(error.message);
     return success(updated);
