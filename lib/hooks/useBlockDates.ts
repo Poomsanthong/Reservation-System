@@ -7,24 +7,17 @@ import {
 import { toSqlDate } from "@/lib/dateHelper";
 import { BlackoutDate } from "@/lib/types";
 import { useDateStore } from "@/store/useSelectedData";
-import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
 export function useBlockoutDates() {
   const [blackouts, setBlackouts] = useState<BlackoutDate[]>([]);
   const { selectedDate, setSelectedDate } = useDateStore();
   const [blockReason, setBlockReason] = useState("");
   const [loading, setLoading] = useState(false);
-  const slug = useTenantSlug();
 
   const loadBlackouts = async () => {
-    if (!slug) {
-      setBlackouts([]);
-      return;
-    }
-
     try {
       setLoading(true);
-      const data = await getBlackoutDates(slug);
+      const data = await getBlackoutDates();
       setBlackouts(data);
     } finally {
       setLoading(false);
@@ -33,7 +26,7 @@ export function useBlockoutDates() {
 
   useEffect(() => {
     void loadBlackouts();
-  }, [slug]);
+  }, []);
 
   const getBlackoutByDate = (date: Date) => {
     const sql = toSqlDate(date);
@@ -41,22 +34,28 @@ export function useBlockoutDates() {
   };
 
   const blockDate = async () => {
-    if (!slug) return;
-
     const sqlDate = toSqlDate(selectedDate);
-    await addBlackoutDate(sqlDate, blockReason, slug);
-    await loadBlackouts();
-    setBlockReason("");
+    try {
+      await addBlackoutDate(sqlDate, blockReason);
+      await loadBlackouts();
+      setBlockReason("");
+    } catch (error) {
+      console.error("Failed to block date:", error);
+    }
   };
 
   const unblockSelectedDate = async () => {
-    if (!slug) return;
-
     const sqlDate = toSqlDate(selectedDate);
-    await unblockDate(sqlDate, slug);
+    const previousBlackouts = blackouts;
     setBlackouts((prev) => prev.filter((b) => b.date !== sqlDate));
+    try {
+      await unblockDate(sqlDate);
+    } catch (error) {
+      console.error("Failed to unblock date:", error);
+      setBlackouts(previousBlackouts); // Rollback on failure
+      // Handle error (e.g., show toast notification)
+    }
   };
-
   return {
     blackouts,
     selectedDate,

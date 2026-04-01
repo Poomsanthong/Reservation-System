@@ -35,9 +35,7 @@ async function getMessageStats(
 }
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const slug = searchParams.get("slug") || undefined;
-  const restaurant = await getRestaurantBySlug(slug);
+  const restaurant = await getRestaurantBySlug();
   if (!restaurant) {
     return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
   }

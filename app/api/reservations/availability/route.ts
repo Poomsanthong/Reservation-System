@@ -4,7 +4,7 @@ import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 
 export async function POST(req: Request) {
   try {
-    const { date, time, slug } = await req.json();
+    const { date, time } = await req.json();
     if (!date || !time) {
       return NextResponse.json(
         { error: "Missing date or time" },
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const restaurant = await getRestaurantBySlug(slug);
+    const restaurant = await getRestaurantBySlug();
     if (!restaurant) {
       return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
     }

@@ -47,17 +47,11 @@ import { Reservation } from "@/lib/types";
 import { cancelBooking, get, updateBooking } from "@/lib/api/functions";
 
 import { useModalStore } from "@/store/useModalStore";
-import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
-export function BookingsTable({
-  bookings,
-}: {
-  bookings: Reservation[];
-}) {
+export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   const [loading, setLoading] = useState(true);
   const [bookingsData, setBookingsData] = useState<Reservation[]>(bookings);
   const [searchTerm, setSearchTerm] = useState("");
-  const slug = useTenantSlug();
 
   const { open, type, payload, openModal, closeModal } = useModalStore();
 
@@ -68,7 +62,7 @@ export function BookingsTable({
     try {
       setLoading(true);
 
-      const res = await get("reservations", slug);
+      const res = await get("reservations");
 
       if (res.error) throw res.error;
 
@@ -88,7 +82,7 @@ export function BookingsTable({
 
   useEffect(() => {
     loadBookings();
-  }, [slug]);
+  }, []);
 
   // -----------------------
   // HANDLE ACTION
@@ -167,7 +161,7 @@ export function BookingsTable({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400" />
             <Input
-              placeholder="Search by name, ID, or email…"
+              placeholder="Search by name, ID, or email"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"

@@ -5,11 +5,9 @@ import { useState } from "react";
 import { useToastStore } from "@/store/useToastStore";
 import { checkDuplicate, create, get } from "@/lib/api/functions";
 import { Reservation } from "@/lib/types";
-import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
 export function useBookingForm() {
   const toastStore = useToastStore();
-  const slug = useTenantSlug();
 
   // ---- FORM STATE ----
   const [fields, setFields] = useState({
@@ -78,7 +76,6 @@ export function useBookingForm() {
       fields.date.toISOString().split("T")[0],
       fields.selectedTime,
       fields.name,
-      slug,
     );
 
     // handle API load failure
@@ -98,7 +95,7 @@ export function useBookingForm() {
     } // 3.BUILD PAYLOAD & SUBMIT
     try {
       const payload = buildPayload();
-      const { error } = await create(payload, slug);
+      const { error } = await create(payload);
 
       if (error) {
         toastStore.error(error.message || "Failed to create booking.");
@@ -107,8 +104,8 @@ export function useBookingForm() {
 
       toastStore.success("Booking confirmed!");
 
-      // Refresh bookings for just this restaurant after submit.
-      await get("reservations", slug);
+      // Refresh bookings after submit.
+      await get("reservations");
 
       setShowConfirmation(true);
       setTimeout(() => setShowConfirmation(false), 4000);
@@ -134,7 +131,6 @@ export function useBookingForm() {
 
   return {
     fields,
-    slug,
     updateField,
     submit,
     showConfirmation,

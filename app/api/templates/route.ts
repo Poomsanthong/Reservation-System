@@ -4,13 +4,14 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const slug = searchParams.get("slug") ?? undefined;
-    const restaurant = await getRestaurantBySlug(slug);
+    const restaurant = await getRestaurantBySlug();
     if (!restaurant) {
-      return new NextResponse(JSON.stringify({ error: "Restaurant not found" }), {
-        status: 404,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: "Restaurant not found" }),
+        {
+          status: 404,
+        },
+      );
     }
 
     const templates = await getTemplates(restaurant.id);
@@ -31,11 +32,14 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const template = await req.json(); // expects { id, subject, html }
-    const restaurant = await getRestaurantBySlug(template.slug);
+    const restaurant = await getRestaurantBySlug();
     if (!restaurant) {
-      return new NextResponse(JSON.stringify({ error: "Restaurant not found" }), {
-        status: 404,
-      });
+      return new NextResponse(
+        JSON.stringify({ error: "Restaurant not found" }),
+        {
+          status: 404,
+        },
+      );
     }
     // update in DB
     await updateTemplate(

@@ -9,7 +9,7 @@ export async function getTemplates(restaurantId?: string) {
     .eq("restaurant_id", restaurantId)
     .order("updated_at", { ascending: false });
 
-  console.log("Fetched templates for restaurantId", restaurantId, ":", data); // Debug log to verify fetched templates
+  // console.log("Fetched templates for restaurantId", restaurantId, ":", data); // Debug log to verify fetched templates
 
   if (error) {
     console.error("Supabase fetch error:", error);

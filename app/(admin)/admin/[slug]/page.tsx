@@ -7,13 +7,8 @@ import { getTimeDistribution } from "@/lib/server/getTimeDistribution";
 import { getRecentActivity } from "@/lib/server/getRecentActivity";
 import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
 
-export default async function AdminPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const { supabase, user, restaurant } = await getCurrentUserRestaurant(slug);
+export default async function AdminPage() {
+  const { supabase, user, restaurant } = await getCurrentUserRestaurant();
 
   if (!user) {
     redirect("/login");

@@ -14,11 +14,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { updateTemplate } from "@/lib/api/functions";
 import { getTemplates } from "@/lib/api/functions";
-import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
+
 type Template = {
   id: string;
   type: string;
@@ -34,14 +33,13 @@ const MessageTemplate = () => {
 
   const [subject, setSubject] = useState("");
   const [html, setHtml] = useState("");
-  const slug = useTenantSlug();
 
   // fetch Templates from API
   useEffect(() => {
     setLoading(true);
     async function fetchTemplates() {
       try {
-        const data = await getTemplates(slug);
+        const data = await getTemplates();
         setTemplates(data);
       } catch (error) {
         console.error("Failed to fetch templates:", error);
@@ -50,7 +48,7 @@ const MessageTemplate = () => {
       }
     }
     fetchTemplates();
-  }, [slug]);
+  }, []);
 
   const saveTemplate = async () => {
     try {

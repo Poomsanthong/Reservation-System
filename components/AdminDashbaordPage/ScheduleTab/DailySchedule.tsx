@@ -11,13 +11,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useDateStore } from "@/store/useSelectedData";
 import { toSqlDate } from "@/lib/dateHelper";
-import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
 const DailyBooking = () => {
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState<any[]>([]);
   const { selectedDate } = useDateStore();
-  const slug = useTenantSlug();
 
   if (!selectedDate) return null;
   const sqlDate = toSqlDate(selectedDate);
@@ -26,12 +24,7 @@ const DailyBooking = () => {
     async function fetchSchedule() {
       try {
         setLoading(true);
-        const searchParams = new URLSearchParams({
-          date: sqlDate,
-        });
-        if (slug) {
-          searchParams.set("slug", slug);
-        }
+        const searchParams = new URLSearchParams({ date: sqlDate });
         const res = await fetch(`/api/reservations/schedule?${searchParams}`);
         if (!res.ok) throw new Error("Failed to fetch schedule");
         const data = await res.json();
@@ -44,7 +37,7 @@ const DailyBooking = () => {
     }
 
     fetchSchedule();
-  }, [sqlDate, slug]);
+  }, [sqlDate]);
 
   // if (loading) return <p>Loading...</p>;
 
@@ -116,14 +109,6 @@ const DailyBooking = () => {
               >
                 {slot.status}
               </Badge>
-
-              {/* <Button
-                size="sm"
-                variant="ghost"
-                className="text-primary-600 hover:text-primary-800"
-              >
-                Edit
-              </Button> */}
             </div>
           </div>
         ))}

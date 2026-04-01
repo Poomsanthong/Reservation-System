@@ -91,7 +91,7 @@ async function scheduleReservationReminder(
 
 export async function POST(req: Request) {
   try {
-    const { table, data, slug } = await req.json();
+    const { table, data } = await req.json();
 
     requireFields({ table, data }, ["table", "data"]);
     validateTable(table);
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
     let insertData = data;
 
     if (table === "reservations") {
-      const restaurant = await getRestaurantBySlug(slug);
+      const restaurant = await getRestaurantBySlug();
       if (!restaurant) {
         throw new Error("Restaurant not found");
       }

@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import { getRecentMessages } from "@/lib/api/functions";
 import { timeAgo } from "@/lib/dateHelper";
-import { useTenantSlug } from "@/lib/hooks/useTenantSlug";
 
 type Communication = {
   id: number;
@@ -25,22 +24,20 @@ type Communication = {
 };
 const CommunicationHistory = () => {
   const [communications, setCommunications] = useState<Communication[]>([]);
-  const slug = useTenantSlug();
 
   useEffect(() => {
     async function fetchCommunications() {
       try {
-        const data = await getRecentMessages(slug);
+        const data = await getRecentMessages();
 
         setCommunications(data);
-        console.log("Fetched communications:", data);
       } catch (error) {
         console.error("Error fetching communications:", error);
       }
     }
 
     fetchCommunications();
-  }, [slug]);
+  }, []);
 
   return (
     <Card>
@@ -61,7 +58,7 @@ const CommunicationHistory = () => {
                 </div>
                 <div>
                   <p className="text-sm text-primary-900">
-                    {comm.type} → {comm.booking_id?.name || "Unknown"}
+                    {comm.type} to {comm.booking_id?.name || "Unknown"}
                   </p>
                   <p className="text-xs text-primary-500">
                     {timeAgo(comm.created_at)}

@@ -13,7 +13,7 @@ export default function TimeSlotGrid({ form }: { form: any }) {
   useEffect(() => {
     async function fetchSchedule() {
       try {
-        const data = await getSchedule(sqlDate, form.slug);
+        const data = await getSchedule(sqlDate);
         setSchedule(data);
       } catch (err) {
         console.error("Failed to load schedule:", err);
@@ -23,7 +23,7 @@ export default function TimeSlotGrid({ form }: { form: any }) {
     }
 
     fetchSchedule();
-  }, [form.fields.date, form.slug, sqlDate]);
+  }, [form.fields.date, sqlDate]);
 
   return (
     <div>
