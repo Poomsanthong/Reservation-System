@@ -9,7 +9,7 @@ const Hero = () => {
     <>
       <section className="relative pt-32 pb-32 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center overflow-hidden">
+          <div className="grid lg:grid-cols-2 gap-16 items-center ">
             {/* Left content     */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -82,21 +82,26 @@ const Hero = () => {
               </div>
             </motion.div>
 
-            {/* Right Content - Booking Page Preview */}
+            {/* Right Content - Booking Page Preview Picture */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="relative hidden lg:block"
+              className="relative hidden lg:block  -top-30"
             >
-              <div className="relative">
+              <div className="relative ">
+                <img
+                  src="/hero-preview.png"
+                  alt="Booking Page Preview"
+                  className="rounded-2xl shadow-lg shadow-black/30"
+                />
                 {/* Floating Notifications */}
                 <NotificationCard
                   icon={CheckCircle2}
                   title="New reservation"
                   subtitle="Table 12 • 7:30 PM"
                   delay={0.8}
-                  className="absolute -left-12 top-20"
+                  className="absolute -left-30 top-30"
                 />
 
                 <NotificationCard
@@ -104,7 +109,7 @@ const Hero = () => {
                   title="Dashboard updated"
                   subtitle="15 bookings today"
                   delay={1.2}
-                  className="absolute right-0 bottom-32 "
+                  className="absolute -right-20 top-55 "
                 />
               </div>
             </motion.div>
