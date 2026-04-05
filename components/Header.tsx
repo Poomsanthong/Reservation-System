@@ -29,7 +29,7 @@ function Header({
     : "/bookingPage";
   const isBookingView = pathname.startsWith("/bookingPage");
   const isAdminView = pathname.startsWith("/admin");
-
+  const isLandingPage = pathname === "/" || pathname === "/landingPage";
   useEffect(() => {
     const supabase = createClientInstance();
     void supabase.auth.getSession().then(({ data }) => {
@@ -45,119 +45,123 @@ function Header({
   }, []);
 
   return (
-    <div className="bg-background text-foreground shadow-sm">
-      {" "}
-      {/* navigation content goes here */}
-      <nav className="border-b shadow-sm ">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 px-2 sm:px-4">
-            <div className="flex items-center gap-3">
-              <div className="w-15 h-15  rounded-xl flex items-center justify-center overflow-hidden bg-muted">
-                <img
-                  src={logoSrc}
-                  alt="Restaurant logo"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div>
-                <h1 className="text-primary-900">BookFlow System</h1>
-                <p className="hidden text-sm text-primary-500 sm:inline">
-                  Manage your bookings efficiently
-                </p>
-              </div>
-            </div>
+    <>
+      {!isLandingPage && (
+        <div className="bg-background text-foreground shadow-sm">
+          {" "}
+          {/* navigation content goes here */}
+          <nav className="border-b shadow-sm ">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16 px-2 sm:px-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-15 h-15  rounded-xl flex items-center justify-center overflow-hidden bg-muted">
+                    <img
+                      src={logoSrc}
+                      alt="Restaurant logo"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h1 className="text-primary-900">BookFlow System</h1>
+                    <p className="hidden text-sm text-primary-500 sm:inline">
+                      Manage your bookings efficiently
+                    </p>
+                  </div>
+                </div>
 
-            <div className="hidden sm:flex gap-2">
-              <Button
-                variant={isBookingView ? "default" : "outline"}
-                onClick={() => {
-                  setMobileOpen(false);
-                  router.push(bookingHref);
-                }}
-                className="gap-2"
-              >
-                <CalendarClock className="w-4 h-4" />
-                Book Now
-              </Button>
-              <Button
-                variant={isAdminView ? "default" : "outline"}
-                onClick={() => {
-                  setMobileOpen(false);
-                  router.push(session ? "/admin" : "/login");
-                }}
-                className="gap-2"
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                Admin Dashboard
-              </Button>
-              {session && (
+                <div className="hidden sm:flex gap-2">
+                  <Button
+                    variant={isBookingView ? "default" : "outline"}
+                    onClick={() => {
+                      setMobileOpen(false);
+                      router.push(bookingHref);
+                    }}
+                    className="gap-2"
+                  >
+                    <CalendarClock className="w-4 h-4" />
+                    Book Now
+                  </Button>
+                  <Button
+                    variant={isAdminView ? "default" : "outline"}
+                    onClick={() => {
+                      setMobileOpen(false);
+                      router.push(session ? "/admin" : "/login");
+                    }}
+                    className="gap-2"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    Admin Dashboard
+                  </Button>
+                  {session && (
+                    <Button
+                      variant="outline"
+                      onClick={async () => {
+                        await createClientInstance().auth.signOut();
+                        router.replace("/login");
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  )}
+                </div>
                 <Button
                   variant="outline"
-                  onClick={async () => {
-                    await createClientInstance().auth.signOut();
-                    router.replace("/login");
-                  }}
+                  className="sm:hidden"
+                  onClick={() => setMobileOpen((v) => !v)}
+                  aria-label="Toggle menu"
                 >
-                  Logout
+                  {mobileOpen ? (
+                    <X className="w-5 h-5" />
+                  ) : (
+                    <Menu className="w-5 h-5" />
+                  )}
                 </Button>
-              )}
+              </div>
             </div>
-            <Button
-              variant="outline"
-              className="sm:hidden"
-              onClick={() => setMobileOpen((v) => !v)}
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </Button>
-          </div>
-        </div>
-        {/* mobile menu panel */}
-        {mobileOpen && (
-          <div className="sm:hidden px-4 pb-4 flex flex-col gap-2">
-            <Button
-              variant={isBookingView ? "default" : "outline"}
-              onClick={() => {
-                router.push(bookingHref);
-                setMobileOpen(false);
-              }}
-              className="w-full justify-start gap-2"
-            >
-              <CalendarClock className="w-4 h-4" />
-              Book Now
-            </Button>
-            <Button
-              variant={isAdminView ? "default" : "outline"}
-              onClick={() => {
-                router.push(session ? "/admin" : "/login");
-                setMobileOpen(false);
-              }}
-              className="w-full justify-start gap-2"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              Admin Dashboard
-            </Button>
-            {session && (
-              <Button
-                variant="outline"
-                onClick={async () => {
-                  await createClientInstance().auth.signOut();
-                  setMobileOpen(false);
-                  router.replace("/login");
-                }}
-                className="w-full justify-start gap-2"
-              >
-                Logout
-              </Button>
+            {/* mobile menu panel */}
+            {mobileOpen && (
+              <div className="sm:hidden px-4 pb-4 flex flex-col gap-2">
+                <Button
+                  variant={isBookingView ? "default" : "outline"}
+                  onClick={() => {
+                    router.push(bookingHref);
+                    setMobileOpen(false);
+                  }}
+                  className="w-full justify-start gap-2"
+                >
+                  <CalendarClock className="w-4 h-4" />
+                  Book Now
+                </Button>
+                <Button
+                  variant={isAdminView ? "default" : "outline"}
+                  onClick={() => {
+                    router.push(session ? "/admin" : "/login");
+                    setMobileOpen(false);
+                  }}
+                  className="w-full justify-start gap-2"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Admin Dashboard
+                </Button>
+                {session && (
+                  <Button
+                    variant="outline"
+                    onClick={async () => {
+                      await createClientInstance().auth.signOut();
+                      setMobileOpen(false);
+                      router.replace("/login");
+                    }}
+                    className="w-full justify-start gap-2"
+                  >
+                    Logout
+                  </Button>
+                )}
+              </div>
             )}
-          </div>
-        )}
-      </nav>
-    </div>
+          </nav>
+        </div>
+      )}
+    </>
   );
 }
 
