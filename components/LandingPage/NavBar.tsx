@@ -1,8 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { redirect } from "next/navigation";
+import { useState } from "react";
+import { Button } from "../ui/button";
 export default function NavBar() {
+  const [mobileOpen, setMobileOpen] = useState(false); // mobile menu open/close
+
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
@@ -63,13 +67,63 @@ export default function NavBar() {
                 onClick={() => redirect("/signup")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-semibold shadow-lg shadow-purple-900/30"
+                className=" hidden px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-semibold shadow-lg shadow-purple-900/30"
               >
                 Get Started
               </motion.button>
-              <button className="md:hidden p-2">
-                <Menu className="w-6 h-6" />
-              </button>
+              {/* Mobile Menu Button */}
+              <Button
+                variant="outline"
+                className="sm:hidden"
+                onClick={() => setMobileOpen((v) => !v)}
+                aria-label="Toggle menu"
+              >
+                {mobileOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
+              </Button>
+              {/* Mobile Navigation */}
+              {mobileOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="sm:hidden px-4 pb-4 flex flex-col gap-2 absolute top-full left-0 right-0 bg-gray-900/50 backdrop-blur-xl border border-white/10 rounded-b-2xl mt-2"
+                >
+                  <div className="flex flex-col gap-4">
+                    <a
+                      href="#features"
+                      className="text-gray-300 hover:text-white transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Features
+                    </a>
+                    <a
+                      href="#how-it-works"
+                      className="text-gray-300 hover:text-white transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      How it works
+                    </a>
+                    <a
+                      href="#pricing"
+                      className="text-gray-300 hover:text-white transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Pricing
+                    </a>
+                    <a
+                      href="#about"
+                      className="text-gray-300 hover:text-white transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      About
+                    </a>
+                  </div>
+                </motion.div>
+              )}
             </div>
           </div>
         </div>
