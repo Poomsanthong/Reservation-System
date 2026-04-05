@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
+import { redirect } from "next/navigation";
 export default function NavBar() {
   return (
     <motion.nav
@@ -52,10 +53,14 @@ export default function NavBar() {
 
             {/* CTA Buttons */}
             <div className="flex items-center gap-4">
-              <button className="hidden sm:block text-gray-300 hover:text-white transition-colors">
-                Sign in
+              <button
+                onClick={() => redirect("/login")}
+                className="hidden sm:block text-gray-300 hover:text-white transition-colors"
+              >
+                Sign In
               </button>
               <motion.button
+                onClick={() => redirect("/signup")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-semibold shadow-lg shadow-purple-900/30"
