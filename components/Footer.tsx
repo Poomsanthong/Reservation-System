@@ -19,13 +19,19 @@ const Footer = () => {
         <div className="text-center md:text-left">
           <p className="text-sm font-semibold text-primary-800 mb-3">Product</p>
           <div className="flex flex-col gap-3 text-sm text-primary-600">
-            <a href="#" className="hover:text-primary-900">
+            <a href="/landingPage#features" className="hover:text-primary-900">
               Features
             </a>
-            <a href="#" className="hover:text-primary-900">
-              Pricing
+            <a
+              href="/landingPage#how-it-works"
+              className="hover:text-primary-900"
+            >
+              How It Works
             </a>
-            <a href="#" className="hover:text-primary-900">
+            <a
+              href="/landingPage#documentation"
+              className="hover:text-primary-900"
+            >
               Documentation
             </a>
           </div>
@@ -62,7 +68,7 @@ const Footer = () => {
       <div className="border-t">
         <div className="max-w-7xl mx-auto px-4 py-4 text-xs text-primary-500 flex flex-col items-center text-center gap-2 sm:flex-row sm:justify-between sm:text-left">
           <span>&copy; {year} Bookflow. All rights reserved.</span>
-          <span className="opacity-80">Built for modern restaurants 🚀</span>
+          <span className="opacity-80">Built for modern restaurants </span>
         </div>
       </div>
     </footer>
