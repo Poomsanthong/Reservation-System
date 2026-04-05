@@ -26,7 +26,7 @@ const steps = [
 ];
 const HowItWorks = () => {
   return (
-    <section className="relative py-32 px-6">
+    <section className="relative py-32 px-6" id="how-it-works">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -30,7 +30,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="relative py-32 px-6">
+    <section className="relative py-32 px-6" id="features">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

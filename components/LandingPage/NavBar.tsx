@@ -42,13 +42,13 @@ export default function NavBar() {
                 How it works
               </a>
               <a
-                href="#pricing"
+                href="#documentation"
                 className="text-gray-300 hover:text-white transition-colors"
               >
-                Pricing
+                Documentation
               </a>
               <a
-                href="#about"
+                href="#trust"
                 className="text-gray-300 hover:text-white transition-colors"
               >
                 About
@@ -63,11 +63,12 @@ export default function NavBar() {
               >
                 Sign In
               </button>
+
               <motion.button
                 onClick={() => redirect("/signup")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className=" hidden px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-semibold shadow-lg shadow-purple-900/30"
+                className=" hidden md:block px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl font-semibold shadow-lg shadow-purple-900/30"
               >
                 Get Started
               </motion.button>
@@ -107,19 +108,13 @@ export default function NavBar() {
                     >
                       How it works
                     </a>
+
                     <a
-                      href="#pricing"
+                      href="#documentation"
                       className="text-gray-300 hover:text-white transition-colors"
                       onClick={() => setMobileOpen(false)}
                     >
-                      Pricing
-                    </a>
-                    <a
-                      href="#about"
-                      className="text-gray-300 hover:text-white transition-colors"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      About
+                      Documentation
                     </a>
                   </div>
                 </motion.div>
