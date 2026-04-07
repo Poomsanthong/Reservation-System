@@ -17,13 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { updateTemplate } from "@/lib/api/functions";
 import { getTemplates } from "@/lib/api/functions";
-
-type Template = {
-  id: string;
-  type: string;
-  subject: string;
-  html: string;
-};
+import type { MessageTemplate as Template } from "@/features/messages/types";
 const MessageTemplate = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);

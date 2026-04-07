@@ -1,15 +1,17 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import type { BookingFormController } from "@/features/bookings/types";
 
-const BookingSummary = ({ form }: { form: any }) => {
+type BookingSummaryProps = {
+  form: BookingFormController;
+};
+
+const BookingSummary = ({ form }: BookingSummaryProps) => {
   const { date, selectedTime, partysize } = form.fields;
 
   return (
     <div className="flex justify-center w-full">
-      {" "}
-      {/* Summary */}
       <Card className="w-full max-w-lg">
-        {" "}
         <CardHeader>
           <CardTitle>Booking Summary</CardTitle>
         </CardHeader>

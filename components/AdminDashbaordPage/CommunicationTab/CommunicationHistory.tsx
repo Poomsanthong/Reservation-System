@@ -11,17 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import { getRecentMessages } from "@/lib/api/functions";
 import { timeAgo } from "@/lib/dateHelper";
-
-type Communication = {
-  id: number;
-  type: string;
-  reminder_state: string;
-  created_at: string;
-  booking_id: {
-    name: string;
-    email: string;
-  } | null;
-};
+import type { RecentMessage as Communication } from "@/features/messages/types";
 const CommunicationHistory = () => {
   const [communications, setCommunications] = useState<Communication[]>([]);
 
@@ -70,7 +60,7 @@ const CommunicationHistory = () => {
                   comm.reminder_state === "delivered" ? "default" : "secondary"
                 }
               >
-                {comm.reminder_state}
+                {comm.reminder_state ?? "scheduled"}
               </Badge>
             </div>
           ))}

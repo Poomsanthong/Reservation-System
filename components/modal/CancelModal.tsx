@@ -8,7 +8,14 @@ import {
   DialogFooter,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { CancelModalProps } from "@/lib/types";
+import type { Reservation } from "@/features/bookings/types";
+
+type CancelModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  booking: Reservation | null;
+  onSubmit: () => void;
+};
 
 export default function CancelModal({
   open,
@@ -41,9 +48,7 @@ export default function CancelModal({
 
           <Button
             variant="destructive"
-            onClick={() => {
-              onSubmit((booking.status = "cancelled"), booking);
-            }}
+            onClick={onSubmit}
           >
             Cancel Reservation
           </Button>

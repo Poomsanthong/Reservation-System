@@ -1,11 +1,15 @@
 import React from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import type { BookingFormController } from "@/features/bookings/types";
 
-const GuestDetails = ({ form }: { form: any }) => {
+type GuestDetailsProps = {
+  form: BookingFormController;
+};
+
+const GuestDetails = ({ form }: GuestDetailsProps) => {
   return (
     <div>
-      {/* Guest Details */}
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="name">Full Name</Label>

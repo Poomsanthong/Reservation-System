@@ -11,10 +11,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useDateStore } from "@/store/useSelectedData";
 import { toSqlDate } from "@/lib/dateHelper";
+import { getSchedule } from "@/lib/api/functions";
+import type { ScheduleSlot } from "@/features/bookings/types";
 
 const DailyBooking = () => {
   const [loading, setLoading] = useState(true);
-  const [schedule, setSchedule] = useState<any[]>([]);
+  const [schedule, setSchedule] = useState<ScheduleSlot[]>([]);
   const { selectedDate } = useDateStore();
 
   if (!selectedDate) return null;
@@ -24,10 +26,7 @@ const DailyBooking = () => {
     async function fetchSchedule() {
       try {
         setLoading(true);
-        const searchParams = new URLSearchParams({ date: sqlDate });
-        const res = await fetch(`/api/reservations/schedule?${searchParams}`);
-        if (!res.ok) throw new Error("Failed to fetch schedule");
-        const data = await res.json();
+        const data = await getSchedule(sqlDate);
         setSchedule(data);
       } catch (err) {
         console.error("Failed to load schedule:", err);

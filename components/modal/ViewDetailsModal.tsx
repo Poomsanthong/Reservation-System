@@ -10,7 +10,13 @@ import {
 } from "../ui/dialog";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { ViewDetailsModalProps } from "@/lib/types";
+import type { Reservation } from "@/features/bookings/types";
+
+type ViewDetailsModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  booking: Reservation | null;
+};
 
 const labelCls =
   "text-xs font-medium uppercase tracking-wide text-muted-foreground";

@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +11,6 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Reservation } from "@/lib/types";
-import { EditModalProps } from "@/lib/types";
-import { useEffect, useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -20,9 +18,20 @@ import {
   SelectItem,
   SelectValue,
 } from "../ui/select";
+import type {
+  BookingStatus,
+  Reservation,
+  UpdateReservationInput,
+} from "@/features/bookings/types";
 
-const labelCls =
-  "text-xs font-medium uppercase tracking-wide text-muted-foreground";
+type EditModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  booking: Reservation | null;
+  onSubmit: (payload: UpdateReservationInput) => Promise<void>;
+};
+
+const labelCls = "text-xs font-medium uppercase tracking-wide text-muted-foreground";
 const valueCls = "text-sm font-medium text-primary-900";
 
 const Field: React.FC<{ label: string; children: React.ReactNode }> = ({
@@ -41,17 +50,29 @@ const EditModal: React.FC<EditModalProps> = ({
   booking,
   onSubmit,
 }) => {
-  const [form, setForm] = useState<Reservation>({} as Reservation);
+  const [form, setForm] = useState<UpdateReservationInput>({});
 
   useEffect(() => {
     if (booking) {
-      setForm(booking);
+      setForm({
+        name: booking.name,
+        email: booking.email,
+        phone: booking.phone,
+        partysize: booking.partysize,
+        reservation_date: booking.reservation_date,
+        reservation_time: booking.reservation_time,
+        status: booking.status,
+        note: booking.note,
+      });
     }
   }, [booking]);
 
   if (!booking) return null;
 
-  const handleChange = (key: keyof Reservation, value: any) => {
+  const handleChange = <K extends keyof UpdateReservationInput>(
+    key: K,
+    value: UpdateReservationInput[K],
+  ) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -93,7 +114,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 value={form.partysize?.toString() || ""}
                 type="number"
                 onChange={(e) =>
-                  handleChange("partysize", parseInt(e.target.value))
+                  handleChange("partysize", Number.parseInt(e.target.value, 10))
                 }
               />
             </Field>
@@ -113,7 +134,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 value={form.reservation_time?.slice(0, 5) || ""}
                 type="time"
                 onChange={(e) =>
-                  handleChange("reservation_time", e.target.value)
+                  handleChange("reservation_time", `${e.target.value}:00`)
                 }
               />
             </Field>
@@ -121,7 +142,9 @@ const EditModal: React.FC<EditModalProps> = ({
             <Field label="Status">
               <Select
                 value={form.status || "pending"}
-                onValueChange={(val) => handleChange("status", val)}
+                onValueChange={(val) =>
+                  handleChange("status", val as BookingStatus)
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />

@@ -3,31 +3,38 @@
 
 import { useState } from "react";
 import { useToastStore } from "@/store/useToastStore";
-import { checkDuplicate, create, get } from "@/lib/api/functions";
-import { Reservation } from "@/lib/types";
+import { checkDuplicate, createReservation } from "@/lib/api/functions";
+import type {
+  BookingFormController,
+  BookingFormFields,
+  CreateReservationInput,
+} from "@/features/bookings/types";
 
-export function useBookingForm() {
+const initialFields = (): BookingFormFields => ({
+  date: new Date(),
+  selectedTime: "",
+  partysize: "2",
+  name: "",
+  email: "",
+  phone: "",
+  note: "",
+});
+
+export function useBookingForm(): BookingFormController {
   const toastStore = useToastStore();
 
-  // ---- FORM STATE ----
-  const [fields, setFields] = useState({
-    date: new Date(),
-    selectedTime: "",
-    partysize: "2",
-    name: "",
-    email: "",
-    phone: "",
-    note: "",
-  });
+  const [fields, setFields] = useState<BookingFormFields>(initialFields);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  // ---- UPDATE HELPERS ----
-  function updateField(key: string, value: any) {
+  function updateField<K extends keyof BookingFormFields>(
+    key: K,
+    value: BookingFormFields[K],
+  ) {
     setFields((prev) => ({ ...prev, [key]: value }));
   }
 
-  // ---- VALIDATION ----
+  // Keep basic UX validation in the hook so the page components stay mostly presentational.
   function validate(): boolean {
     if (!fields.name.trim()) {
       toastStore.error("Name is required");
@@ -53,8 +60,7 @@ export function useBookingForm() {
     return true;
   }
 
-  // ---- BUILD PAYLOAD ----
-  function buildPayload(): Reservation {
+  function buildPayload(): CreateReservationInput {
     return {
       name: fields.name,
       email: fields.email,
@@ -66,67 +72,42 @@ export function useBookingForm() {
     };
   }
 
-  // ---- SUBMIT HANDLER ----
   async function submit() {
-    // 1.VALIDATE
     if (!validate()) return;
 
-    // 2. CHECK DUPLICATES
+    // Prevent accidental double-bookings before we create the reservation.
     const duplicateCheck = await checkDuplicate(
       fields.date.toISOString().split("T")[0],
       fields.selectedTime,
       fields.name,
     );
 
-    // handle API load failure
-    if (duplicateCheck.error) {
-      toastStore.error(
-        duplicateCheck.error || "Failed to check duplicate bookings.",
-      );
-      return;
-    }
-
-    // is duplicate?
     if (duplicateCheck.exists) {
       toastStore.error(
         "Duplicate booking detected for this date, time, and name.",
       );
       return;
-    } // 3.BUILD PAYLOAD & SUBMIT
+    }
+
     try {
       const payload = buildPayload();
-      const { error } = await create(payload);
-
-      if (error) {
-        toastStore.error(error.message || "Failed to create booking.");
-        return;
-      }
+      await createReservation(payload);
 
       toastStore.success("Booking confirmed!");
-
-      // Refresh bookings after submit.
-      await get("reservations");
 
       setShowConfirmation(true);
       setTimeout(() => setShowConfirmation(false), 4000);
 
       reset();
-    } catch (err: any) {
-      toastStore.error(err?.message || "Unexpected error");
+    } catch (error) {
+      toastStore.error(
+        error instanceof Error ? error.message : "Unexpected error",
+      );
     }
   }
 
-  // ---- RESET FORM ----
   function reset() {
-    setFields({
-      date: new Date(),
-      selectedTime: "",
-      partysize: "2",
-      name: "",
-      email: "",
-      phone: "",
-      note: "",
-    });
+    setFields(initialFields());
   }
 
   return {

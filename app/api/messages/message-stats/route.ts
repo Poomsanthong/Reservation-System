@@ -1,11 +1,15 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
-import { NextResponse } from "next/server";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { fail, success } from "@/lib/utils";
+import type {
+  MessageStatsBreakdown,
+  MessageType,
+} from "@/features/messages/types";
 
 async function getMessageStats(
-  type: "confirmation" | "reminder",
+  type: MessageType,
   restaurantId?: string,
-) {
+): Promise<MessageStatsBreakdown> {
   const supabase = await supabaseServer();
 
   let query = supabase
@@ -37,14 +41,18 @@ async function getMessageStats(
 export async function GET(req: Request) {
   const restaurant = await getRestaurantBySlug();
   if (!restaurant) {
-    return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
+    return fail(new Error("Restaurant not found"), 404);
   }
 
-  const confirmations = await getMessageStats("confirmation", restaurant.id);
-  const reminders = await getMessageStats("reminder", restaurant.id);
+  try {
+    const confirmations = await getMessageStats("confirmation", restaurant.id);
+    const reminders = await getMessageStats("reminder", restaurant.id);
 
-  return NextResponse.json({
-    confirmations,
-    reminders,
-  });
+    return success({
+      confirmations,
+      reminders,
+    });
+  } catch (error) {
+    return fail(error, 500);
+  }
 }

@@ -1,5 +1,6 @@
 "use server";
 import { getDailyBookings } from "@/lib/server/getBooking";
+import type { ScheduleSlot } from "@/features/bookings/types";
 
 const TIMESLOTS = [
   "11:00:00",
@@ -19,7 +20,10 @@ const TIMESLOTS = [
 ];
 const CAPACITY = 8;
 
-export async function getSchedule(date: string, restaurantId?: string) {
+export async function getSchedule(
+  date: string,
+  restaurantId?: string,
+): Promise<ScheduleSlot[]> {
   if (!restaurantId) {
     return TIMESLOTS.map((time) => ({
       time,

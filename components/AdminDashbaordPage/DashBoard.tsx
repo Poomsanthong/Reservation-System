@@ -1,45 +1,83 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import dynamic from "next/dynamic";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  TrendingUp,
-  Users,
-  Calendar,
-  DollarSign,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Mail,
-  MessageSquare,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
-  Book,
-} from "lucide-react";
+
+import { Calendar, Clock, MessageSquare, BarChart3 } from "lucide-react";
 import { Reservation } from "@/lib/types";
 
-import { BookingsTable } from "@/components/AdminDashbaordPage/BookingTab/bookingTable";
-import { ScheduleManager } from "@/components/AdminDashbaordPage/ScheduleTab/scheduleManager";
 import StatsCard from "@/components/AdminDashbaordPage/OverViewTab/StatsCard";
-import BookTrendChart from "./OverViewTab/BookTrendChart";
-// import RevenueChart from "./OverViewTab/RevenueChart";
-import TimeConstribution from "./OverViewTab/TimeConstribution";
 import RecentActivity from "./OverViewTab/RecentActivity";
 
-import Comunication from "./CommunicationTab/Comunication";
-import MessageTemplate from "./CommunicationTab/MessageTemplate";
-import CommunicationHistory from "./CommunicationTab/CommunicationHistory";
+function TabPanelFallback({
+  className = "min-h-[260px]",
+}: {
+  className?: string;
+}) {
+  return (
+    <Card className={className}>
+      <CardContent className="p-6">
+        <div className="space-y-3 animate-pulse">
+          <div className="h-5 w-40 rounded bg-muted" />
+          <div className="h-4 w-64 rounded bg-muted/70" />
+          <div className="h-32 rounded-xl bg-muted/60" />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+const BookingsTable = dynamic(
+  () =>
+    import("@/components/AdminDashbaordPage/BookingTab/bookingTable").then(
+      (mod) => mod.BookingsTable,
+    ),
+  {
+    loading: () => <TabPanelFallback className="min-h-[420px]" />,
+  },
+);
+
+const ScheduleManager = dynamic(
+  () =>
+    import("@/components/AdminDashbaordPage/ScheduleTab/scheduleManager").then(
+      (mod) => mod.ScheduleManager,
+    ),
+  {
+    loading: () => <TabPanelFallback className="min-h-[420px]" />,
+  },
+);
+
+const BookTrendChart = dynamic(() => import("./OverViewTab/BookTrendChart"), {
+  loading: () => <TabPanelFallback />,
+  ssr: false,
+});
+
+const TimeConstribution = dynamic(
+  () => import("./OverViewTab/TimeConstribution"),
+  {
+    loading: () => <TabPanelFallback />,
+    ssr: false,
+  },
+);
+
+const Comunication = dynamic(() => import("./CommunicationTab/Comunication"), {
+  loading: () => <TabPanelFallback />,
+});
+
+const MessageTemplate = dynamic(
+  () => import("./CommunicationTab/MessageTemplate"),
+  {
+    loading: () => <TabPanelFallback />,
+  },
+);
+
+const CommunicationHistory = dynamic(
+  () => import("./CommunicationTab/CommunicationHistory"),
+  {
+    loading: () => <TabPanelFallback className="min-h-[320px]" />,
+  },
+);
 
 export default function AdminDashboard({
   userEmail,

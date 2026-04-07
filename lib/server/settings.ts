@@ -1,6 +1,10 @@
 "use server";
 
 import { supabaseServer } from "@/lib/server/supabaseServer";
+import type {
+  RestaurantSettings,
+  UpdateRestaurantSettingsInput,
+} from "@/features/settings/types";
 
 // --- Load Settings ---
 export async function loadSettings() {
@@ -12,11 +16,11 @@ export async function loadSettings() {
     .single();
 
   if (error) return null;
-  return data;
+  return data as RestaurantSettings;
 }
 
 // --- Update Settings ---
-export async function updateSettings(payload: Partial<any>) {
+export async function updateSettings(payload: UpdateRestaurantSettingsInput) {
   const supabase = await supabaseServer();
 
   const { data, error } = await supabase
@@ -27,5 +31,5 @@ export async function updateSettings(payload: Partial<any>) {
     .single();
 
   if (error) throw error;
-  return data;
+  return data as RestaurantSettings;
 }

@@ -1,59 +1,40 @@
 import { getTemplates, updateTemplate } from "@/lib/server/template";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
-import { NextResponse } from "next/server";
+import { fail, success } from "@/lib/utils";
+import { updateTemplateSchema } from "@/shared/api/schemas";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const restaurant = await getRestaurantBySlug();
     if (!restaurant) {
-      return new NextResponse(
-        JSON.stringify({ error: "Restaurant not found" }),
-        {
-          status: 404,
-        },
-      );
+      return fail(new Error("Restaurant not found"), 404);
     }
 
     const templates = await getTemplates(restaurant.id);
 
-    return new NextResponse(JSON.stringify(templates), {
-      status: 200,
-    });
+    return success(templates);
   } catch (err) {
     console.error(err);
-
-    return new NextResponse(
-      JSON.stringify({ error: "Failed to fetch templates" }),
-      { status: 500 },
-    );
+    return fail(err, 500);
   }
 }
 
 export async function POST(req: Request) {
   try {
-    const template = await req.json(); // expects { id, subject, html }
+    const template = updateTemplateSchema.parse(await req.json());
     const restaurant = await getRestaurantBySlug();
     if (!restaurant) {
-      return new NextResponse(
-        JSON.stringify({ error: "Restaurant not found" }),
-        {
-          status: 404,
-        },
-      );
+      return fail(new Error("Restaurant not found"), 404);
     }
-    // update in DB
     await updateTemplate(
       template.id,
       template.subject,
       template.html,
       restaurant.id,
     );
-    return new NextResponse(JSON.stringify({ success: true }), { status: 200 });
+    return success({ success: true as const });
   } catch (err) {
     console.error(err);
-    return new NextResponse(
-      JSON.stringify({ error: "Failed to update template" }),
-      { status: 500 },
-    );
+    return fail(err, 500);
   }
 }

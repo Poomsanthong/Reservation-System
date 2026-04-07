@@ -3,11 +3,18 @@ import { Clock } from "lucide-react";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
 import { getSchedule } from "@/lib/api/functions";
+import type {
+  BookingFormController,
+  ScheduleSlot,
+} from "@/features/bookings/types";
 
-export default function TimeSlotGrid({ form }: { form: any }) {
-  const [schedule, setSchedule] = useState<any[]>([]);
+type TimeSlotGridProps = {
+  form: BookingFormController;
+};
+
+export default function TimeSlotGrid({ form }: TimeSlotGridProps) {
+  const [schedule, setSchedule] = useState<ScheduleSlot[]>([]);
   const sqlDate = form.fields.date?.toISOString().split("T")[0];
-  const [loading, setLoading] = useState(true);
   if (!form.fields.date) return null;
 
   useEffect(() => {
@@ -17,8 +24,6 @@ export default function TimeSlotGrid({ form }: { form: any }) {
         setSchedule(data);
       } catch (err) {
         console.error("Failed to load schedule:", err);
-      } finally {
-        setLoading(false);
       }
     }
 
@@ -27,7 +32,6 @@ export default function TimeSlotGrid({ form }: { form: any }) {
 
   return (
     <div>
-      {/* Time Slots */}
       <div className="space-y-2">
         <Label>Available Times</Label>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">

@@ -1,16 +1,19 @@
-export type Reservation = {
-  id?: string;
-  restaurant_id?: string;
-  name: string;
-  phone: string;
-  email?: string | null;
-  reservation_date: string; // YYYY-MM-DD
-  reservation_time: string; // HH:MM:SS
-  partysize: number;
-  status?: "confirmed" | "cancelled";
-  note?: string | null;
-  created_at?: string;
-};
+export type {
+  AvailabilityResponse,
+  BookingFormController,
+  BookingFormFields,
+  BookingModalType,
+  BookingStatus,
+  CreateReservationInput,
+  DuplicateCheckResponse,
+  Reservation,
+  ScheduleSlot,
+  UpdateReservationInput,
+} from "@/features/bookings/types";
+
+export type { MessageStatsResponse, MessageTemplate, RecentMessage } from "@/features/messages/types";
+
+export type { RestaurantSettings, UpdateRestaurantSettingsInput } from "@/features/settings/types";
 
 export type OpeningHour = {
   id?: string;
@@ -32,26 +35,6 @@ export type Setting = {
   value: string;
 };
 
-export type ViewDetailsModalProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  booking: Reservation | null;
-};
-
-export type EditModalProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  booking: Reservation | null;
-  onSubmit: (payload: Reservation) => Promise<void>;
-};
-
-export type CancelModalProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  booking: Reservation | null;
-  onSubmit: (status: string, payload: Reservation) => void;
-};
-
 export type statsDataType = {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
@@ -64,11 +47,4 @@ export type StatsCardPropsType = {
   totalGuests: number | null;
   previousTotalBookings: number | null;
   previousTotalGuests: number | null;
-};
-export type ScheduleSlot = {
-  time: string;
-  booked: number;
-  capacity: number;
-  status: "available" | "filling" | "full";
-  waitlist?: number;
 };

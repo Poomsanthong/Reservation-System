@@ -1,12 +1,11 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
-import { success, fail, validateTable, requireFields } from "@/lib/utils";
+import { success, fail, validateTable } from "@/lib/utils";
+import { crudDeleteSchema } from "@/shared/api/schemas";
 
 export async function DELETE(req: Request) {
   try {
-    const { table, id } = await req.json();
-
-    requireFields({ table, id }, ["table", "id"]);
+    const { table, id } = crudDeleteSchema.parse(await req.json());
     validateTable(table);
 
     const supabase = await supabaseServer();

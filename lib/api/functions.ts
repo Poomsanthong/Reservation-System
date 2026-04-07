@@ -1,16 +1,27 @@
-// Centralized API functions for frontend components to interact with backend routes.
-// This file serves as a single source of truth for all API interactions, making it easier to maintain and update endpoints as needed.
+import type {
+  AvailabilityResponse,
+  CreateReservationInput,
+  DuplicateCheckResponse,
+  Reservation,
+  ScheduleSlot,
+  UpdateReservationInput,
+} from "@/features/bookings/types";
+import type {
+  MessageStatsResponse,
+  MessageTemplate,
+  RecentMessage,
+} from "@/features/messages/types";
+import { request } from "@/shared/api/client";
 
-export async function get(table: string) {
+type CrudTable = "reservations" | "bookings" | "users" | "email_templates";
+
+export async function get<T>(table: CrudTable) {
   const searchParams = new URLSearchParams({ table });
-
-  const res = await fetch(`/api/crud/get?${searchParams.toString()}`);
-  if (!res.ok) throw new Error("Failed to load bookings");
-  return res.json();
+  return request<T>(`/api/crud/get?${searchParams.toString()}`);
 }
 
-export async function create(data: any) {
-  const res = await fetch("/api/crud/create", {
+export async function createReservation(data: CreateReservationInput) {
+  return request<Reservation>("/api/crud/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -18,110 +29,91 @@ export async function create(data: any) {
       data,
     }),
   });
-  return res.json();
 }
 
-export async function updateBooking(id: any, updates: any) {
-  const res = await fetch("/api/crud/edit", {
+export async function updateBooking(
+  id: Reservation["id"],
+  updates: UpdateReservationInput,
+) {
+  return request<Reservation[]>("/api/crud/edit", {
     method: "PATCH",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       table: "reservations",
       id,
       data: updates,
     }),
   });
-  return res.json();
 }
 
-export async function updateTemplate(id: any, updates: any) {
-  const res = await fetch("/api/crud/edit", {
-    method: "PATCH",
-    body: JSON.stringify({
-      table: "email_templates",
-      id,
-      data: updates,
-    }),
+export async function updateTemplate(
+  id: MessageTemplate["id"],
+  updates: Pick<MessageTemplate, "subject" | "html">,
+) {
+  return request<{ success: true }>("/api/templates", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, ...updates }),
   });
-  return res.json();
 }
 
-export async function cancelBooking(id: any, status: string) {
-  const res = await fetch("/api/crud/edit", {
+export async function cancelBooking(
+  id: Reservation["id"],
+  status: Reservation["status"] = "cancelled",
+) {
+  return request<Reservation[]>("/api/crud/edit", {
     method: "PATCH",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       table: "reservations",
       id,
       data: { status },
     }),
   });
-  return res.json();
 }
 
-export async function deleteBooking(id: any) {
-  const res = await fetch("/api/crud/delete", {
+export async function deleteBooking(id: Reservation["id"]) {
+  return request<{ deleted: Reservation["id"] }>("/api/crud/delete", {
     method: "DELETE",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       table: "reservations",
       id,
     }),
   });
-  return res.json();
 }
 
 export async function checkDuplicate(date: string, time: string, name: string) {
-  const res = await fetch("/api/reservations/check-duplicate", {
+  return request<DuplicateCheckResponse>("/api/reservations/check-duplicate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ date, time, name }),
   });
-  if (!res.ok) throw new Error("Failed to check for duplicates");
-  return res.json();
 }
 
 export async function checkAvailability(date: string, time: string) {
-  const res = await fetch("/api/reservations/availability", {
+  return request<AvailabilityResponse>("/api/reservations/availability", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ date, time }),
   });
-  if (!res.ok) throw new Error("Failed to check availability");
-  return res.json();
 }
 
 export async function getSchedule(date: string) {
   const searchParams = new URLSearchParams({ date });
-
-  const res = await fetch(
+  return request<ScheduleSlot[]>(
     "/api/reservations/schedule?" + searchParams.toString(),
   );
-
-  if (!res.ok) {
-    throw new Error("Failed to load schedule");
-  }
-
-  return res.json();
 }
 
 export async function getMessageStats() {
-  const res = await fetch("/api/messages/message-stats");
-  if (!res.ok) {
-    throw new Error("Failed to load message stats");
-  }
-  return res.json();
+  return request<MessageStatsResponse>("/api/messages/message-stats");
 }
 
 export async function getRecentMessages() {
-  const res = await fetch("/api/messages");
-  if (!res.ok) {
-    throw new Error("Failed to load recent messages");
-  }
-  return res.json();
+  return request<RecentMessage[]>("/api/messages");
 }
 
 export async function getTemplates() {
-  const res = await fetch("/api/templates");
-  if (!res.ok) {
-    throw new Error("Failed to load templates");
-  }
-  return res.json();
+  return request<MessageTemplate[]>("/api/templates");
 }
