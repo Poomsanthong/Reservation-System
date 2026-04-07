@@ -1,7 +1,10 @@
 import { supabaseServer } from "./supabaseServer";
+import type { MessageTemplate } from "@/features/messages/types";
 
 // Fetch all email templates for a given restaurant
-export async function getTemplates(restaurantId?: string) {
+export async function getTemplates(
+  restaurantId?: string,
+): Promise<MessageTemplate[]> {
   const supabase = await supabaseServer();
   const { data, error } = await supabase
     .from("email_templates")
@@ -24,7 +27,7 @@ export async function getTemplates(restaurantId?: string) {
     }
   }
 
-  return Array.from(latestTemplatesByType.values());
+  return Array.from(latestTemplatesByType.values()) as MessageTemplate[];
 }
 
 // Update a single email template for a restaurant

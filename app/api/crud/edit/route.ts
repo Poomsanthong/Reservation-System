@@ -1,12 +1,11 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
-import { success, fail, validateTable, requireFields } from "@/lib/utils";
+import { success, fail, validateTable } from "@/lib/utils";
+import { crudEditSchema } from "@/shared/api/schemas";
 
 export async function PATCH(req: Request) {
   try {
-    const { table, id, data } = await req.json();
-
-    requireFields({ table, id, data }, ["table", "id", "data"]);
+    const { table, id, data } = crudEditSchema.parse(await req.json());
     validateTable(table);
 
     const supabase = await supabaseServer();

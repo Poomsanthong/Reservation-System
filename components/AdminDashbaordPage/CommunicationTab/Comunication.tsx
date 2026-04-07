@@ -10,9 +10,10 @@ import {
   CardTitle,
 } from "../../ui/card";
 import { getMessageStats } from "../../../lib/api/functions";
+import type { MessageStatsResponse } from "@/features/messages/types";
 
 const Comunication = () => {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<MessageStatsResponse | null>(null);
 
   useEffect(() => {
     async function fetchStats() {

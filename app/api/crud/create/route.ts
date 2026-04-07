@@ -1,20 +1,24 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { inngest } from "@/lib/inngest/inngest";
-import { success, fail, validateTable, requireFields } from "@/lib/utils";
+import { success, fail, validateTable } from "@/lib/utils";
+import type { Reservation } from "@/features/bookings/types";
+import { crudCreateSchema } from "@/shared/api/schemas";
 
-type ReservationRecord = {
-  email: string;
-  id: string;
-  name: string;
-  partysize: number;
-  reservation_date: string;
-  reservation_time: string;
-  restaurant_id: string;
-};
+type ReservationRecord = Pick<
+  Reservation,
+  | "email"
+  | "id"
+  | "name"
+  | "partysize"
+  | "reservation_date"
+  | "reservation_time"
+  | "restaurant_id"
+>;
 
 type Supabase = Awaited<ReturnType<typeof supabaseServer>>;
 
+// Fire the background confirmation workflow after a reservation is saved.
 async function sendReservationCreatedEvent(created: ReservationRecord) {
   try {
     await inngest.send({
@@ -36,6 +40,7 @@ async function sendReservationCreatedEvent(created: ReservationRecord) {
   }
 }
 
+// Reminder messages are scheduled relative to the reservation time.
 function getReminderTime(created: ReservationRecord) {
   const bookingTime = new Date(
     `${created.reservation_date}T${created.reservation_time}`,
@@ -91,14 +96,14 @@ async function scheduleReservationReminder(
 
 export async function POST(req: Request) {
   try {
-    const { table, data } = await req.json();
-
-    requireFields({ table, data }, ["table", "data"]);
+    // Validate the request body up front before touching the database.
+    const { table, data } = crudCreateSchema.parse(await req.json());
     validateTable(table);
 
     const supabase = await supabaseServer();
     let insertData = data;
 
+    // Reservation rows always inherit the current restaurant on the server.
     if (table === "reservations") {
       const restaurant = await getRestaurantBySlug();
       if (!restaurant) {
@@ -119,6 +124,7 @@ export async function POST(req: Request) {
 
     if (error) throw new Error(error.message);
 
+    // Only reservation inserts trigger follow-up messaging workflows.
     if (table === "reservations") {
       const reservation = created as ReservationRecord;
       await sendReservationCreatedEvent(reservation);
@@ -126,7 +132,7 @@ export async function POST(req: Request) {
     }
 
     return success(created);
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in CREATE route:", error);
     return fail(error);
   }

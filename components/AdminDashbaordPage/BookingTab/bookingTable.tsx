@@ -42,7 +42,11 @@ import {
 import ViewDetailsModal from "../../modal/ViewDetailsModal";
 import EditModal from "../../modal/EditModal";
 import CancelModal from "../../modal/CancelModal";
-import { Reservation } from "@/lib/types";
+import type {
+  BookingStatus,
+  Reservation,
+  UpdateReservationInput,
+} from "@/features/bookings/types";
 
 import { cancelBooking, get, updateBooking } from "@/lib/api/functions";
 
@@ -62,19 +66,15 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
     try {
       setLoading(true);
 
-      const res = await get("reservations");
-
-      if (res.error) throw res.error;
-
-      // Sort by created_at desc
-      const sorted = (res.data || []).sort(
-        (a: any, b: any) =>
+      const reservations = await get<Reservation[]>("reservations");
+      const sorted = [...reservations].sort(
+        (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
 
       setBookingsData(sorted);
-    } catch (err) {
-      setBookingsData([]); // fallback
+    } catch {
+      setBookingsData([]);
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   // -----------------------
   // HANDLE SUBMIT (edit/cancel)
   // -----------------------
-  async function handleSubmit(updated: Reservation) {
+  async function handleSubmit(updated: UpdateReservationInput) {
     if (!payload) return;
 
     if (type === "edit") {
@@ -123,19 +123,19 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   const filteredBookings = bookingsData.filter((booking) => {
     const matchesSearch =
       booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.email?.toLowerCase().includes(searchTerm.toLowerCase()) === true;
 
     return matchesSearch;
   });
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: BookingStatus) => {
     if (status === "confirmed") return <CheckCircle2 className="w-4 h-4" />;
     if (status === "cancelled") return <XCircle className="w-4 h-4" />;
     return <Clock className="w-4 h-4" />;
   };
 
-  const getStatusVariant = (status: string) => {
+  const getStatusVariant = (status: BookingStatus) => {
     if (status === "confirmed") return "default";
     if (status === "cancelled") return "destructive";
     return "secondary";
@@ -204,8 +204,8 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
                     <TableCell>{booking.partysize} guests</TableCell>
 
                     <TableCell>
-                      <Badge variant={getStatusVariant(booking.status!)}>
-                        {getStatusIcon(booking.status!)} {booking.status}
+                      <Badge variant={getStatusVariant(booking.status)}>
+                        {getStatusIcon(booking.status)} {booking.status}
                       </Badge>
                     </TableCell>
 

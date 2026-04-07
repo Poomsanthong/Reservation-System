@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { supabaseServer } from "@/lib/server/supabaseServer";
+import { fail, success } from "@/lib/utils";
 
-export async function GET(req: Request) {
-  const supabase = await supabaseServer(); // Initialize Supabase on the server
+export async function GET() {
+  const supabase = await supabaseServer();
   const restaurant = await getRestaurantBySlug();
   if (!restaurant) {
-    return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
+    return fail(new Error("Restaurant not found"), 404);
   }
   const { data, error } = await supabase
     .from("messages")
@@ -25,6 +25,10 @@ export async function GET(req: Request) {
     .eq("restaurant_id", restaurant.id)
     .order("created_at", { ascending: false })
     .limit(10);
-  // console.log("Fetched recent messages from database:", data, error);
-  return NextResponse.json(data);
+
+  if (error) {
+    return fail(error, 500);
+  }
+
+  return success(data);
 }

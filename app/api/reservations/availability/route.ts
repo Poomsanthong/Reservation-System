@@ -1,29 +1,21 @@
-import { NextResponse } from "next/server";
 import { checkAvailability } from "@/lib/api/reservation/availability";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { availabilitySchema } from "@/shared/api/schemas";
+import { fail, success } from "@/lib/utils";
 
 export async function POST(req: Request) {
   try {
-    const { date, time } = await req.json();
-    if (!date || !time) {
-      return NextResponse.json(
-        { error: "Missing date or time" },
-        { status: 400 },
-      );
-    }
+    const { date, time } = availabilitySchema.parse(await req.json());
 
     const restaurant = await getRestaurantBySlug();
     if (!restaurant) {
-      return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
+      return fail(new Error("Restaurant not found"), 404);
     }
 
     const result = await checkAvailability(date, time, restaurant.id);
-    return NextResponse.json(result);
+    return success(result);
   } catch (error) {
     console.error("Error checking availability:", error);
-    return NextResponse.json(
-      { error: "Failed to check availability" },
-      { status: 500 },
-    );
+    return fail(error, 500);
   }
 }

@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
+import type { ApiFailure, ApiSuccess } from "@/shared/api/client";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -8,14 +10,21 @@ export function cn(...inputs: ClassValue[]) {
 
 // Standardized success and failure responses
 
-export function success(data: any) {
-  return NextResponse.json({ success: true, data });
+export function success<T>(data: T) {
+  return NextResponse.json<ApiSuccess<T>>({ success: true, data });
 }
 
-export function fail(error: any) {
+export function fail(error: unknown, status = 400) {
+  const message =
+    error instanceof ZodError
+      ? error.issues.map((issue) => issue.message).join(", ")
+      : error instanceof Error
+        ? error.message
+        : "Unknown error";
+
   return NextResponse.json(
-    { success: false, error: error.message || "Unknown error" },
-    { status: 400 },
+    { success: false, error: message } satisfies ApiFailure,
+    { status },
   );
 }
 // Allowed tables for CRUD operations
@@ -24,17 +33,19 @@ export const allowedTables = [
   "bookings",
   "users",
   "email_templates",
-]; // extend as needed
-
+];
 export function validateTable(table?: string | null) {
   if (!table) throw new Error("Table name is required");
   if (!allowedTables.includes(table)) throw new Error("Invalid table");
 }
 
-export function requireFields(obj: any, fields: string[]) {
+export function requireFields<T extends Record<string, unknown>>(
+  obj: T,
+  fields: (keyof T)[],
+) {
   for (const field of fields) {
-    if (!obj[field]) {
-      throw new Error(`Missing field: ${field}`);
+    if (obj[field] === undefined || obj[field] === null) {
+      throw new Error(`Missing field: ${String(field)}`);
     }
   }
 }

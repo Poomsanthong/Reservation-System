@@ -1,15 +1,18 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { success, fail, validateTable } from "@/lib/utils";
+import { crudGetQuerySchema } from "@/shared/api/schemas";
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const table = searchParams.get("table");
+    const { table } = crudGetQuerySchema.parse({
+      table: searchParams.get("table"),
+    });
 
     validateTable(table);
     const supabase = await supabaseServer();
-    let query = supabase.from(table!).select("*");
+    let query = supabase.from(table).select("*");
 
     if (table === "reservations" || table === "email_templates") {
       const restaurant = await getRestaurantBySlug();

@@ -13,29 +13,27 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import PartysizeTab from "./PartySizeTab";
 import { useBlockoutDates } from "@/lib/hooks/useBlockDates";
+import type { BookingFormController } from "@/features/bookings/types";
 
-export default function BookingForm({ form }: { form: any }) {
+type BookingFormProps = {
+  form: BookingFormController;
+};
+
+export default function BookingForm({ form }: BookingFormProps) {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string>("");
-  const { blackouts } = useBlockoutDates(); // to disable blocked dates on calendar;
+  const { blackouts } = useBlockoutDates();
+
   async function handleSubmit() {
     setSubmitError("");
     if (submitLoading) return;
     setSubmitLoading(true);
+
     try {
-      // form.submit should throw on error (see lib/api/functions.ts improvements)
       await form.submit();
-      // success state is handled inside the hook (form.showConfirmation)
-    } catch (err: any) {
-      // surface a readable message
-      const msg =
-        typeof err === "string"
-          ? err
-          : err?.message ||
-            (err && typeof err === "object"
-              ? JSON.stringify(err)
-              : "Unknown error");
-      console.error("Booking failed:", err);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Unknown error";
+      console.error("Booking failed:", error);
       setSubmitError(msg);
     } finally {
       setSubmitLoading(false);
@@ -45,7 +43,6 @@ export default function BookingForm({ form }: { form: any }) {
     <Card className="w-full max-w-md mx-auto ">
       <PartysizeTab form={form} />
       <CardContent className="space-y-4 sm:space-y-6">
-        {/* Calendar */}
         <div className="space-y-2">
           <Label>Date</Label>
           <div className="border rounded-lg p-4 flex justify-center">
@@ -53,7 +50,7 @@ export default function BookingForm({ form }: { form: any }) {
               mode="single"
               fixedWeeks
               selected={form.fields.date}
-              onSelect={(d) => form.updateField("date", d)}
+              onSelect={(d) => form.updateField("date", d ?? form.fields.date)}
               disabled={(d) =>
                 d < new Date() ||
                 blackouts.some(
