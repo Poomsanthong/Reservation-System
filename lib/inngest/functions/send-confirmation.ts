@@ -12,6 +12,7 @@ export const sendconfirmation = inngest.createFunction(
       email,
       booking_id,
       name,
+      restaurant_name,
       reservation_date,
       reservation_time,
       partysize,
@@ -39,7 +40,8 @@ export const sendconfirmation = inngest.createFunction(
       .replace("{{reservation_date}}", reservation_date)
       .replace("{{reservation_time}}", reservation_time)
       .replace("{{booking_id}}", booking_id)
-      .replace("{{partysize}}", partysize.toString());
+      .replace("{{partysize}}", partysize.toString())
+      .replace("{{restaurant_name}}", restaurant_name);
 
     try {
       const result = await resend.emails.send({

@@ -1,8 +1,4 @@
-export type BookingStatus =
-  | "confirmed"
-  | "pending"
-  | "waitlist"
-  | "cancelled";
+export type BookingStatus = "confirmed" | "pending" | "waitlist" | "cancelled";
 
 // Full reservation record as it exists once it comes back from the database/API.
 export type Reservation = {
@@ -13,6 +9,8 @@ export type Reservation = {
   email: string | null;
   reservation_date: string;
   reservation_time: string;
+  restaurant_name: string;
+
   partysize: number;
   status: BookingStatus;
   note: string | null;
