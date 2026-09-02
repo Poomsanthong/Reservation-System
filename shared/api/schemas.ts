@@ -21,6 +21,7 @@ export const reservationSchema = z.object({
   status: bookingStatusSchema,
   note: z.string().nullable(),
   created_at: z.string(),
+  restaurant_name: z.string().min(1),
 });
 
 export const createReservationSchema = z.object({
@@ -43,6 +44,7 @@ export const updateReservationSchema = z
     partysize: z.number().int().positive().optional(),
     status: bookingStatusSchema.optional(),
     note: z.string().nullable().optional(),
+    restaurant_name: z.string().min(1).optional(),
   })
   .refine((value) => Object.keys(value).length > 0, {
     message: "At least one field is required",

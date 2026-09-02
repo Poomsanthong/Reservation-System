@@ -1,20 +1,20 @@
 import { Resend } from "resend";
 import { inngest } from "../inngest";
 import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
-import { error } from "console";
-import { toast } from "sonner";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendReminder = inngest.createFunction(
-  { id: "send-reminder-email" },
-  { event: "reservation/reminder.scheduled" },
-
+  {
+    id: "send-reminder-email",
+    triggers: { event: "reservation/reminder.scheduled" },
+  },
   async ({ event, step }) => {
     const {
       email,
       booking_id,
       name,
+      restaurant_name,
       reservation_date,
       reservation_time,
       partysize,
@@ -32,7 +32,9 @@ export const sendReminder = inngest.createFunction(
       .maybeSingle();
 
     if (templateError || !template) {
-      throw new Error(templateError?.message || "Reminder email template not found");
+      throw new Error(
+        templateError?.message || "Reminder email template not found",
+      );
     }
 
     let emailContent = template?.html || "";
@@ -41,7 +43,8 @@ export const sendReminder = inngest.createFunction(
       .replace("{{reservation_date}}", reservation_date)
       .replace("{{reservation_time}}", reservation_time)
       .replace("{{booking_id}}", booking_id)
-      .replace("{{partysize}}", partysize.toString());
+      .replace("{{partysize}}", partysize.toString())
+      .replace("{{restaurant_name}}", restaurant_name);
 
     console.log("Reminder Time is " + reminderTime);
     // await step.sleep("30s", 3000); // Initial sleep to ensure the database record is created , Test with 30s, then change to sleepUntil with the actual reminder time

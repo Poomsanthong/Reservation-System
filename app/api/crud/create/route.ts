@@ -14,6 +14,7 @@ type ReservationRecord = Pick<
   | "reservation_date"
   | "reservation_time"
   | "restaurant_id"
+  | "restaurant_name"
 >;
 
 type Supabase = Awaited<ReturnType<typeof supabaseServer>>;
@@ -27,6 +28,7 @@ async function sendReservationCreatedEvent(created: ReservationRecord) {
         email: created.email,
         booking_id: created.id,
         name: created.name,
+        restaurant_name: created.restaurant_name,
         reservation_date: created.reservation_date,
         reservation_time: created.reservation_time,
         partysize: created.partysize,
@@ -82,6 +84,7 @@ async function scheduleReservationReminder(
         booking_id: created.id,
         email: created.email,
         name: created.name,
+        restaurant_name: created.restaurant_name,
         reservation_date: created.reservation_date,
         reservation_time: created.reservation_time,
         partysize: created.partysize,
@@ -102,6 +105,7 @@ export async function POST(req: Request) {
 
     const supabase = await supabaseServer();
     let insertData = data;
+    let reservationRestaurantName: string | null = null;
 
     // Reservation rows always inherit the current restaurant on the server.
     if (table === "reservations") {
@@ -110,6 +114,7 @@ export async function POST(req: Request) {
         throw new Error("Restaurant not found");
       }
 
+      reservationRestaurantName = restaurant.name;
       insertData = {
         ...data,
         restaurant_id: restaurant.id,
@@ -126,9 +131,14 @@ export async function POST(req: Request) {
 
     // Only reservation inserts trigger follow-up messaging workflows.
     if (table === "reservations") {
-      const reservation = created as ReservationRecord;
+      const reservation = {
+        ...created,
+        restaurant_name: reservationRestaurantName ?? "",
+      } as ReservationRecord;
       await sendReservationCreatedEvent(reservation);
       await scheduleReservationReminder(supabase, reservation);
+
+      return success(reservation);
     }
 
     return success(created);
