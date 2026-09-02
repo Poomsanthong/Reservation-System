@@ -5,9 +5,10 @@ import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendReminder = inngest.createFunction(
-  { id: "send-reminder-email" },
-  { event: "reservation/reminder.scheduled" },
-
+  {
+    id: "send-reminder-email",
+    triggers: { event: "reservation/reminder.scheduled" },
+  },
   async ({ event, step }) => {
     const {
       email,
@@ -31,7 +32,9 @@ export const sendReminder = inngest.createFunction(
       .maybeSingle();
 
     if (templateError || !template) {
-      throw new Error(templateError?.message || "Reminder email template not found");
+      throw new Error(
+        templateError?.message || "Reminder email template not found",
+      );
     }
 
     let emailContent = template?.html || "";

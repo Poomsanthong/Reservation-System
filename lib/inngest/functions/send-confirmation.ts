@@ -5,9 +5,13 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendconfirmation = inngest.createFunction(
-  { id: "send-confirmation-email" },
-  { event: "reservation.created" }, // match exactly what you send
+  {
+    id: "send-confirmation-email",
+    triggers: { event: "reservation.created" },
+  },
   async ({ event }) => {
+    // match exactly what you send
+
     const {
       email,
       booking_id,
