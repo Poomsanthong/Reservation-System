@@ -59,7 +59,7 @@ export async function updateTemplate(
 
 export async function cancelBooking(
   id: Reservation["id"],
-  status: Reservation["status"] = "cancelled",
+  // status: Reservation["status"] = "cancelled",
 ) {
   return request<Reservation[]>("/api/crud/edit", {
     method: "PATCH",
@@ -67,7 +67,7 @@ export async function cancelBooking(
     body: JSON.stringify({
       table: "reservations",
       id,
-      data: { status },
+      data: { status: "cancelled" },
     }),
   });
 }

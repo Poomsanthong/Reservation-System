@@ -121,6 +121,10 @@ export const crudEditSchema = z.discriminatedUnion("table", [
   }),
 ]);
 
+export const crudCancelSchema = z.object({
+  id: z.string().uuid().min(1),
+});
+
 export const crudDeleteSchema = z.object({
   table: crudTableSchema,
   id: z.string().min(1),

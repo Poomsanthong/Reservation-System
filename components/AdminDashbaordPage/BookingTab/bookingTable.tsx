@@ -110,7 +110,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
     }
 
     if (type === "cancel") {
-      await cancelBooking(payload.id, "cancelled");
+      await cancelBooking(payload.id);
     }
 
     closeModal();

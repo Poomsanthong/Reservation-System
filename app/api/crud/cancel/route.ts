@@ -1,22 +1,38 @@
-import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/server/supabaseServer";
+// import { supabaseServer } from "@/lib/server/supabaseServer";
+// import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+// import { success, fail, validateTable } from "@/lib/utils";
+// import { crudCancelSchema } from "@/shared/api/schemas";
 
-export async function DELETE(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const table = searchParams.get("table");
-  const id = searchParams.get("id");
+// export async function PATCH(req: Request) {
+//   try {
+//     const { id } = crudCancelSchema.parse(await req.json());
 
-  if (!table || !id) {
-    return NextResponse.json(
-      { error: "Missing table or id parameter" },
-      { status: 400 }
-    );
-  }
+//     const supabase = await supabaseServer();
 
-  const supabase = await supabaseServer(); // 👈 call the function
-  const { error } = await supabase.from(table).delete().eq("id", id);
+//     const restaurant = await getRestaurantBySlug();
 
-  if (error) return NextResponse.json({ error }, { status: 400 });
+//     if (!restaurant) {
+//       throw new Error("Restaurant not found");
+//     }
 
-  return NextResponse.json({ success: true });
-}
+//     const { data, error } = await supabase
+//       .from("reservations")
+//       .update({
+//         status: "cancelled",
+//       })
+//       .eq("id", id)
+//       .eq("restaurant_id", restaurant.id)
+//       .select()
+//       .single();
+
+//     if (error) {
+//       throw new Error(error.message);
+//     }
+//     console.log("Reservation cancelled:", data);
+//     return success(data);
+//   } catch (error) {
+//     return fail(error);
+//   }
+// }
+
+// FILE CURRENTLY NOT IN USE. DO NOT DELETE. MAY BE USED IN THE FUTURE.
