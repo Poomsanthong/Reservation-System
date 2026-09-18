@@ -200,7 +200,11 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
                     <TableCell>{booking.id}</TableCell>
                     <TableCell>{booking.name}</TableCell>
                     <TableCell>{booking.email}</TableCell>
-                    <TableCell>{booking.reservation_date}</TableCell>
+                    <TableCell>
+                      {booking.reservation_date +
+                        " " +
+                        booking.reservation_time}
+                    </TableCell>
                     <TableCell>{booking.partysize} guests</TableCell>
 
                     <TableCell>
