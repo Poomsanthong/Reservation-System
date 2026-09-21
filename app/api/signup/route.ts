@@ -210,6 +210,7 @@ export async function POST(req: NextRequest) {
 
     // Get the new restaurant's id
     const restaurantId = restaurantData?.[0]?.id;
+
     if (restaurantId) {
       console.log(
         "Inserting default templates for restaurantId:",
@@ -237,6 +238,24 @@ export async function POST(req: NextRequest) {
       } else {
         console.log("Inserted default templates:", templateData);
       }
+    }
+
+    // Insert default restaurant settings
+    const { error: settingsError } = await supabase
+      .from("restaurant_settings")
+      .insert({
+        restaurant_id: restaurantData?.[0]?.id,
+      });
+
+    if (settingsError) {
+      console.error(
+        "Failed to insert default restaurant settings:",
+        settingsError,
+      );
+      return NextResponse.json(
+        { error: "Failed to insert default restaurant settings." },
+        { status: 500 },
+      );
     }
 
     // Respond with success

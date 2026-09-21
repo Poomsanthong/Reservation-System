@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { Calendar, Clock, MessageSquare, BarChart3 } from "lucide-react";
-import { Reservation } from "@/lib/types";
+import { Reservation, RestaurantSettings } from "@/lib/types";
 
 import StatsCard from "@/components/AdminDashbaordPage/OverViewTab/StatsCard";
 import RecentActivity from "./OverViewTab/RecentActivity";
@@ -90,6 +90,7 @@ export default function AdminDashboard({
   bookingTrends,
   timeDistribution,
   recentActivity,
+  restaurantSettings,
 }: {
   userEmail: string | null;
   organizationName: string;
@@ -107,6 +108,7 @@ export default function AdminDashboard({
     time: string;
     status: string;
   }[];
+  restaurantSettings: RestaurantSettings | null;
 }) {
   const [activeTab, setActiveTab] = useState("overview");
   const [mounted, setMounted] = useState(false);
@@ -216,7 +218,7 @@ export default function AdminDashboard({
 
           {/* Schedule Tab */}
           <TabsContent value="schedule" className="min-w-0">
-            <ScheduleManager />
+            <ScheduleManager setting={restaurantSettings} />
           </TabsContent>
 
           {/* Communications Tab */}
