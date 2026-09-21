@@ -3,7 +3,7 @@ export type RestaurantSettings = {
   restaurant_id: string;
   auto_accept: boolean;
   waitlist_enabled: boolean;
-  max_party_size: number;
+  default_capacity: number;
   booking_interval: number;
   booking_window: number;
   min_notice_hours: number;

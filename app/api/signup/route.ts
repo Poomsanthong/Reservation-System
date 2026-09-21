@@ -185,28 +185,28 @@ export async function POST(req: NextRequest) {
     const confirmationSubject = "Reservation Confirmation";
     const confirmationHtml = `<h2 style="color:#111827;">Hello {{name}},</h2>
 
-<p>Thank you for your reservation. Your booking is confirmed.</p>
+                              <p>Thank you for your reservation. Your booking is confirmed.</p>
 
-<div style="background:#f9fafb; padding:16px; border-radius:8px; margin:16px 0;">
-  <p style="margin:4px 0;"><strong>Date:</strong> {{reservation_date}}</p>
-  <p style="margin:4px 0;"><strong>Time:</strong> {{reservation_time}}</p>
-  <p style="margin:4px 0;"><strong>Party Size:</strong> {{partysize}}</p>
-</div>
+                              <div style="background:#f9fafb; padding:16px; border-radius:8px; margin:16px 0;">
+                                <p style="margin:4px 0;"><strong>Date:</strong> {{reservation_date}}</p>
+                                <p style="margin:4px 0;"><strong>Time:</strong> {{reservation_time}}</p>
+                                <p style="margin:4px 0;"><strong>Party Size:</strong> {{partysize}}</p>
+                              </div>
 
-<p><strong>Booking ID:</strong> {{booking_id}}</p>
+                              <p><strong>Booking ID:</strong> {{booking_id}}</p>
 
-<p>We look forward to welcoming you.</p>
+                              <p>We look forward to welcoming you.</p>
 
-<div style="margin:24px 0;">
-  <a href="{{manage_url}}" 
-     style="background:#111827; color:#ffffff; padding:10px 16px; text-decoration:none; border-radius:6px; font-size:14px;">
-     Manage Reservation
-  </a>
-</div>
+                              <div style="margin:24px 0;">
+                                <a href="{{manage_url}}" 
+                                  style="background:#111827; color:#ffffff; padding:10px 16px; text-decoration:none; border-radius:6px; font-size:14px;">
+                                  Manage Reservation
+                                </a>
+                              </div>
 
-<p style="color:#6b7280; font-size:12px;">
-  Need to make changes? Use the button above or contact us directly.
-</p>`;
+                              <p style="color:#6b7280; font-size:12px;">
+                                Need to make changes? Use the button above or contact us directly.
+                              </p>`;
 
     // Get the new restaurant's id
     const restaurantId = restaurantData?.[0]?.id;

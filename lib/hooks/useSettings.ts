@@ -22,9 +22,11 @@ export function useSettings() {
 
   const save = async (changes: Omit<UpdateRestaurantSettingsInput, "id">) => {
     if (!settings) {
-      throw new Error("Settings are not loaded yet");
+      throw new Error(
+        "Settings are not loaded yet; cannot save changes." + settings,
+      );
     }
-
+    // console.log("Saving changes:", changes);
     const updated = await updateSettings({
       id: settings.id,
       ...changes,

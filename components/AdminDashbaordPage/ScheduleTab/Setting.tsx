@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import {
   Card,
   CardHeader,
@@ -17,36 +16,50 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Settings } from "lucide-react";
+import { Settings, Save } from "lucide-react";
 import { useState } from "react";
-import { RestaurantSettings } from "@/features/settings/types";
+import { useSettings } from "@/lib/hooks/useSettings";
+const Setting = () => {
+  const { settings, loading, save } = useSettings();
 
-const Setting = ({
-  restaurantSettings,
-}: {
-  restaurantSettings: RestaurantSettings | null;
-}) => {
+  // Initialize state variables with default values from restaurantSettings or fallback values
   const [autoAccept, setAutoAccept] = useState<boolean>(
-    restaurantSettings?.auto_accept || false,
+    settings?.auto_accept || false,
   );
   const [waitlistEnabled, setWaitlistEnabled] = useState<boolean>(
-    restaurantSettings?.waitlist_enabled || true,
+    settings?.waitlist_enabled ?? true,
   );
-  const [maxPartySize, setMaxPartySize] = useState(
-    restaurantSettings?.max_party_size?.toString() ?? "8",
+  const [default_capacity, setDefault_capacity] = useState(
+    settings?.default_capacity?.toString() ?? "8",
   );
 
   const [bookingWindow, setBookingWindow] = useState(
-    restaurantSettings?.booking_window?.toString() ?? "60",
+    settings?.booking_window?.toString() ?? "60",
   );
 
   const [minNoticeHours, setMinNoticeHours] = useState(
-    restaurantSettings?.min_notice_hours?.toString() ?? "2",
+    settings?.min_notice_hours?.toString() ?? "2",
   );
 
   const [reservationDuration, setReservationDuration] = useState(
-    restaurantSettings?.avg_table_duration?.toString() ?? "90",
+    settings?.avg_table_duration?.toString() ?? "90",
   );
+
+  const handleSaveChanges = async () => {
+    await save({
+      auto_accept: autoAccept,
+      waitlist_enabled: waitlistEnabled,
+      default_capacity: parseInt(default_capacity, 10),
+      booking_window: parseInt(bookingWindow, 10),
+      min_notice_hours: parseInt(minNoticeHours, 10),
+      avg_table_duration: parseInt(reservationDuration, 10),
+    });
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <Card>
@@ -97,8 +110,8 @@ const Setting = ({
               <div className="space-y-2">
                 <Label>Default Reservation Capacity</Label>
                 <Select
-                  defaultValue={maxPartySize}
-                  onValueChange={setMaxPartySize}
+                  defaultValue={default_capacity}
+                  onValueChange={setDefault_capacity}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -170,6 +183,14 @@ const Setting = ({
               </div>
             </div>
           </div>
+          <Button
+            onClick={handleSaveChanges}
+            variant="outline"
+            className="gap-2"
+          >
+            <Save className="w-4 h-4" />
+            Save Changes
+          </Button>
         </CardContent>
       </Card>
     </div>
