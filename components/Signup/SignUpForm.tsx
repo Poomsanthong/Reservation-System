@@ -1,10 +1,9 @@
 "use client";
-import React, { useCallback, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { EyeOff } from "lucide-react";
-import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import LogoUpload from "./LogoUplaod";
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const FULL_DAYS = [
@@ -42,12 +41,8 @@ export default function SignUpForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [logo, setLogo] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [logoName, setLogoName] = useState(" ");
-  const [dragging, setDragging] = useState(false);
-  const [hours, setHours] = useState<Hours>(buildDefaultHours);
 
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [hours, setHours] = useState<Hours>(buildDefaultHours);
 
   const toggleDay = (day: string) => {
     setHours((h) => ({ ...h, [day]: { ...h[day], open: !h[day].open } }));
