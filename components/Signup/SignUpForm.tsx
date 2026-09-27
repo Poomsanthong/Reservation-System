@@ -41,7 +41,8 @@ export default function SignUpForm() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [logo, setLogo] = useState("");
+  const [logo, setLogo] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [logoName, setLogoName] = useState(" ");
   const [dragging, setDragging] = useState(false);
   const [hours, setHours] = useState<Hours>(buildDefaultHours);
@@ -96,12 +97,10 @@ export default function SignUpForm() {
 
   const handleFile = (file: File) => {
     if (!file.type.startsWith("image/")) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setLogo(e.target?.result as string);
-      setLogoName(file.name);
-    };
-    reader.readAsDataURL(file);
+
+    setLogo(file);
+    setLogoPreview(URL.createObjectURL(file));
+    setLogoName(file.name);
   };
 
   return (
@@ -278,14 +277,17 @@ export default function SignUpForm() {
                   type="file"
                   accept="image/*"
                   onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) handleFile(f);
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handleFile(file);
+                    }
                   }}
+                  disabled={loading}
                 />
                 {logo ? (
                   <div className="flex items-center gap-4">
                     <img
-                      src={logo}
+                      src={logoPreview ?? ""}
                       alt="Logo preview"
                       className="w-14 h-14 object-contain rounded bg-[#2e2b25] p-1"
                     />
@@ -301,8 +303,9 @@ export default function SignUpForm() {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setLogo("");
+                        setLogo(null);
                         setLogoName("");
+                        setLogoPreview(null);
                       }}
                       className="text-[#4a4740] hover:text-[#f5f0e8] transition-colors p-1"
                     >
@@ -425,11 +428,12 @@ export default function SignUpForm() {
             <div className="pt-2">
               <Button
                 type="submit"
-                disabled={loading || !email || !password || !organization}
+                // disabled={loading || !email || !password || !organization}
                 className="w-full bg-[#d4821a] hover:bg-[#f0a83a] text-[#1a1814] font-semibold text-sm rounded py-4 transition-colors"
               >
                 {loading ? "Signing up..." : "Create restaurant account"}
               </Button>
+
               <p className="text-center text-[#4a4740] text-xs mt-4">
                 Already have an account?{" "}
                 <a
