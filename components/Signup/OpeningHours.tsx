@@ -1,10 +1,11 @@
+import { OpeningHoursProps, Day, DayHours, DAYS } from "@/lib/types";
 import { Input } from "../ui/input";
-import { useOpeningHours } from "@/lib/hooks/useOpeningHours";
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-export default function OpeningHours() {
-  const { hours, toggleDay, setTime } = useOpeningHours();
-
+export default function OpeningHours({
+  hours,
+  onToggleDay,
+  onSetTime,
+}: OpeningHoursProps) {
   return (
     <fieldset>
       <legend className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-4 block">
@@ -22,7 +23,7 @@ export default function OpeningHours() {
             {/* Toggle */}
             <button
               type="button"
-              onClick={() => toggleDay(day)}
+              onClick={() => onToggleDay(day)}
               className={`relative w-9 h-5 rounded-full transition-colors shrink-0 ${
                 hours[day].open ? "bg-[#d4821a]" : "bg-[#2e2b25]"
               }`}
@@ -44,7 +45,7 @@ export default function OpeningHours() {
                 <Input
                   type="time"
                   value={hours[day].from}
-                  onChange={(e) => setTime(day, "from", e.target.value)}
+                  onChange={(e) => onSetTime(day, "from", e.target.value)}
                   className="bg-[#1a1814] border-[#2e2b25] text-[#f5f0e8] text-xs px-2 py-1.5 flex-1"
                 />
 
@@ -53,7 +54,7 @@ export default function OpeningHours() {
                 <Input
                   type="time"
                   value={hours[day].to}
-                  onChange={(e) => setTime(day, "to", e.target.value)}
+                  onChange={(e) => onSetTime(day, "to", e.target.value)}
                   className="bg-[#1a1814] border-[#2e2b25] text-[#f5f0e8] text-xs px-2 py-1.5 flex-1"
                 />
               </div>

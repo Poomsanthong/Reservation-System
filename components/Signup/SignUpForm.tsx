@@ -6,30 +6,8 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import LogoUpload from "./LogoUplaod";
 import OpeningHours from "./OpeningHours";
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const FULL_DAYS = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
-
-type DayHours = {
-  open: boolean;
-  from: string;
-  to: string;
-};
-
-type Hours = Record<string, DayHours>;
-
-function buildDefaultHours() {
-  return Object.fromEntries(
-    DAYS.map((d, i) => [d, { open: i < 5, from: "09:00", to: "22:00" }]),
-  );
-}
+import { useOpeningHours } from "@/lib/hooks/useOpeningHours";
+import { DAYS, Hours } from "@/lib/types";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -43,14 +21,9 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [logo, setLogo] = useState<File | null>(null);
 
-  const [hours, setHours] = useState<Hours>(buildDefaultHours);
+  // useHook
+  const { hours, toggleDay, setTime } = useOpeningHours();
 
-  const toggleDay = (day: string) => {
-    setHours((h) => ({ ...h, [day]: { ...h[day], open: !h[day].open } }));
-  };
-  const setTime = (day: string, field: "from" | "to", val: string) => {
-    setHours((h) => ({ ...h, [day]: { ...h[day], [field]: val } }));
-  };
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -241,7 +214,11 @@ export default function SignUpForm() {
 
             {/* Opening Hours */}
 
-            <OpeningHours />
+            <OpeningHours
+              hours={hours}
+              onToggleDay={toggleDay}
+              onSetTime={setTime}
+            />
 
             {/* error */}
             {error && (
@@ -259,7 +236,7 @@ export default function SignUpForm() {
             <div className="pt-2">
               <Button
                 type="submit"
-                // disabled={loading || !email || !password || !organization}
+                disabled={loading || !email || !password || !organization}
                 className="w-full bg-[#d4821a] hover:bg-[#f0a83a] text-[#1a1814] font-semibold text-sm rounded py-4 transition-colors"
               >
                 {loading ? "Signing up..." : "Create restaurant account"}

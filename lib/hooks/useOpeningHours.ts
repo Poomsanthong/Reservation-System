@@ -1,8 +1,5 @@
 import { useState } from "react";
-import { DayHours } from "../types";
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-export type Hours = Record<string, DayHours>;
+import { Day, Hours, DAYS } from "../types";
 
 const buildDefaultHours = (): Hours =>
   Object.fromEntries(
@@ -14,12 +11,12 @@ const buildDefaultHours = (): Hours =>
         to: "22:00",
       },
     ]),
-  );
+  ) as Hours;
 
 export function useOpeningHours() {
   const [hours, setHours] = useState<Hours>(buildDefaultHours);
 
-  const toggleDay = (day: string) => {
+  const toggleDay = (day: Day) => {
     setHours((current) => ({
       ...current,
       [day]: {
@@ -29,7 +26,7 @@ export function useOpeningHours() {
     }));
   };
 
-  const setTime = (day: string, field: "from" | "to", value: string) => {
+  const setTime = (day: Day, field: "from" | "to", value: string) => {
     setHours((current) => ({
       ...current,
       [day]: {

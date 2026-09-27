@@ -22,12 +22,13 @@ export type {
   UpdateRestaurantSettingsInput,
 } from "@/features/settings/types";
 
-export type DayHours = {
-  id?: string;
-  open: boolean;
-  from: string;
-  to: string;
-};
+export type {
+  DayHours,
+  Hours,
+  OpeningHoursProps,
+  Day,
+} from "@/features/openingsHours/types";
+export { DAYS } from "@/features/openingsHours/types";
 
 export type BlackoutDate = {
   id?: string;
