@@ -11,15 +11,22 @@ export type {
   UpdateReservationInput,
 } from "@/features/bookings/types";
 
-export type { MessageStatsResponse, MessageTemplate, RecentMessage } from "@/features/messages/types";
+export type {
+  MessageStatsResponse,
+  MessageTemplate,
+  RecentMessage,
+} from "@/features/messages/types";
 
-export type { RestaurantSettings, UpdateRestaurantSettingsInput } from "@/features/settings/types";
+export type {
+  RestaurantSettings,
+  UpdateRestaurantSettingsInput,
+} from "@/features/settings/types";
 
-export type OpeningHour = {
+export type DayHours = {
   id?: string;
-  day_of_week: number; // 0..6
-  open_time: string; // HH:MM:SS
-  close_time: string; // HH:MM:SS
+  open: boolean;
+  from: string;
+  to: string;
 };
 
 export type BlackoutDate = {
