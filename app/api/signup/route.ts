@@ -19,16 +19,34 @@ export async function POST(req: NextRequest) {
     let email = "";
     let password = "";
     let organization = "";
+    let hours: {
+      dayOfWeek: number;
+      openTime: string;
+      closeTime: string;
+      open: string;
+    }[] = [];
     let logoUrl: string | null = null;
     let logoFile: File | null = null;
 
     // Detect if request is multipart/form-data
     const contentType = req.headers.get("content-type") || "";
+
     if (contentType.includes("multipart/form-data")) {
       const form = await req.formData();
       email = (form.get("email") as string)?.trim();
       password = form.get("password") as string;
       organization = (form.get("organization") as string)?.trim();
+
+      const hoursValue = form.get("hours");
+      try {
+        hours = hoursValue ? JSON.parse(hoursValue.toString()) : [];
+      } catch {
+        return NextResponse.json(
+          { error: "Invalid opening hours." },
+          { status: 400 },
+        );
+      }
+
       const logo = form.get("logo");
       if (logo && typeof logo === "object" && "arrayBuffer" in logo) {
         logoFile = logo as File;
@@ -38,6 +56,7 @@ export async function POST(req: NextRequest) {
       email = body?.email?.trim();
       password = body?.password;
       organization = body?.organization?.trim();
+      hours = body?.hours ?? null;
     }
 
     if (!email || !password || !organization) {
@@ -150,14 +169,54 @@ export async function POST(req: NextRequest) {
           logo_url: logoUrl,
         },
       ])
-      .select();
+      .select()
+      .single();
 
-    if (restaurantError) {
+    if (restaurantError || !restaurantData) {
+      console.error("Restaurant creation error:", restaurantError);
+
       await supabase.auth.admin.deleteUser(createdUserId);
+
       return NextResponse.json(
-        { error: restaurantError.message },
+        { error: restaurantError?.message ?? "Failed to create restaurant." },
         { status: 400 },
       );
+    }
+
+    const restaurantId = restaurantData.id;
+
+    console.log("RESTAURANT ID:", restaurantId);
+
+    // Insert opening hours
+    if (Array.isArray(hours) && hours.length > 0) {
+      const openingHoursRows = hours.map((hour) => ({
+        restaurant_id: restaurantId,
+        day_of_week: hour.dayOfWeek,
+        open_time: hour.openTime,
+        close_time: hour.closeTime,
+        open: hour.open,
+      }));
+
+      console.log("INSERTING OPENING HOURS:", openingHoursRows);
+
+      const { data: insertedHours, error: openingHoursError } = await supabase
+        .from("opening_hours")
+        .insert(openingHoursRows)
+        .select();
+
+      if (openingHoursError) {
+        console.error("OPENING HOURS DATABASE ERROR:", openingHoursError);
+
+        return NextResponse.json(
+          {
+            error: "Failed to save opening hours.",
+            details: openingHoursError.message,
+          },
+          { status: 500 },
+        );
+      }
+
+      console.log("INSERTED OPENING HOURS:", insertedHours);
     }
 
     // Insert default email templates for the new restaurant
@@ -165,51 +224,49 @@ export async function POST(req: NextRequest) {
     const reminderSubject = "Reservation Reminder";
     const reminderHtml = `<h2 style="color:#111827;">Hi {{name}},</h2>
 
-<p>This is a friendly reminder that your reservation is coming up soon.</p>
+                            <p>This is a friendly reminder that your reservation is coming up soon.</p>
 
-<div style="background:#f9fafb; padding:16px; border-radius:8px; margin:16px 0;">
-  <p style="margin:4px 0;"><strong>Date:</strong> {{reservation_date}}</p>
-  <p style="margin:4px 0;"><strong>Time:</strong> {{reservation_time}}</p>
-  <p style="margin:4px 0;"><strong>Party Size:</strong> {{partysize}}</p>
-</div>
+                            <div style="background:#f9fafb; padding:16px; border-radius:8px; margin:16px 0;">
+                              <p style="margin:4px 0;"><strong>Date:</strong> {{reservation_date}}</p>
+                              <p style="margin:4px 0;"><strong>Time:</strong> {{reservation_time}}</p>
+                              <p style="margin:4px 0;"><strong>Party Size:</strong> {{partysize}}</p>
+                            </div>
 
-<p><strong>Booking ID:</strong> {{booking_id}}</p>
+                            <p><strong>Booking ID:</strong> {{booking_id}}</p>
 
-<p>Please arrive on time. We look forward to welcoming you.</p>
+                            <p>Please arrive on time. We look forward to welcoming you.</p>
 
-<p style="color:#6b7280; font-size:12px; margin-top:24px;">
-  Need to make changes? Contact us or manage your reservation online.
-</p>`;
+                            <p style="color:#6b7280; font-size:12px; margin-top:24px;">
+                              Need to make changes? Contact us or manage your reservation online.
+                            </p>`;
 
     // Confirmation template
     const confirmationSubject = "Reservation Confirmation";
     const confirmationHtml = `<h2 style="color:#111827;">Hello {{name}},</h2>
 
-<p>Thank you for your reservation. Your booking is confirmed.</p>
+                              <p>Thank you for your reservation. Your booking is confirmed.</p>
 
-<div style="background:#f9fafb; padding:16px; border-radius:8px; margin:16px 0;">
-  <p style="margin:4px 0;"><strong>Date:</strong> {{reservation_date}}</p>
-  <p style="margin:4px 0;"><strong>Time:</strong> {{reservation_time}}</p>
-  <p style="margin:4px 0;"><strong>Party Size:</strong> {{partysize}}</p>
-</div>
+                              <div style="background:#f9fafb; padding:16px; border-radius:8px; margin:16px 0;">
+                                <p style="margin:4px 0;"><strong>Date:</strong> {{reservation_date}}</p>
+                                <p style="margin:4px 0;"><strong>Time:</strong> {{reservation_time}}</p>
+                                <p style="margin:4px 0;"><strong>Party Size:</strong> {{partysize}}</p>
+                              </div>
 
-<p><strong>Booking ID:</strong> {{booking_id}}</p>
+                              <p><strong>Booking ID:</strong> {{booking_id}}</p>
 
-<p>We look forward to welcoming you.</p>
+                              <p>We look forward to welcoming you.</p>
 
-<div style="margin:24px 0;">
-  <a href="{{manage_url}}" 
-     style="background:#111827; color:#ffffff; padding:10px 16px; text-decoration:none; border-radius:6px; font-size:14px;">
-     Manage Reservation
-  </a>
-</div>
+                              <div style="margin:24px 0;">
+                                <a href="{{manage_url}}" 
+                                  style="background:#111827; color:#ffffff; padding:10px 16px; text-decoration:none; border-radius:6px; font-size:14px;">
+                                  Manage Reservation
+                                </a>
+                              </div>
 
-<p style="color:#6b7280; font-size:12px;">
-  Need to make changes? Use the button above or contact us directly.
-</p>`;
+                              <p style="color:#6b7280; font-size:12px;">
+                                Need to make changes? Use the button above or contact us directly.
+                              </p>`;
 
-    // Get the new restaurant's id
-    const restaurantId = restaurantData?.[0]?.id;
     if (restaurantId) {
       console.log(
         "Inserting default templates for restaurantId:",
@@ -237,6 +294,24 @@ export async function POST(req: NextRequest) {
       } else {
         console.log("Inserted default templates:", templateData);
       }
+    }
+
+    // Insert default restaurant settings
+    const { error: settingsError } = await supabase
+      .from("restaurant_settings")
+      .insert({
+        restaurant_id: restaurantId,
+      });
+
+    if (settingsError) {
+      console.error(
+        "Failed to insert default restaurant settings:",
+        settingsError,
+      );
+      return NextResponse.json(
+        { error: "Failed to insert default restaurant settings." },
+        { status: 500 },
+      );
     }
 
     // Respond with success

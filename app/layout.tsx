@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "next-themes";
+// @ts-expect-error CSS is loaded by Next.js and has no TypeScript declarations.
 import "./globals.css";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
 
@@ -33,16 +33,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { restaurant } = await getCurrentUserRestaurant();
-  const restaurantLogo = restaurant?.logo_url ?? undefined;
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-background text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Header restaurant_logo={restaurantLogo} />
           <Toaster position="top-right" />
           {children}
           <Footer />

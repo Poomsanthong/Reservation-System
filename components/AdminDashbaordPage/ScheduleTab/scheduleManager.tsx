@@ -23,13 +23,17 @@ import { Clock, Users, Plus, Settings, AlertCircle } from "lucide-react";
 import Setting from "./Setting";
 import CalendarSetting from "./CalendarSetting";
 import DailySchedule from "./DailySchedule";
+import { RestaurantSettings } from "@/features/settings/types";
 
-export function ScheduleManager() {
+export function ScheduleManager({
+  setting,
+}: {
+  setting: RestaurantSettings | null;
+}) {
   return (
     <div className="space-y-6">
       {/* Settings Card */}
-      {/* //todo advanced settings like waitlist, max party size, etc */}
-      {/* <Setting /> */}
+      <Setting />
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Calendar */}
         <CalendarSetting />
@@ -46,7 +50,9 @@ export function ScheduleManager() {
               </div>
               <div>
                 <p className="text-sm text-primary-600">Total Capacity</p>
-                <p className="text-xl text-primary-900">112 guests</p>
+                <p className="text-xl text-primary-900">
+                  {setting?.max_daily_capacity || 0} guests
+                </p>
               </div>
             </div>
           </CardContent>
@@ -59,7 +65,9 @@ export function ScheduleManager() {
               </div>
               <div>
                 <p className="text-sm text-primary-600">Avg Table Turn</p>
-                <p className="text-xl text-primary-900">85 min</p>
+                <p className="text-xl text-primary-900">
+                  {setting?.avg_table_duration || 0} min
+                </p>
               </div>
             </div>
           </CardContent>

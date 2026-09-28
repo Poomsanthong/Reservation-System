@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { getBookingTrends } from "@/lib/server/getBookingTrends";
 import { getTimeDistribution } from "@/lib/server/getTimeDistribution";
 import { getRecentActivity } from "@/lib/server/getRecentActivity";
+import { getRestaurantSettings } from "@/lib/server/getRestaurantSettings";
 import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
-
 export default async function AdminPage() {
   const { supabase, user, restaurant } = await getCurrentUserRestaurant();
 
@@ -23,7 +23,10 @@ export default async function AdminPage() {
   const bookingTrends = await getBookingTrends(supabase, restaurant.id);
   const timeDistribution = await getTimeDistribution(supabase, restaurant.id);
   const recentActivity = await getRecentActivity(supabase, restaurant.id);
-
+  const restaurantSettings = await getRestaurantSettings(
+    supabase,
+    restaurant.id,
+  );
   return (
     <AdminDashboard
       userEmail={user.email ?? null}
@@ -36,6 +39,7 @@ export default async function AdminPage() {
       bookingTrends={bookingTrends ?? []}
       timeDistribution={timeDistribution ?? []}
       recentActivity={recentActivity ?? []}
+      restaurantSettings={restaurantSettings ?? null}
     />
   );
 }

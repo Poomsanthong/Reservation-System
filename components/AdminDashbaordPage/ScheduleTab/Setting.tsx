@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import {
   Card,
   CardHeader,
@@ -17,12 +16,50 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Settings } from "lucide-react";
+import { Settings, Save } from "lucide-react";
 import { useState } from "react";
-
+import { useSettings } from "@/lib/hooks/useSettings";
 const Setting = () => {
-  const [autoAccept, setAutoAccept] = useState(true);
-  const [waitlistEnabled, setWaitlistEnabled] = useState(true);
+  const { settings, loading, save } = useSettings();
+
+  // Initialize state variables with default values from restaurantSettings or fallback values
+  const [autoAccept, setAutoAccept] = useState<boolean>(
+    settings?.auto_accept || false,
+  );
+  const [waitlistEnabled, setWaitlistEnabled] = useState<boolean>(
+    settings?.waitlist_enabled ?? true,
+  );
+  const [default_capacity, setDefault_capacity] = useState(
+    settings?.default_capacity?.toString() ?? "8",
+  );
+
+  const [bookingWindow, setBookingWindow] = useState(
+    settings?.booking_window?.toString() ?? "60",
+  );
+
+  const [minNoticeHours, setMinNoticeHours] = useState(
+    settings?.min_notice_hours?.toString() ?? "2",
+  );
+
+  const [reservationDuration, setReservationDuration] = useState(
+    settings?.avg_table_duration?.toString() ?? "90",
+  );
+
+  const handleSaveChanges = async () => {
+    await save({
+      auto_accept: autoAccept,
+      waitlist_enabled: waitlistEnabled,
+      default_capacity: parseInt(default_capacity, 10),
+      booking_window: parseInt(bookingWindow, 10),
+      min_notice_hours: parseInt(minNoticeHours, 10),
+      avg_table_duration: parseInt(reservationDuration, 10),
+    });
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <Card>
@@ -71,17 +108,20 @@ const Setting = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Default Table Capacity</Label>
-                <Select defaultValue="8">
+                <Label>Default Reservation Capacity</Label>
+                <Select
+                  defaultValue={default_capacity}
+                  onValueChange={setDefault_capacity}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="4">4 Tables</SelectItem>
-                    <SelectItem value="6">6 Tables</SelectItem>
-                    <SelectItem value="8">8 Tables</SelectItem>
-                    <SelectItem value="10">10 Tables</SelectItem>
-                    <SelectItem value="12">12 Tables</SelectItem>
+                    <SelectItem value="4">4 Guests</SelectItem>
+                    <SelectItem value="6">6 Guests</SelectItem>
+                    <SelectItem value="8">8 Guests</SelectItem>
+                    <SelectItem value="10">10 Guests</SelectItem>
+                    <SelectItem value="12">12 Guests</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -91,7 +131,10 @@ const Setting = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Booking Window</Label>
-                <Select defaultValue="60">
+                <Select
+                  defaultValue={bookingWindow}
+                  onValueChange={setBookingWindow}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -106,7 +149,10 @@ const Setting = () => {
               </div>
               <div className="space-y-2">
                 <Label>Minimum Notice</Label>
-                <Select defaultValue="2">
+                <Select
+                  defaultValue={minNoticeHours}
+                  onValueChange={setMinNoticeHours}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -119,8 +165,11 @@ const Setting = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Average Table Duration</Label>
-                <Select defaultValue="90">
+                <Label>Average Reservation Duration</Label>
+                <Select
+                  defaultValue={reservationDuration}
+                  onValueChange={setReservationDuration}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -134,6 +183,14 @@ const Setting = () => {
               </div>
             </div>
           </div>
+          <Button
+            onClick={handleSaveChanges}
+            variant="outline"
+            className="gap-2"
+          >
+            <Save className="w-4 h-4" />
+            Save Changes
+          </Button>
         </CardContent>
       </Card>
     </div>
