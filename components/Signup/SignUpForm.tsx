@@ -7,7 +7,6 @@ import React, { useState } from "react";
 import LogoUpload from "./LogoUplaod";
 import OpeningHours from "./OpeningHours";
 import { useOpeningHours } from "@/lib/hooks/useOpeningHours";
-import { DAYS, Hours } from "@/lib/types";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -33,6 +32,8 @@ export default function SignUpForm() {
     formData.append("email", email);
     formData.append("password", password);
     formData.append("organization", organization);
+    formData.append("hours", JSON.stringify(hours));
+
     if (logo) formData.append("logo", logo);
 
     try {
@@ -119,7 +120,7 @@ export default function SignUpForm() {
             onSubmit={handleSignUp}
             className="w-full max-w-[560px] space-y-6"
           >
-            {/* form legend */}
+            {/* Account legend */}
             <legend className="text-[10px] uppercase tracking-[0.15em] text-foreground mb-4 block">
               Account details
             </legend>
@@ -188,7 +189,7 @@ export default function SignUpForm() {
               </div>
             </div>
 
-            {/* form legend */}
+            {/* Organization legend */}
             <legend className="text-[10px] uppercase tracking-[0.15em] text-foreground mb-4 block">
               Organization details
             </legend>

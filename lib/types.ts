@@ -23,12 +23,11 @@ export type {
 } from "@/features/settings/types";
 
 export type {
-  DayHours,
   Hours,
   OpeningHoursProps,
   Day,
 } from "@/features/openingsHours/types";
-export { DAYS } from "@/features/openingsHours/types";
+export { DAYS, DAY_TO_NUMBER } from "@/features/openingsHours/types";
 
 export type BlackoutDate = {
   id?: string;

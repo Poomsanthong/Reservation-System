@@ -1,39 +1,38 @@
 import { useState } from "react";
-import { Day, Hours, DAYS } from "../types";
+import { Day, Hours, DAYS, DAY_TO_NUMBER } from "../types";
 
 const buildDefaultHours = (): Hours =>
-  Object.fromEntries(
-    DAYS.map((day, index) => [
-      day,
-      {
-        open: index < 5,
-        from: "09:00",
-        to: "22:00",
-      },
-    ]),
-  ) as Hours;
+  DAYS.map((day, index) => ({
+    dayOfWeek: DAY_TO_NUMBER[day],
+    open: index < 5,
+    openTime: "09:00",
+    closeTime: "22:00",
+  }));
 
 export function useOpeningHours() {
   const [hours, setHours] = useState<Hours>(buildDefaultHours);
 
   const toggleDay = (day: Day) => {
-    setHours((current) => ({
-      ...current,
-      [day]: {
-        ...current[day],
-        open: !current[day].open,
-      },
-    }));
+    const dayOfWeek = DAY_TO_NUMBER[day];
+
+    setHours((current) =>
+      current.map((hour) =>
+        hour.dayOfWeek === dayOfWeek ? { ...hour, open: !hour.open } : hour,
+      ),
+    );
   };
 
-  const setTime = (day: Day, field: "from" | "to", value: string) => {
-    setHours((current) => ({
-      ...current,
-      [day]: {
-        ...current[day],
-        [field]: value,
-      },
-    }));
+  const setTime = (
+    day: Day,
+    field: "openTime" | "closeTime",
+    value: string,
+  ) => {
+    const dayOfWeek = DAY_TO_NUMBER[day];
+    setHours((current) =>
+      current.map((hour) =>
+        hour.dayOfWeek === dayOfWeek ? { ...hour, [field]: value } : hour,
+      ),
+    );
   };
 
   return {
