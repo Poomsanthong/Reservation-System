@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
+import "./globals.css";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "next-themes";
-// @ts-expect-error CSS is loaded by Next.js and has no TypeScript declarations.
-import "./globals.css";
 import Footer from "@/components/Footer";
-import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
