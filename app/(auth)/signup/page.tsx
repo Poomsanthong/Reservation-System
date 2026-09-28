@@ -1,9 +1,7 @@
-import SignUpForm from "@/components/Signup/SignUpForm";
+"use client";
 
-export default function Page() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen ">
-      <SignUpForm />
-    </div>
-  );
+import SignUpForm from "@/components/SignUp/SignUpForm";
+
+export default function SignUpPage() {
+  return <SignUpForm />;
 }

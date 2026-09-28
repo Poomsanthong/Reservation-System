@@ -12,7 +12,7 @@ export default function OpeningHours({
         Operating hours
       </legend>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         {DAYS.map((day) => {
           const hour = hours.find(
             (hour) => hour.dayOfWeek === DAY_TO_NUMBER[day],
@@ -21,7 +21,7 @@ export default function OpeningHours({
           return (
             <div
               key={day}
-              className={`flex items-center gap-3 px-4 py-3 rounded transition-colors ${
+              className={`flex min-w-0 items-center gap-2 px-2 sm:px-4 py-3 rounded ${
                 hour?.open ? "bg-[#111009]" : "bg-transparent opacity-60"
               }`}
             >
@@ -46,7 +46,7 @@ export default function OpeningHours({
               </span>
 
               {hour?.open ? (
-                <div className="flex items-center gap-2 flex-1">
+                <div className="flex   items-center gap-1.5 flex-1">
                   <Input
                     type="time"
                     value={hour.openTime}
