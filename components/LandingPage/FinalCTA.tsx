@@ -1,5 +1,5 @@
 "use client";
-
+import { redirect } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, LayoutDashboard } from "lucide-react";
 
@@ -60,6 +60,7 @@ const FinalCTA = () => {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={() => redirect("/signup")}
                   className="group px-10 py-5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl font-semibold shadow-2xl shadow-purple-900/50 hover:shadow-purple-900/70 transition-shadow flex items-center gap-2"
                 >
                   Get Started

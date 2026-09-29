@@ -54,7 +54,7 @@ function Header({
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16 px-2 sm:px-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-15 h-15  rounded-xl flex items-center justify-center overflow-hidden bg-muted">
+                  <div className="w-12 h-12  rounded-xl flex items-center justify-center overflow-hidden bg-muted">
                     <img
                       src={logoSrc}
                       alt="Restaurant logo"

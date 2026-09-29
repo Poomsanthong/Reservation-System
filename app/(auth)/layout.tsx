@@ -66,7 +66,7 @@ export default function AuthLayout({
               <img src="/BookFlow_favicon.svg" alt="BookFlow Logo" />
             </div>
             <span className="font-[family-name:var(--font-display)] text-[#f5f0e8] text-lg tracking-tight">
-              tablefront
+              BookFlow
             </span>
           </div>
 

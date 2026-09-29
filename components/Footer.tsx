@@ -1,74 +1,95 @@
 import React from "react";
+import { FaXTwitter, FaInstagram } from "react-icons/fa6";
 
 const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t bg-background text-foreground">
-      <div className="max-w-7xl mx-auto px-4 py-10 grid gap-10 sm:grid-cols-2 md:grid-cols-4">
-        {/* Brand */}
-        <div className="flex flex-col items-center text-center md:items-start md:text-left">
-          <img
-            src="/BookFlow_Logo.png"
-            alt="Bookflow Logo"
-            className="h-12 md:h-35 w-auto"
-          />
-        </div>
+    <footer className="w-full border-t bg-background text-foreground mt-auto">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        {/* top row */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8 pb-4">
+          {/* brand */}
 
-        {/* Product */}
-        <div className="text-center md:text-left">
-          <p className="text-sm font-semibold text-primary-800 mb-3">Product</p>
-          <div className="flex flex-col gap-3 text-sm text-primary-600">
-            <a href="/landingPage#features" className="hover:text-primary-900">
-              Features
-            </a>
-            <a
-              href="/landingPage#how-it-works"
-              className="hover:text-primary-900"
-            >
-              How It Works
-            </a>
-            <a
-              href="/landingPage#documentation"
-              className="hover:text-primary-900"
-            >
-              Documentation
-            </a>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-14 h-14 lg:h-24 lg:w-24 rounded bg-background flex items-center justify-center shrink-0 ">
+                <img
+                  src="/BookFlow_Logo.png"
+                  alt="Bookflow Logo"
+                  className="w-auto "
+                />
+              </div>
+              <span className="text-foreground text-lg tracking-tight">
+                BookFlow
+              </span>
+            </div>
+            <p className="text-muted-foreground text-xs leading-relaxed max-w-[220px] mb-2">
+              Restaurant management that feels as good as your best service.
+            </p>
+          </div>
+        </div>
+        {/* links grid */}
+        <div className="grid grid-cols-2 gap-x-12 gap-y-1 sm:gap-x-16">
+          <div className="flex flex-col gap-3 ">
+            <p className="text-[10px] uppercase tracking-[0.15em] text-foreground">
+              Product
+            </p>
+            {["Features", "Pricing"].map((i) => (
+              <a
+                key={i}
+                href={"/landingPage#" + i.toLowerCase()}
+                className="text-xs text-muted-foreground hover:text-accent-foreground transition-colors"
+              >
+                {i}
+              </a>
+            ))}
+          </div>
+          <div className="flex flex-col gap-3">
+            <p className="text-[10px] uppercase tracking-[0.15em] text-foreground">
+              Company
+            </p>
+            {["About", "Privacy", "Terms"].map((i) => (
+              <a
+                key={i}
+                href="/landingPage"
+                className="text-xs text-muted-foreground hover:text-[#f5f0e8] transition-colors"
+              >
+                {i}
+              </a>
+            ))}
           </div>
         </div>
 
-        {/* Company */}
-        <div className="text-center md:text-left">
-          <p className="text-sm font-semibold text-primary-800 mb-3">Company</p>
-          <div className="flex flex-col gap-3 text-sm text-primary-600">
-            <a href="#" className="hover:text-primary-900">
-              Support
-            </a>
-            <a href="#" className="hover:text-primary-900">
-              Contact
-            </a>
+        {/* bottom row */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-8 pt-6 border-t border-[2e2b25]">
+          <p className="text-[#4a4740] text-xs">
+            © {new Date().getFullYear()} BookFlow Inc. All rights reserved.
+          </p>
+          {/* Social icons */}
+          <div className="flex items-center gap-4">
+            {[
+              {
+                label: "X / Twitter",
+                href: "https://x.com",
+                Icon: FaXTwitter,
+              },
+              {
+                label: "Instagram",
+                href: "https://instagram.com",
+                Icon: FaInstagram,
+              },
+            ].map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                className="text-[#4a4740] hover:text-[#d4821a] transition-colors"
+              >
+                <Icon className="w-4 h-4"></Icon>
+              </a>
+            ))}
           </div>
-        </div>
-
-        {/* Legal */}
-        <div className="text-center md:text-left">
-          <p className="text-sm font-semibold text-primary-800 mb-3">Legal</p>
-          <div className="flex flex-col gap-3 text-sm text-primary-600">
-            <a href="#" className="hover:text-primary-900">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-primary-900">
-              Terms
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom bar */}
-      <div className="border-t">
-        <div className="max-w-7xl mx-auto px-4 py-4 text-xs text-primary-500 flex flex-col items-center text-center gap-2 sm:flex-row sm:justify-between sm:text-left">
-          <span>&copy; {year} Bookflow. All rights reserved.</span>
-          <span className="opacity-80">Built for modern restaurants </span>
         </div>
       </div>
     </footer>
