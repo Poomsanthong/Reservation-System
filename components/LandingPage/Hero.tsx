@@ -46,7 +46,7 @@ const Hero = () => {
 
               <div className="flex flex-wrap gap-4">
                 <motion.button
-                  onClick={() => redirect("/login")}
+                  onClick={() => redirect("/signup")}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl font-semibold shadow-lg shadow-purple-900/50 hover:shadow-purple-900/70 transition-shadow"
@@ -54,7 +54,7 @@ const Hero = () => {
                   Get Started
                 </motion.button>
                 <motion.button
-                  onClick={() => redirect("/bookingPage/demo-restaurant")}
+                  onClick={() => redirect("/bookingPage/bookflow-system")}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-semibold backdrop-blur-sm hover:bg-white/10 transition-colors"

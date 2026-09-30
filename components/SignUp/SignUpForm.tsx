@@ -16,6 +16,7 @@ export default function SignUpForm() {
   const [organization, setOrganization] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [logo, setLogo] = useState<File | null>(null);
