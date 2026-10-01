@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import TimeSlotGrid from "@/components/BookingPage/TimeSlotGrid";
 import GuestDetails from "@/components/BookingPage/GuestDetails";
@@ -12,9 +6,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import PartysizeTab from "./PartySizeTab";
-import { useBlockoutDates } from "@/lib/hooks/useBlockDates";
 import type { BookingFormController } from "@/features/bookings/types";
-
+import { useSlotAvailability } from "@/lib/hooks/useSlotAvailablility"; // Import the useAvailability hook
 type BookingFormProps = {
   form: BookingFormController;
 };
@@ -22,7 +15,7 @@ type BookingFormProps = {
 export default function BookingForm({ form }: BookingFormProps) {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string>("");
-  const { blackouts } = useBlockoutDates();
+  const { isSlotAvailable } = useSlotAvailability(); // slots availability hook
 
   async function handleSubmit() {
     setSubmitError("");
@@ -51,11 +44,8 @@ export default function BookingForm({ form }: BookingFormProps) {
               fixedWeeks
               selected={form.fields.date}
               onSelect={(d) => form.updateField("date", d ?? form.fields.date)}
-              disabled={(d) =>
-                d < new Date() ||
-                blackouts.some(
-                  (b) => new Date(b.date).toDateString() === d.toDateString(),
-                )
+              disabled={
+                (d) => d < new Date() || !isSlotAvailable(d) // Disable the date if the restaurant is closed or blocked or in the past  ;
               }
               className="rounded-md w-full max-w-md"
             />

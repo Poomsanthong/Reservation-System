@@ -27,6 +27,7 @@ export default async function AdminPage() {
     supabase,
     restaurant.id,
   );
+
   return (
     <AdminDashboard
       userEmail={user.email ?? null}

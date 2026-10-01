@@ -1,7 +1,6 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import { notFound } from "next/navigation";
 import BookingPageClient from "./BookingPageClient";
-
 type PageProps = {
   params: Promise<{ slug: string }>;
 };

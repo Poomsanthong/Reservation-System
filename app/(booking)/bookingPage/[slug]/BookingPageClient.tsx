@@ -33,6 +33,7 @@ export default function BookingPageClient({
 }) {
   const [mounted, setMounted] = useState(false);
   const form = useBookingForm();
+
   const rating = restaurant.rating
     ? Number(restaurant.rating).toFixed(1)
     : "4.8";
