@@ -14,15 +14,14 @@ export async function POST(req: Request) {
     }
 
     const supabase = await supabaseServer();
-    const query = supabase
+    const { data, error } = await supabase
       .from("reservations")
       .select("*")
       .eq("reservation_date", date)
       .eq("reservation_time", time)
-      .ilike("name", name)
+      .ilike("name", name) // Case-insensitive match for the name
       .eq("restaurant_id", restaurant.id);
 
-    const { data, error } = await query; // case-insensitive match
     if (error) {
       return fail(new Error(error.message), 500);
     }

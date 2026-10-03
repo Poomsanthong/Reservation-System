@@ -1,4 +1,4 @@
-import { checkAvailability } from "@/lib/api/reservation/availability";
+import { checkAvailability } from "@/lib/server/availability";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { availabilitySchema } from "@/shared/api/schemas";
 import { fail, success } from "@/lib/utils";

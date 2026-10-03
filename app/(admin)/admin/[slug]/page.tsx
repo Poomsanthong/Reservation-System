@@ -19,7 +19,7 @@ export default async function AdminPage() {
   }
 
   const stats = await getStats(supabase, restaurant.id);
-  const bookings = await getBookings(supabase, restaurant.id);
+  const bookings = await getBookings(restaurant.id);
   const bookingTrends = await getBookingTrends(supabase, restaurant.id);
   const timeDistribution = await getTimeDistribution(supabase, restaurant.id);
   const recentActivity = await getRecentActivity(supabase, restaurant.id);

@@ -1,12 +1,9 @@
 "use server";
-import { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseServer } from "@/lib/server/supabaseServer";
 
-export async function getBookings(
-  supabase: SupabaseClient,
-  restaurantId: string,
-) {
+export async function getBookings(restaurantId: string) {
   // Fetch all bookings ordered by creation date
+  const supabase = await supabaseServer();
   const { data, error } = await supabase
     .from("reservations")
     .select("*")
@@ -19,7 +16,6 @@ export async function getBookings(
 
 export async function getDailyBookings(date: string, restaurantId: string) {
   const supabase = await supabaseServer();
-
   const { data, error } = await supabase
     .from("reservations")
     .select("*")

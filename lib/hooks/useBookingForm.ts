@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useToastStore } from "@/store/useToastStore";
 import { checkDuplicate, createReservation } from "@/lib/api/functions";
+import { toSqlDate } from "@/lib/dateHelper";
 import type {
   BookingFormController,
   BookingFormFields,
@@ -65,7 +66,7 @@ export function useBookingForm(): BookingFormController {
       name: fields.name,
       email: fields.email,
       phone: fields.phone,
-      reservation_date: fields.date.toISOString().split("T")[0],
+      reservation_date: toSqlDate(fields.date),
       reservation_time: fields.selectedTime,
       partysize: parseInt(fields.partysize),
       note: fields.note || "",
@@ -77,7 +78,7 @@ export function useBookingForm(): BookingFormController {
 
     // Prevent accidental double-bookings before we create the reservation.
     const duplicateCheck = await checkDuplicate(
-      fields.date.toISOString().split("T")[0],
+      toSqlDate(fields.date),
       fields.selectedTime,
       fields.name,
     );
