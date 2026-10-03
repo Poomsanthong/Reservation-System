@@ -5,8 +5,8 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="w-full border-t bg-background text-foreground mt-auto">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
+    <footer className="w-full  border-t bg-background text-foreground mt-auto">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-2 py-8 sm:py-10">
         {/* top row */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8 pb-4">
           {/* brand */}
@@ -28,38 +28,38 @@ const Footer = () => {
               Restaurant management that feels as good as your best service.
             </p>
           </div>
+          <div className="grid grid-cols-2 gap-x-12 gap-y-1 sm:gap-x-16">
+            <div className="flex flex-col gap-3 ">
+              <p className="text-[10px] uppercase tracking-[0.15em] text-foreground">
+                Product
+              </p>
+              {["Features", "Pricing"].map((i) => (
+                <a
+                  key={i}
+                  href={"/landingPage#" + i.toLowerCase()}
+                  className="text-xs text-muted-foreground hover:text-accent-foreground transition-colors"
+                >
+                  {i}
+                </a>
+              ))}
+            </div>
+            <div className="flex flex-col gap-3">
+              <p className="text-[10px] uppercase tracking-[0.15em] text-foreground">
+                Company
+              </p>
+              {["About", "Privacy", "Terms"].map((i) => (
+                <a
+                  key={i}
+                  href="/landingPage"
+                  className="text-xs text-muted-foreground hover:text-[#f5f0e8] transition-colors"
+                >
+                  {i}
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
         {/* links grid */}
-        <div className="grid grid-cols-2 gap-x-12 gap-y-1 sm:gap-x-16">
-          <div className="flex flex-col gap-3 ">
-            <p className="text-[10px] uppercase tracking-[0.15em] text-foreground">
-              Product
-            </p>
-            {["Features", "Pricing"].map((i) => (
-              <a
-                key={i}
-                href={"/landingPage#" + i.toLowerCase()}
-                className="text-xs text-muted-foreground hover:text-accent-foreground transition-colors"
-              >
-                {i}
-              </a>
-            ))}
-          </div>
-          <div className="flex flex-col gap-3">
-            <p className="text-[10px] uppercase tracking-[0.15em] text-foreground">
-              Company
-            </p>
-            {["About", "Privacy", "Terms"].map((i) => (
-              <a
-                key={i}
-                href="/landingPage"
-                className="text-xs text-muted-foreground hover:text-[#f5f0e8] transition-colors"
-              >
-                {i}
-              </a>
-            ))}
-          </div>
-        </div>
 
         {/* bottom row */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-8 pt-6 border-t border-[2e2b25]">
