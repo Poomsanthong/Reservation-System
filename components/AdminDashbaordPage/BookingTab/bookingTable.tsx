@@ -22,6 +22,7 @@ import {
 } from "../../ui/table";
 
 import {
+  Filter,
   Search,
   MoreHorizontal,
   Download,
@@ -51,12 +52,21 @@ import type {
 import { cancelBooking, get, updateBooking } from "@/lib/api/functions";
 
 import { useModalStore } from "@/store/useModalStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
   const [loading, setLoading] = useState(true);
   const [bookingsData, setBookingsData] = useState<Reservation[]>(bookings);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [statusFilter, setStatusFilter] = useState("all");
+  const ITEMS_PER_PAGE = 8;
+  const [currentPage, setCurrentPage] = useState(1);
   const { open, type, payload, openModal, closeModal } = useModalStore();
 
   // -----------------------
@@ -82,7 +92,8 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
 
   useEffect(() => {
     loadBookings();
-  }, []);
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [searchTerm, statusFilter]);
 
   // -----------------------
   // HANDLE ACTION
@@ -126,7 +137,9 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
       booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.email?.toLowerCase().includes(searchTerm.toLowerCase()) === true;
 
-    return matchesSearch;
+    const matchesStatus =
+      statusFilter === "all" || booking.status === statusFilter;
+    return matchesSearch && matchesStatus;
   });
 
   const getStatusIcon = (status: BookingStatus) => {
@@ -141,6 +154,16 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
     return "secondary";
   };
 
+  // -----------------------
+  // PAGINATION
+  // -----------------------
+  const totalPages = Math.ceil(filteredBookings.length / ITEMS_PER_PAGE);
+  const paginatedBookings = filteredBookings.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
+
+  // todo implement export functionality , move frontend logic to backend for filtering and pagination , booking id change to display id and add a new column for booking id in the backend
   return (
     <Card>
       <CardHeader>
@@ -159,7 +182,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
         {/* Search */}
         <div className="flex gap-3 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />{" "}
             <Input
               placeholder="Search by name, ID, or email"
               value={searchTerm}
@@ -167,6 +190,19 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
               className="pl-9"
             />
           </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px]">
+              <Filter className="w-4 h-4 mr-2" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="waitlist">Waitlist</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* TABLE */}
@@ -195,26 +231,32 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
               )}
 
               {!loading &&
-                filteredBookings.map((booking) => (
+                paginatedBookings.map((booking) => (
                   <TableRow key={booking.id}>
                     <TableCell>{booking.id}</TableCell>
                     <TableCell>{booking.name}</TableCell>
-                    <TableCell>{booking.email}</TableCell>
                     <TableCell>
-                      {booking.reservation_date +
-                        " " +
-                        booking.reservation_time}
+                      <div className="flex flex-col gap-1">
+                        <p>{booking.email}</p>
+                        <p>{booking.phone}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        <p>{booking.reservation_date}</p>
+                        <p>{booking.reservation_time}</p>
+                      </div>
                     </TableCell>
                     <TableCell>{booking.partysize} guests</TableCell>
-
                     <TableCell>
-                      <Badge variant={getStatusVariant(booking.status)}>
+                      <Badge
+                        className="gap-1 capitalize"
+                        variant={getStatusVariant(booking.status)}
+                      >
                         {getStatusIcon(booking.status)} {booking.status}
                       </Badge>
                     </TableCell>
-
                     <TableCell>{booking.note || "-"}</TableCell>
-
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -254,6 +296,44 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
                 ))}
             </TableBody>
           </Table>
+        </div>
+
+        {/* Pagination Info */}
+        <div className="flex items-center justify-between border-t px-5 py-4">
+          <p className="text-sm text-slate-500">
+            Showing{" "}
+            {filteredBookings.length === 0
+              ? 0
+              : (currentPage - 1) * ITEMS_PER_PAGE + 1}
+            –{Math.min(currentPage * ITEMS_PER_PAGE, filteredBookings.length)}{" "}
+            of {filteredBookings.length} bookings
+          </p>
+
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-500">
+              Page {currentPage} of {Math.max(totalPages, 1)}
+            </span>
+
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((page) => page - 1)}
+              >
+                Previous
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage((page) => page + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* MODALS (dynamic via Zustand) */}
