@@ -1,4 +1,4 @@
-import { createClientInstance } from "@/lib/supabaseClient";
+import { supabaseServer } from "@/lib/server/supabaseServer";
 
 const MAX_TABLES = 8;
 export async function checkAvailability(
@@ -6,7 +6,7 @@ export async function checkAvailability(
   time: string,
   restaurantId?: string,
 ) {
-  const supabase = createClientInstance();
+  const supabase = await supabaseServer();
   let query = supabase
     .from("reservations")
     .select("id")

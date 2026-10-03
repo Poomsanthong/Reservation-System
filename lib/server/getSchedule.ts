@@ -2,6 +2,7 @@
 import { getDailyBookings } from "@/lib/server/getBooking";
 import type { ScheduleSlot } from "@/features/bookings/types";
 
+//TODO : move to Dynamic variable or database
 const TIMESLOTS = [
   "11:00:00",
   "11:30:00",

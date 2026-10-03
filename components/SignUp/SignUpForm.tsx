@@ -7,7 +7,6 @@ import React, { useState } from "react";
 import LogoUpload from "./LogoUplaod";
 import OpeningHours from "./OpeningHours";
 import { useOpeningHours } from "@/lib/hooks/useOpeningHours";
-
 export default function SignUpForm() {
   const router = useRouter();
   const [ownerName, setOwnerName] = useState("");

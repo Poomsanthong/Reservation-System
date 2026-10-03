@@ -3,17 +3,15 @@ import {
   addBlackoutDate,
   getBlackoutDates,
   unblockDate,
-} from "@/lib/server/calendar";
+} from "@/lib/server/getBlockDates";
 import { toSqlDate } from "@/lib/dateHelper";
 import { BlackoutDate } from "@/lib/types";
 import { useDateStore } from "@/store/useSelectedData";
-
 export function useBlockoutDates() {
   const [blackouts, setBlackouts] = useState<BlackoutDate[]>([]);
   const { selectedDate, setSelectedDate } = useDateStore();
   const [blockReason, setBlockReason] = useState("");
   const [loading, setLoading] = useState(false);
-
   const loadBlackouts = async () => {
     try {
       setLoading(true);
@@ -38,6 +36,7 @@ export function useBlockoutDates() {
     try {
       await addBlackoutDate(sqlDate, blockReason);
       await loadBlackouts();
+
       setBlockReason("");
     } catch (error) {
       console.error("Failed to block date:", error);
