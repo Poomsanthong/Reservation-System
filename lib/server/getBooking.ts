@@ -11,7 +11,13 @@ export async function getBookings(restaurantId: string) {
     .order("created_at", { ascending: true });
 
   if (error) throw error;
-  return data;
+
+  const bookings = data.map((booking) => ({
+    ...booking,
+    display_id: `BK-${booking.booking_number.toString().padStart(4, "0")}`,
+  }));
+
+  return bookings;
 }
 
 export async function getDailyBookings(date: string, restaurantId: string) {
@@ -19,7 +25,7 @@ export async function getDailyBookings(date: string, restaurantId: string) {
   const { data, error } = await supabase
     .from("reservations")
     .select("*")
-    .eq("restaurant_id", restaurantId) // Replace with actual restaurant ID
+    .eq("restaurant_id", restaurantId)
     .eq("reservation_date", date)
     .eq("status", "confirmed"); // Only count confirmed bookings
 

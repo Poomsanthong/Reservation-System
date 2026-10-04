@@ -3,6 +3,7 @@ export type BookingStatus = "confirmed" | "pending" | "waitlist" | "cancelled";
 // Full reservation record as it exists once it comes back from the database/API.
 export type Reservation = {
   id: string;
+  display_id: string; // Formatted booking number for display, e.g., "BK-0001"
   restaurant_id: string;
   name: string;
   phone: string;

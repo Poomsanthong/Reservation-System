@@ -2,7 +2,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
 import { supabaseServer } from "@/lib/server/supabaseServer";
-import { NUMBER_TO_DAY } from "@/features/openingsHours/types";
 export async function getRestaurantSettings(
   supabase: SupabaseClient,
   restaurantId: string,

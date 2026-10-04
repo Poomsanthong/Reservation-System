@@ -22,6 +22,7 @@ import {
 } from "../../ui/table";
 
 import {
+  Filter,
   Search,
   MoreHorizontal,
   Download,
@@ -48,42 +49,55 @@ import type {
   UpdateReservationInput,
 } from "@/features/bookings/types";
 
-import { cancelBooking, get, updateBooking } from "@/lib/api/functions";
+import { cancelBooking, updateBooking } from "@/lib/api/functions";
 
 import { useModalStore } from "@/store/useModalStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  useBookings,
+  useBookingFilters,
+  usePagination,
+} from "@/lib/hooks/useBookings";
 
 export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
-  const [loading, setLoading] = useState(true);
-  const [bookingsData, setBookingsData] = useState<Reservation[]>(bookings);
-  const [searchTerm, setSearchTerm] = useState("");
-
   const { open, type, payload, openModal, closeModal } = useModalStore();
+  // -----------------------
+  // FETCH BOOKINGS
+  // -----------------------
+  const {
+    loadBookings,
+    loading,
+    bookings: bookingsData,
+  } = useBookings(bookings);
+  // -----------------------
+  // FILTERS
+  // -----------------------
+  const {
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setStatusFilter,
+    filteredBookings,
+  } = useBookingFilters(bookingsData);
 
   // -----------------------
-  // LOAD BOOKINGS
+  // PAGINATION
   // -----------------------
-  async function loadBookings() {
-    try {
-      setLoading(true);
-
-      const reservations = await get<Reservation[]>("reservations");
-      const sorted = [...reservations].sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      );
-
-      setBookingsData(sorted);
-    } catch {
-      setBookingsData([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadBookings();
-  }, []);
-
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedBookings,
+    totalItems,
+    startIndex,
+    endIndex,
+  } = usePagination(filteredBookings, 8);
   // -----------------------
   // HANDLE ACTION
   // -----------------------
@@ -117,18 +131,6 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
     await loadBookings();
   }
 
-  // -----------------------
-  // FILTER
-  // -----------------------
-  const filteredBookings = bookingsData.filter((booking) => {
-    const matchesSearch =
-      booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.email?.toLowerCase().includes(searchTerm.toLowerCase()) === true;
-
-    return matchesSearch;
-  });
-
   const getStatusIcon = (status: BookingStatus) => {
     if (status === "confirmed") return <CheckCircle2 className="w-4 h-4" />;
     if (status === "cancelled") return <XCircle className="w-4 h-4" />;
@@ -141,6 +143,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
     return "secondary";
   };
 
+  // todo implement export functionality , move frontend logic to backend for filtering and pagination , booking id change to display id and add a new column for booking id in the backend
   return (
     <Card>
       <CardHeader>
@@ -159,7 +162,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
         {/* Search */}
         <div className="flex gap-3 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />{" "}
             <Input
               placeholder="Search by name, ID, or email"
               value={searchTerm}
@@ -167,6 +170,19 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
               className="pl-9"
             />
           </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px]">
+              <Filter className="w-4 h-4 mr-2" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="waitlist">Waitlist</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* TABLE */}
@@ -195,26 +211,32 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
               )}
 
               {!loading &&
-                filteredBookings.map((booking) => (
+                paginatedBookings.map((booking) => (
                   <TableRow key={booking.id}>
-                    <TableCell>{booking.id}</TableCell>
+                    <TableCell>{booking.display_id}</TableCell>
                     <TableCell>{booking.name}</TableCell>
-                    <TableCell>{booking.email}</TableCell>
                     <TableCell>
-                      {booking.reservation_date +
-                        " " +
-                        booking.reservation_time}
+                      <div className="flex flex-col gap-1">
+                        <p>{booking.email}</p>
+                        <p>{booking.phone}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        <p>{booking.reservation_date}</p>
+                        <p>{booking.reservation_time}</p>
+                      </div>
                     </TableCell>
                     <TableCell>{booking.partysize} guests</TableCell>
-
                     <TableCell>
-                      <Badge variant={getStatusVariant(booking.status)}>
+                      <Badge
+                        className="gap-1 capitalize"
+                        variant={getStatusVariant(booking.status)}
+                      >
                         {getStatusIcon(booking.status)} {booking.status}
                       </Badge>
                     </TableCell>
-
                     <TableCell>{booking.note || "-"}</TableCell>
-
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -254,6 +276,42 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
                 ))}
             </TableBody>
           </Table>
+        </div>
+
+        {/* Pagination Info */}
+        <div className="flex flex-col gap-3 border-t px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+          <p className="text-sm text-slate-500">
+            Showing {totalItems === 0 ? 0 : startIndex + 1}–{endIndex} of{" "}
+            {totalItems} bookings
+          </p>
+
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-500">
+              Page {currentPage} of {Math.max(totalPages, 1)}
+            </span>
+
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((page) => page - 1)}
+              >
+                <span className="hidden sm:inline">Previous</span>
+                <span className="sm:hidden">Prev</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage((page) => page + 1)}
+              >
+                <span className="hidden sm:inline">Next</span>
+                <span className="sm:hidden">Next</span>
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* MODALS (dynamic via Zustand) */}
