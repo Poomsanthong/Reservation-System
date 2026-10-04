@@ -49,7 +49,7 @@ import type {
   UpdateReservationInput,
 } from "@/features/bookings/types";
 
-import { cancelBooking, get, updateBooking } from "@/lib/api/functions";
+import { cancelBooking, updateBooking } from "@/lib/api/functions";
 
 import { useModalStore } from "@/store/useModalStore";
 import {
@@ -59,42 +59,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  useBookings,
+  useBookingFilters,
+  usePagination,
+} from "@/lib/hooks/useBookings";
 
 export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
-  const [loading, setLoading] = useState(true);
-  const [bookingsData, setBookingsData] = useState<Reservation[]>(bookings);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const ITEMS_PER_PAGE = 8;
-  const [currentPage, setCurrentPage] = useState(1);
   const { open, type, payload, openModal, closeModal } = useModalStore();
+  // -----------------------
+  // FETCH BOOKINGS
+  // -----------------------
+  const {
+    loadBookings,
+    loading,
+    bookings: bookingsData,
+  } = useBookings(bookings);
+  // -----------------------
+  // FILTERS
+  // -----------------------
+  const {
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setStatusFilter,
+    filteredBookings,
+  } = useBookingFilters(bookingsData);
 
   // -----------------------
-  // LOAD BOOKINGS
+  // PAGINATION
   // -----------------------
-  async function loadBookings() {
-    try {
-      setLoading(true);
-
-      const reservations = await get<Reservation[]>("reservations");
-      const sorted = [...reservations].sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      );
-
-      setBookingsData(sorted);
-    } catch {
-      setBookingsData([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadBookings();
-    setCurrentPage(1); // Reset to first page when filters change
-  }, [searchTerm, statusFilter]);
-
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedBookings,
+    totalItems,
+    startIndex,
+    endIndex,
+  } = usePagination(filteredBookings, 8);
   // -----------------------
   // HANDLE ACTION
   // -----------------------
@@ -128,20 +131,6 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
     await loadBookings();
   }
 
-  // -----------------------
-  // FILTER
-  // -----------------------
-  const filteredBookings = bookingsData.filter((booking) => {
-    const matchesSearch =
-      booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.email?.toLowerCase().includes(searchTerm.toLowerCase()) === true;
-
-    const matchesStatus =
-      statusFilter === "all" || booking.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
   const getStatusIcon = (status: BookingStatus) => {
     if (status === "confirmed") return <CheckCircle2 className="w-4 h-4" />;
     if (status === "cancelled") return <XCircle className="w-4 h-4" />;
@@ -153,15 +142,6 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
     if (status === "cancelled") return "destructive";
     return "secondary";
   };
-
-  // -----------------------
-  // PAGINATION
-  // -----------------------
-  const totalPages = Math.ceil(filteredBookings.length / ITEMS_PER_PAGE);
-  const paginatedBookings = filteredBookings.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
-  );
 
   // todo implement export functionality , move frontend logic to backend for filtering and pagination , booking id change to display id and add a new column for booking id in the backend
   return (
@@ -233,7 +213,7 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
               {!loading &&
                 paginatedBookings.map((booking) => (
                   <TableRow key={booking.id}>
-                    <TableCell>{booking.id}</TableCell>
+                    <TableCell>{booking.display_id}</TableCell>
                     <TableCell>{booking.name}</TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-1">
@@ -299,14 +279,10 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
         </div>
 
         {/* Pagination Info */}
-        <div className="flex items-center justify-between border-t px-5 py-4">
+        <div className="flex flex-col gap-3 border-t px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
           <p className="text-sm text-slate-500">
-            Showing{" "}
-            {filteredBookings.length === 0
-              ? 0
-              : (currentPage - 1) * ITEMS_PER_PAGE + 1}
-            –{Math.min(currentPage * ITEMS_PER_PAGE, filteredBookings.length)}{" "}
-            of {filteredBookings.length} bookings
+            Showing {totalItems === 0 ? 0 : startIndex + 1}–{endIndex} of{" "}
+            {totalItems} bookings
           </p>
 
           <div className="flex items-center gap-3">
@@ -321,7 +297,8 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((page) => page - 1)}
               >
-                Previous
+                <span className="hidden sm:inline">Previous</span>
+                <span className="sm:hidden">Prev</span>
               </Button>
 
               <Button
@@ -330,7 +307,8 @@ export function BookingsTable({ bookings }: { bookings: Reservation[] }) {
                 disabled={currentPage === totalPages || totalPages === 0}
                 onClick={() => setCurrentPage((page) => page + 1)}
               >
-                Next
+                <span className="hidden sm:inline">Next</span>
+                <span className="sm:hidden">Next</span>
               </Button>
             </div>
           </div>
