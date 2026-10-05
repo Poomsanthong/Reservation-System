@@ -12,12 +12,7 @@ export async function getBookings(restaurantId: string) {
 
   if (error) throw error;
 
-  const bookings = data.map((booking) => ({
-    ...booking,
-    display_id: `BK-${booking.booking_number.toString().padStart(4, "0")}`,
-  }));
-
-  return bookings;
+  return data;
 }
 
 export async function getDailyBookings(date: string, restaurantId: string) {
