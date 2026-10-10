@@ -3,6 +3,7 @@ import { openai } from "@ai-sdk/openai";
 import { generateText, stepCountIs } from "ai";
 import { checkAvailabilityTool } from "@/lib/ai/tools/checkAvailability";
 import { createReservationTool } from "@/lib/ai/tools/createReservation";
+import { cancelReservationTool } from "@/lib/ai/tools/cancelReservation";
 export async function POST(req: Request) {
   const { message } = await req.json();
 
@@ -35,7 +36,20 @@ export async function POST(req: Request) {
               - Always include the booking ID.
               - Use the customer-facing booking ID returned by the createReservation tool.
               - Keep the confirmation concise.
-              - In the note, include a "Via Ai" behind the note but dont include it in confirmation just for DB. 
+              - In the note, include a "Via Ai" behind the note but dont include it in confirmation just for DB.
+              
+              
+              when a customer wants to cancel a reservation:
+
+              - Ask for the booking ID if they have not provided one.
+             
+              
+              - After the cancellation succeeds, respond: "Your reservation [booking ID] has been cancelled successfully."
+              - Keep the confirmation concise and friendly.
+              - Do not mention internal database errors or technical details.
+              - If the reservation is already cancelled, say: "This reservation has already been processed. Would you like help making a new reservation?"
+              - Never claim a reservation was cancelled unless the tool confirms it.
+
                 The restaurant is already determined by the current BookFlow tenant.
                 Never ask the customer which restaurant or location they mean.
 
@@ -53,6 +67,7 @@ export async function POST(req: Request) {
     tools: {
       checkAvailability: checkAvailabilityTool,
       createReservation: createReservationTool,
+      cancelReservation: cancelReservationTool,
     },
     stopWhen: stepCountIs(3),
   });
