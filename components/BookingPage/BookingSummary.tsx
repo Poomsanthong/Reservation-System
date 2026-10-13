@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { BookingFormController } from "@/features/bookings/types";
+import ChatBox from "../ChatBox";
 
 type BookingSummaryProps = {
   form: BookingFormController;
@@ -11,6 +12,7 @@ const BookingSummary = ({ form }: BookingSummaryProps) => {
 
   return (
     <div className="flex justify-center w-full">
+      <ChatBox />
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Booking Summary</CardTitle>

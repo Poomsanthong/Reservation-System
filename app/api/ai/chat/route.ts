@@ -5,13 +5,20 @@ import { checkAvailabilityTool } from "@/lib/ai/tools/checkAvailability";
 import { createReservationTool } from "@/lib/ai/tools/createReservation";
 import { cancelReservationTool } from "@/lib/ai/tools/cancelReservation";
 export async function POST(req: Request) {
-  const { message } = await req.json();
+  const { message, messages } = await req.json();
 
+  // Use the full conversation when provided.
+  // Fall back to the latest message for older API requests.
+  const conversationMessages =
+    Array.isArray(messages) && messages.length > 0
+      ? messages
+      : [{ role: "user", content: message }];
   const result = await generateText({
     model: openai("gpt-5-mini"),
     system: `
                 You are BookFlow AI, an AI assistant for a restaurant reservation system.
-
+                Use the conversation history to understand the customer's latest message. 
+                Reuse details they have already provided. Ask only for information that is still missing.
                 You can:
                 - Check reservation availability
                 - Help customers make reservations
@@ -63,7 +70,7 @@ export async function POST(req: Request) {
                 Keep responses helpful and concise.
                 `,
 
-    prompt: message,
+    messages: conversationMessages,
     tools: {
       checkAvailability: checkAvailabilityTool,
       createReservation: createReservationTool,
