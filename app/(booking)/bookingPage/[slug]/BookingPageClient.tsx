@@ -123,6 +123,7 @@ export default function BookingPageClient({
           {mounted ? (
             <>
               <BookingForm form={form} />
+
               <BookingSummary form={form} />
             </>
           ) : (
