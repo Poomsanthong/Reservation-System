@@ -1,4 +1,7 @@
-export type MessageType = "confirmation" | "reminder";
+export type MessageType =
+  | "confirmation"
+  | "reminder"
+  | "restaurant_notification";
 
 export type MessageStatsBreakdown = {
   total: number;
@@ -30,4 +33,3 @@ export type RecentMessage = {
     email: string | null;
   } | null;
 };
-

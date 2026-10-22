@@ -28,6 +28,7 @@ async function sendReservationCreatedEvent(created: ReservationRecord) {
     data: {
       email: created.email,
       booking_id: created.id,
+      display_id: created.display_id,
       name: created.name,
       restaurant_name: created.restaurant_name,
       reservation_date: created.reservation_date,
@@ -74,7 +75,8 @@ async function scheduleReservationReminder(
     await inngest.send({
       name: "reservation/reminder.scheduled",
       data: {
-        booking_id: created.display_id,
+        booking_id: created.id,
+        display_id: created.display_id,
         email: created.email,
         name: created.name,
         restaurant_name: created.restaurant_name,
