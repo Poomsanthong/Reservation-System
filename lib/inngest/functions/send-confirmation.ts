@@ -1,89 +1,10 @@
 import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
 import { inngest } from "../inngest";
-import { Resend } from "resend";
-import { MessageType } from "@/features/messages/types";
-import { NonRetriableError, step } from "inngest"; // NON Retry error
-import build from "next/dist/build";
+import { NonRetriableError } from "inngest"; // NON Retry error
+import { resend, FROM_EMAIL } from "@/lib/email/client";
+import { loadTemplate, buildValues, render } from "@/lib/email/templates";
+import { recordMessage } from "@/lib/email/messages";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const FROM_EMAIL = "NoReply@bookflow.poomsan.site";
-const HTML_ENTITIES: Record<string, string> = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-};
-
-const escapeHtml = (value: string) =>
-  value.replace(/[&<>"']/g, (c) => HTML_ENTITIES[c]);
-
-function render(
-  text: string,
-  values: Record<string, string>,
-  { escape }: { escape: boolean },
-) {
-  return text.replace(/{{\s*(\w+)\s*}}/g, (match, key) =>
-    key in values ? (escape ? escapeHtml(values[key]) : values[key]) : match,
-  );
-}
-
-// Load Template function
-async function loadTemplate(restaurantId: string, type: MessageType) {
-  const { data, error } = await supabaseAdmin
-    .from("email_templates")
-    .select("subject, html")
-    .eq("type", type)
-    .eq("restaurant_id", restaurantId)
-    .order("updated_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message); // transient: retry
-  if (!data) {
-    throw new NonRetriableError(
-      `No "${type}" template for restaurant ${restaurantId}`,
-    );
-  }
-  return data;
-}
-
-function buildValues(data: Record<string, unknown>): Record<string, string> {
-  const convertToString = (value: unknown): string => String(value ?? "");
-
-  return {
-    name: convertToString(data.name),
-    email: convertToString(data.email),
-    restaurant_name: convertToString(data.restaurant_name),
-    booking_id: convertToString(data.booking_id),
-    display_id: convertToString(data.display_id),
-    reservation_date: convertToString(data.reservation_date),
-    reservation_time: convertToString(data.reservation_time),
-    partysize: convertToString(data.partysize),
-  };
-}
-
-async function recordMessage(
-  booking_id: string,
-  restaurant_id: string,
-  type: MessageType,
-  delivered: boolean,
-) {
-  const { error } = await supabaseAdmin.from("messages").upsert(
-    {
-      booking_id,
-      restaurant_id,
-      type,
-      delivered,
-      reminder_state: delivered ? "delivered" : "failed",
-    },
-    {
-      onConflict: "restaurant_id,booking_id,type",
-    },
-  );
-  if (error) throw new Error(error.message);
-}
 // ---------- Customer confirmation ----------
 export const sendconfirmation = inngest.createFunction(
   {

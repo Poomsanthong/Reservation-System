@@ -47,8 +47,6 @@ export async function cancelReservation(
     throw new Error(`Reservation ${displayId} not found in this restaurant`);
   }
 
-  console.log("Found reservation:", reservation.display_id);
-
   // 4. Check whether it is already cancelled
   if (reservation.status === "cancelled") {
     throw new Error(
@@ -73,8 +71,6 @@ export async function cancelReservation(
   if (!updatedReservation) {
     throw new Error(`Reservation ${displayId} was not updated`);
   }
-
-  console.log("Cancelled reservation:", updatedReservation.display_id);
 
   return updatedReservation;
 }
