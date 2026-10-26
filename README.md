@@ -34,20 +34,23 @@ A modern web application for managing reservations, built with Next.js, TypeScri
 
 ```
 reservation-system/
-├── app/                # Next.js app directory
-│   ├── (auth)/         # Authentication pages
-│   ├── (root)/         # Main landing pages
-│   ├── (admin)/        # Admin dashboard
-│   └── api/            # API routes
-├── components/         # Reusable UI and page components
-│   ├── AdminDashbaordPage/
-│   ├── BookingPage/
-│   ├── modal/
-│   └── ui/
-├── lib/                # Helpers, utilities, and actions
-├── public/             # Static assets
-├── store/              # Zustand stores for state management
-├── ...                 # Config and setup file
+├── app/                # Next.js routes, layouts, and API handlers
+├── features/           # Feature UI, hooks, types, and server logic
+│   ├── ai/
+│   ├── auth/
+│   ├── bookings/
+│   ├── dashboard/
+│   ├── marketing/
+│   ├── messages/
+│   └── restaurants/
+├── components/         # Shared layout components and UI primitives
+├── lib/                # Shared utilities and infrastructure
+│   ├── email/          # Resend client, templates, and message recording
+│   ├── inngest/        # Inngest client and background functions
+│   └── server/         # Shared server-only Supabase clients
+├── shared/             # Cross-feature API client and validation schemas
+├── store/              # Zustand stores for application state
+└── public/             # Static assets
 ```
 
 ## Getting Started

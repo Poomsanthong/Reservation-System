@@ -1,3 +1,4 @@
+import "server-only";
 import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
 import { inngest } from "../inngest";
 import { NonRetriableError } from "inngest"; // NON Retry error

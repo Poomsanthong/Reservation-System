@@ -1,12 +1,12 @@
-import AdminDashboard from "@/components/AdminDashbaordPage/DashBoard";
-import { getStats } from "@/lib/server/stats";
-import { getBookings } from "@/lib/server/getBooking";
+import AdminDashboard from "@/features/dashboard/components/AdminDashbaordPage/DashBoard";
+import { getStats } from "@/features/dashboard/server/stats";
+import { getBookings } from "@/features/bookings/server/getBooking";
 import { redirect } from "next/navigation";
-import { getBookingTrends } from "@/lib/server/getBookingTrends";
-import { getTimeDistribution } from "@/lib/server/getTimeDistribution";
-import { getRecentActivity } from "@/lib/server/getRecentActivity";
-import { getRestaurantSettings } from "@/lib/server/getRestaurantSettings";
-import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
+import { getBookingTrends } from "@/features/dashboard/server/getBookingTrends";
+import { getTimeDistribution } from "@/features/dashboard/server/getTimeDistribution";
+import { getRecentActivity } from "@/features/dashboard/server/getRecentActivity";
+import { getRestaurantSettings } from "@/features/restaurants/server/getRestaurantSettings";
+import { getCurrentUserRestaurant } from "@/features/restaurants/server/getCurrentUserRestaurant";
 export default async function AdminPage() {
   const { supabase, user, restaurant } = await getCurrentUserRestaurant();
 

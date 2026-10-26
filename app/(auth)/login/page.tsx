@@ -1,6 +1,6 @@
 "use client";
 
-import SignInForm from "@/components/SignIn/SignInForm";
+import SignInForm from "@/features/auth/components/SignIn/SignInForm";
 
 export default function AdminLoginPage() {
   return <SignInForm />;

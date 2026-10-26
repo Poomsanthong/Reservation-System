@@ -1,3 +1,4 @@
+import "server-only";
 import { inngest } from "../inngest";
 import { NonRetriableError } from "inngest"; // NON Retry error
 import { resend, FROM_EMAIL } from "@/lib/email/client";

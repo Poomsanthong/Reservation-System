@@ -1,5 +1,5 @@
-import { getTemplates, updateTemplate } from "@/lib/server/template";
-import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { getTemplates, updateTemplate } from "@/features/messages/server/template";
+import { getRestaurantBySlug } from "@/features/restaurants/server/getRestaurantBySlug";
 import { fail, success } from "@/lib/utils";
 import { updateTemplateSchema } from "@/shared/api/schemas";
 

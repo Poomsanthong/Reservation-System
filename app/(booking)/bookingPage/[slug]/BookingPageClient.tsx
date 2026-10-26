@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import BookingForm from "@/components/BookingPage/BookingForm";
-import BookingSummary from "@/components/BookingPage/BookingSummary";
+import BookingForm from "@/features/bookings/components/BookingPage/BookingForm";
+import BookingSummary from "@/features/bookings/components/BookingPage/BookingSummary";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, MapPin, Sparkles, Star } from "lucide-react";
-import { useBookingForm } from "@/lib/hooks/useBookingForm";
+import { useBookingForm } from "@/features/bookings/hooks/useBookingForm";
 
 type Restaurant = {
   id: string;

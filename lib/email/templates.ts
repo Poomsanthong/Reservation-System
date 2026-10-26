@@ -1,3 +1,4 @@
+import "server-only";
 import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
 import { MessageType } from "@/features/messages/types";
 import { NonRetriableError } from "inngest"; // NON Retry error

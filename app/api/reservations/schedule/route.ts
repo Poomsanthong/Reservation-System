@@ -1,5 +1,5 @@
-import { getSchedule } from "@/lib/server/getSchedule";
-import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { getSchedule } from "@/features/bookings/server/getSchedule";
+import { getRestaurantBySlug } from "@/features/restaurants/server/getRestaurantBySlug";
 import { success, fail } from "@/lib/utils";
 import { availabilitySchema } from "@/shared/api/schemas";
 

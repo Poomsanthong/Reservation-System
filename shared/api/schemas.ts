@@ -67,6 +67,31 @@ export const updateTemplateSchema = z.object({
   html: z.string().min(1),
 });
 
+export const blackoutDateSchema = z.object({
+  date: z.string().min(1),
+  reason: z.string().optional(),
+});
+
+export const unblockDateSchema = z.object({
+  date: z.string().min(1),
+});
+
+export const updateRestaurantSettingsSchema = z.object({
+  id: z.string().min(1),
+  restaurant_id: z.string().optional(),
+  auto_accept: z.boolean().optional(),
+  waitlist_enabled: z.boolean().optional(),
+  default_capacity: z.number().optional(),
+  booking_interval: z.number().optional(),
+  booking_window: z.number().optional(),
+  min_notice_hours: z.number().optional(),
+  avg_table_duration: z.number().optional(),
+  max_daily_capacity: z.number().nullable().optional(),
+  max_slot_capacity: z.number().nullable().optional(),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional(),
+});
+
 export const crudTableSchema = z.enum([
   "reservations",
   "bookings",

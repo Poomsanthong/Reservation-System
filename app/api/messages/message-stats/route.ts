@@ -1,5 +1,5 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
-import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { getRestaurantBySlug } from "@/features/restaurants/server/getRestaurantBySlug";
 import { fail, success } from "@/lib/utils";
 import type {
   MessageStatsBreakdown,

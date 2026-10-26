@@ -1,3 +1,4 @@
+import "server-only";
 import { MessageType } from "@/features/messages/types";
 import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
 
