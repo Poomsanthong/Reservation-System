@@ -2,7 +2,7 @@ import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
-import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
+import { getCurrentUserRestaurant } from "@/features/restaurants/server/getCurrentUserRestaurant";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const { restaurant } = await getCurrentUserRestaurant();

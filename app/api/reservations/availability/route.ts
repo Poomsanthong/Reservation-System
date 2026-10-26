@@ -1,5 +1,5 @@
-import { checkAvailability } from "@/lib/server/availability";
-import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { checkAvailability } from "@/features/bookings/server/availability";
+import { getRestaurantBySlug } from "@/features/restaurants/server/getRestaurantBySlug";
 import { availabilitySchema } from "@/shared/api/schemas";
 import { fail, success } from "@/lib/utils";
 

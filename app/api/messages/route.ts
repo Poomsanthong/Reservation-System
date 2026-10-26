@@ -1,4 +1,4 @@
-import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { getRestaurantBySlug } from "@/features/restaurants/server/getRestaurantBySlug";
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import { fail, success } from "@/lib/utils";
 

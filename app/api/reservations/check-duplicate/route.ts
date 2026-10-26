@@ -1,6 +1,6 @@
-import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { getRestaurantBySlug } from "@/features/restaurants/server/getRestaurantBySlug";
 import { duplicateCheckSchema } from "@/shared/api/schemas";
-import { checkDuplicate } from "@/lib/server/checkDuplicate";
+import { checkDuplicate } from "@/features/bookings/server/checkDuplicate";
 import { fail, success } from "@/lib/utils";
 
 export async function POST(req: Request) {

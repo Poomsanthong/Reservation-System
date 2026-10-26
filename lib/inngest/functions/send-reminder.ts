@@ -1,84 +1,67 @@
-import { Resend } from "resend";
+import "server-only";
 import { inngest } from "../inngest";
-import { supabaseAdmin } from "@/lib/server/supabaseAdmin";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { NonRetriableError } from "inngest"; // NON Retry error
+import { resend, FROM_EMAIL } from "@/lib/email/client";
+import { loadTemplate, buildValues, render } from "@/lib/email/templates";
+import { recordMessage } from "@/lib/email/messages";
 
 export const sendReminder = inngest.createFunction(
   {
     id: "send-reminder-email",
     triggers: { event: "reservation/reminder.scheduled" },
+
+    onFailure: async ({ event }) => {
+      const d = event.data.event.data;
+
+      await recordMessage(d.booking_id, d.restaurant_id, "reminder", false);
+    },
   },
+
   async ({ event, step }) => {
-    const {
-      email,
-      booking_id,
-      name,
-      restaurant_name,
-      reservation_date,
-      reservation_time,
-      partysize,
-      reminderTime,
-      restaurant_id,
-    } = event.data;
+    const { email, booking_id, restaurant_id, reminderTime } = event.data;
 
-    const { data: template, error: templateError } = await supabaseAdmin
-      .from("email_templates")
-      .select("*")
-      .eq("type", "reminder")
-      .eq("restaurant_id", restaurant_id)
-      .order("updated_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (templateError || !template) {
-      throw new Error(
-        templateError?.message || "Reminder email template not found",
-      );
+    if (!email) {
+      throw new NonRetriableError("Reminder event is missing customer email");
     }
 
-    let emailContent = template?.html || "";
-    emailContent = emailContent
-      .replace("{{name}}", name)
-      .replace("{{reservation_date}}", reservation_date)
-      .replace("{{reservation_time}}", reservation_time)
-      .replace("{{booking_id}}", booking_id)
-      .replace("{{partysize}}", partysize.toString())
-      .replace("{{restaurant_name}}", restaurant_name);
+    // Load the reminder template
+    const template = await step.run("load-template", () =>
+      loadTemplate(restaurant_id, "reminder"),
+    );
 
-    console.log("Reminder Time is " + reminderTime);
-    // await step.sleep("30s", 3000); // Initial sleep to ensure the database record is created , Test with 30s, then change to sleepUntil with the actual reminder time
-    await step.sleepUntil("waiting for reminder time", new Date(reminderTime));
+    //  Wait until the scheduled reminder time
+    await step.sleepUntil("wait-for-reminder-time", new Date(reminderTime));
 
-    try {
-      await step.run("send-email", async () => {
-        return resend.emails.send({
-          from: "NoReply@bookflow.poomsan.site",
+    // Build the email using the shared template helpers
+    await step.run("send-email", async () => {
+      const values = buildValues(event.data);
+
+      const { error } = await resend.emails.send(
+        {
+          from: FROM_EMAIL,
           to: email,
-          subject: template.subject,
-          html: emailContent,
-        });
-      });
+          subject: render(template.subject, values, {
+            escape: false,
+          }),
+          html: render(template.html ?? "", values, {
+            escape: true,
+          }),
+        },
+        {
+          idempotencyKey: `reminder-${restaurant_id}-${booking_id}-${reminderTime}`,
+        },
+      );
 
-      // console.log("Reminder email sent result:", booking_id);
+      if (error) {
+        throw new Error(`Reminder email failed: ${error.message}`);
+      }
+    });
 
-      await step.run("update-message", async () => {
-        await supabaseAdmin
-          .from("messages")
-          .update({
-            reminder_state: "delivered",
-            delivered: true,
-          })
-          .eq("booking_id", booking_id)
-          .eq("type", "reminder");
-      });
-    } catch (error) {
-      await supabaseAdmin
-        .from("messages")
-        .update({ reminder_state: "failed" })
-        .eq("booking_id", booking_id)
-        .eq("type", "reminder");
-      console.error("Error sending reminder email:", error);
-    }
+    // Record successful delivery
+    await step.run("record-message", () =>
+      recordMessage(booking_id, restaurant_id, "reminder", true),
+    );
+
+    return { success: true };
   },
 );

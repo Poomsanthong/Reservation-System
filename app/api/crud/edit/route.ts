@@ -1,5 +1,5 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
-import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { getRestaurantBySlug } from "@/features/restaurants/server/getRestaurantBySlug";
 import { success, fail, validateTable } from "@/lib/utils";
 import { crudEditSchema } from "@/shared/api/schemas";
 

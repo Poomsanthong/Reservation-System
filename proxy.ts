@@ -36,6 +36,10 @@ export async function proxy(req: NextRequest) {
   // any auth cookie updates written by Supabase onto the same response.
   // 2 Create a new Headers object based on the incoming request headers and add the tenant slug if it exists.
   const requestHeaders = new Headers(req.headers);
+
+  // Never trust an incoming tenant header.
+  requestHeaders.delete("x-tenant-slug");
+
   if (tenantSlug) {
     requestHeaders.set("x-tenant-slug", tenantSlug);
   }

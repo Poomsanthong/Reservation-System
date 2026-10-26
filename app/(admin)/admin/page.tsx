@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
+import { getCurrentUserRestaurant } from "@/features/restaurants/server/getCurrentUserRestaurant";
 
 export default async function AdminIndexPage() {
   const { user, restaurant } = await getCurrentUserRestaurant();

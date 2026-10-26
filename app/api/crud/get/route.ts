@@ -1,8 +1,8 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
-import { getRestaurantBySlug } from "@/lib/server/getRestaurantBySlug";
+import { getRestaurantBySlug } from "@/features/restaurants/server/getRestaurantBySlug";
 import { success, fail, validateTable } from "@/lib/utils";
 import { crudGetQuerySchema } from "@/shared/api/schemas";
-import { getBookings } from "@/lib/server/getBooking";
+import { getBookings } from "@/features/bookings/server/getBooking";
 
 export async function GET(req: Request) {
   try {

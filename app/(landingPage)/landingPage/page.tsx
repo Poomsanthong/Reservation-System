@@ -1,10 +1,10 @@
-import Features from "@/components/LandingPage/Features";
-import Hero from "@/components/LandingPage/Hero";
-import HowItWorks from "@/components/LandingPage/HowItWorks";
-import UIShowcase from "@/components/LandingPage/UIShowcase";
+import Features from "@/features/marketing/components/LandingPage/Features";
+import Hero from "@/features/marketing/components/LandingPage/Hero";
+import HowItWorks from "@/features/marketing/components/LandingPage/HowItWorks";
+import UIShowcase from "@/features/marketing/components/LandingPage/UIShowcase";
 import React from "react";
-import TrustSection from "@/components/LandingPage/TrustSection";
-import FinalCTA from "@/components/LandingPage/FinalCTA";
+import TrustSection from "@/features/marketing/components/LandingPage/TrustSection";
+import FinalCTA from "@/features/marketing/components/LandingPage/FinalCTA";
 const page = () => {
   return (
     <div>

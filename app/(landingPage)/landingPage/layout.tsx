@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "@/components/LandingPage/NavBar";
+import NavBar from "@/features/marketing/components/LandingPage/NavBar";
 export default async function LandingPageLayout({
   children,
 }: {

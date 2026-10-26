@@ -1,7 +1,7 @@
 import { supabaseServer } from "@/lib/server/supabaseServer";
 import { success, fail, validateTable } from "@/lib/utils";
 import { crudCreateSchema } from "@/shared/api/schemas";
-import { createReservation } from "@/lib/server/createReservation";
+import { createReservation } from "@/features/bookings/server/createReservation";
 
 export async function POST(req: Request) {
   try {

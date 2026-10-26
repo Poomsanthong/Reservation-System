@@ -1,9 +1,9 @@
 import React from "react";
 import { openai } from "@ai-sdk/openai";
 import { generateText, stepCountIs } from "ai";
-import { checkAvailabilityTool } from "@/lib/ai/tools/checkAvailability";
-import { createReservationTool } from "@/lib/ai/tools/createReservation";
-import { cancelReservationTool } from "@/lib/ai/tools/cancelReservation";
+import { checkAvailabilityTool } from "@/features/ai/server/tools/checkAvailability";
+import { createReservationTool } from "@/features/ai/server/tools/createReservation";
+import { cancelReservationTool } from "@/features/ai/server/tools/cancelReservation";
 export async function POST(req: Request) {
   const { message, messages } = await req.json();
 

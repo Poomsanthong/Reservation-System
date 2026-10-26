@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { getCurrentUserRestaurant } from "@/lib/server/getCurrentUserRestaurant";
+import { getCurrentUserRestaurant } from "@/features/restaurants/server/getCurrentUserRestaurant";
 import React from "react";
 
 export default async function AdminLayout({
